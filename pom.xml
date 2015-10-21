@@ -8,5 +8,13 @@
     <artifactId>TuringThesis</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.abdn</groupId>
+            <artifactId>SimpleNLG</artifactId>
+            <version>4.4.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/simplenlg-v4.4.3.jar</systemPath>
+        </dependency>
+    </dependencies>
 </project>
