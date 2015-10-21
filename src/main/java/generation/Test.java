@@ -15,12 +15,18 @@ public class Test {
         Realiser realiser = new Realiser(lexicon);
 
         final SPhraseSpec clause = nlgFactory.createClause();
-        clause.setSubject("Who");
+        clause.setSubject("who");
         clause.setObject("the first president of the United States");
         clause.setVerb("is");
         clause.setFeature(Feature.TENSE, Tense.PAST);
 
         final NLGElement nlgElement = realiser.realise(clause);
-        System.out.println(nlgElement.toString() + "?");
+        System.out.println(turnSentenceIntoQuestion(nlgElement.toString()));
+    }
+
+    private static String turnSentenceIntoQuestion(String sentence) {
+        sentence = sentence.trim();
+        final Character firstCharacter = sentence.charAt(0);
+        return Character.toUpperCase(firstCharacter) + sentence.substring(1) + "?";
     }
 }
