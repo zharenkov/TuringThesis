@@ -16,5 +16,16 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/simplenlg-v4.4.3.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.5.2</version>
+            <classifier>models</classifier>
+        </dependency>
     </dependencies>
 </project>
