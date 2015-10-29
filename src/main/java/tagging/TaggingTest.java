@@ -3,7 +3,7 @@ package tagging;
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
 
-public class Test {
+public class TaggingTest {
     final static StanfordParser parser = new StanfordParser();
 
     public static void main(String[] args) {
