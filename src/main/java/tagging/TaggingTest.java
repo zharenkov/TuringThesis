@@ -21,7 +21,7 @@ public class TaggingTest {
         }
 
         final String sentence = Joiner.on(' ').join(args);
-        System.out.println("Sentence being analyzed: " + sentence + "\n---------------------------");
+        System.out.println("Sentence being analyzed: \"" + sentence + "\"\n---------------------------");
 
         final Tree tree = parser.parse(sentence).getChild(0);
         final List<Tree> trees = tree.getChildrenAsList();
