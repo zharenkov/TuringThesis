@@ -40,14 +40,9 @@ public class TaggingTest {
         sentence = sentence.replaceAll("\\.", "");
 
         final Tree tree = parser.parse(sentence);
-        final List<Tree> trees = tree.getChild(0).getChildrenAsList();
-        for (final Tree part : trees) {
-            System.out.print(part.label());
-            System.out.println(part);
-        }
+        tree.indentedListPrint();
 
         System.out.println();
-
         final List<Tree> leaves = tree.getLeaves();
         for(final Tree leaf : leaves) {
             System.out.printf("(%s - %s), ", leaf.parent(tree).label(), leaf);
