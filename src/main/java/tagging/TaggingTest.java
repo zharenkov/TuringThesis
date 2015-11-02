@@ -9,8 +9,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class TaggingTest {
     final static StanfordParser parser = new StanfordParser();
 
