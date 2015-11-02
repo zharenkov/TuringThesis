@@ -1,44 +1,33 @@
 package generation;
 
-import simplenlg.features.Feature;
-import simplenlg.features.Tense;
-import simplenlg.framework.NLGElement;
+import simplenlg.framework.DocumentElement;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.NPPhraseSpec;
-import simplenlg.phrasespec.PPPhraseSpec;
-import simplenlg.phrasespec.SPhraseSpec;
+import simplenlg.phrasespec.VPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
 
 public class GenerationTest {
+    private static final Lexicon lexicon = Lexicon.getDefaultLexicon();
+    private static final NLGFactory nlgFactory = new NLGFactory(lexicon);
+    private static final Realiser realiser = new Realiser(lexicon);
+
     public static void main(String[] args) {
-        Lexicon lexicon = Lexicon.getDefaultLexicon();
-        NLGFactory nlgFactory = new NLGFactory(lexicon);
-        Realiser realiser = new Realiser(lexicon);
-
-        final PPPhraseSpec prepositionPhrase = nlgFactory.createPrepositionPhrase();
-        prepositionPhrase.setObject("the United States");
-        prepositionPhrase.setPreposition("of");
-
-        final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase();
-        npPhraseSpec.setNoun("president");
-        npPhraseSpec.setDeterminer("the");
-        npPhraseSpec.addModifier("first");
-        npPhraseSpec.addModifier(prepositionPhrase);
-
-        final SPhraseSpec clause = nlgFactory.createClause();
-        clause.setSubject("who");
-        clause.setObject(npPhraseSpec);
-        clause.setVerb("is");
-        clause.setFeature(Feature.TENSE, Tense.PAST);
-
-        final NLGElement nlgElement = realiser.realise(clause);
-        System.out.println(turnSentenceIntoQuestion(nlgElement.toString()));
+        printQuestion("George Washington", "was the first president of the United States");
     }
 
     private static String turnSentenceIntoQuestion(String sentence) {
-        sentence = sentence.trim();
+        sentence = sentence.trim().replaceAll("\\.", "");
         final Character firstCharacter = sentence.charAt(0);
         return Character.toUpperCase(firstCharacter) + sentence.substring(1) + "?";
+    }
+
+    private static void printQuestion(String np, String vp) {
+        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
+        final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
+        // TODO Turn the NP into a WH based on classification
+        // TODO Set the tense of the verb in the question to be the same as the tense in the statement
+        final DocumentElement sentence = nlgFactory.createSentence(npPhraseSpec, vpPhraseSpec);
+        System.out.println(turnSentenceIntoQuestion(realiser.realiseSentence(sentence)));
     }
 }
