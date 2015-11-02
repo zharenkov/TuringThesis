@@ -7,6 +7,8 @@ import simplenlg.phrasespec.NPPhraseSpec;
 import simplenlg.phrasespec.VPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
 
+import java.util.Arrays;
+
 public class GenerationTest {
     private static final Lexicon lexicon = Lexicon.getDefaultLexicon();
     private static final NLGFactory nlgFactory = new NLGFactory(lexicon);
@@ -27,7 +29,7 @@ public class GenerationTest {
         final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
         // TODO Turn the NP into a WH based on classification
         // TODO Set the tense of the verb in the question to be the same as the tense in the statement
-        final DocumentElement sentence = nlgFactory.createSentence(npPhraseSpec, vpPhraseSpec);
+        final DocumentElement sentence = nlgFactory.createSentence(Arrays.asList(npPhraseSpec, vpPhraseSpec));
         System.out.println(turnSentenceIntoQuestion(realiser.realiseSentence(sentence)));
     }
 }
