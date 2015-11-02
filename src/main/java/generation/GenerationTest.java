@@ -1,13 +1,13 @@
 package generation;
 
-import simplenlg.framework.DocumentElement;
+import simplenlg.features.Feature;
+import simplenlg.features.InterrogativeType;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.NPPhraseSpec;
+import simplenlg.phrasespec.SPhraseSpec;
 import simplenlg.phrasespec.VPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
-
-import java.util.Arrays;
 
 public class GenerationTest {
     private static final Lexicon lexicon = Lexicon.getDefaultLexicon();
@@ -27,9 +27,10 @@ public class GenerationTest {
     private static void printQuestion(String np, String vp) {
         final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
         final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
-        // TODO Turn the NP into a WH based on classification
         // TODO Set the tense of the verb in the question to be the same as the tense in the statement
-        final DocumentElement sentence = nlgFactory.createSentence(Arrays.asList(npPhraseSpec, vpPhraseSpec));
-        System.out.println(turnSentenceIntoQuestion(realiser.realiseSentence(sentence)));
+        final SPhraseSpec sPhraseSpec = nlgFactory.createClause(npPhraseSpec, vpPhraseSpec);
+
+        sPhraseSpec.setFeature(Feature.INTERROGATIVE_TYPE, InterrogativeType.WHO_SUBJECT);
+        System.out.println(realiser.realiseSentence(sPhraseSpec));
     }
 }
