@@ -56,7 +56,8 @@ public class TaggingTest {
         }
         System.out.println("\n");
 
-        final List<String> lemmas = Lemmatizer.lemmatizeSentence(sentence);
-        System.out.println(Joiner.on(' ').join(lemmas));
+        for (final Tree leaf : leaves) {
+            System.out.printf("%s ", Lemmatizer.lemmatize(leaf.nodeString(), leaf.parent(tree).label().value()));
+        }
     }
 }
