@@ -22,23 +22,23 @@ public class StanfordParser {
 
     private final TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(),
             "invertible=true");
-
     private final LexicalizedParser parser = LexicalizedParser.loadModel(PCG_MODEL);
 
-    public Tree parse(String str) {
-        final List<CoreLabel> tokens = tokenize(str);
+    private Tree getPosTree(String sentence) {
+        final Tokenizer<CoreLabel> tokenizer = tokenizerFactory.getTokenizer(new StringReader(sentence));
+        final List<CoreLabel> tokens = tokenizer.tokenize();
         return parser.apply(tokens);
     }
 
-    private List<CoreLabel> tokenize(String str) {
-        Tokenizer<CoreLabel> tokenizer = tokenizerFactory.getTokenizer(new StringReader(str));
-        return tokenizer.tokenize();
-    }
-
-    public Collection<TypedDependency> getDependencies(Tree sentenceParseTree) {
+    private Collection<TypedDependency> getDependencies(Tree sentenceParseTree) {
         final TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         final GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
         final GrammaticalStructure gs = gsf.newGrammaticalStructure(sentenceParseTree);
         return gs.typedDependenciesCollapsed();
+    }
+
+    public Sentence parseSentence(String sentence) {
+        final Tree posTree = getPosTree(sentence);
+        return new Sentence(posTree, getDependencies(posTree));
     }
 }

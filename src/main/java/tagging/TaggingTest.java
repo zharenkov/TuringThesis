@@ -40,7 +40,8 @@ public class TaggingTest {
 
         sentence = sentence.replaceAll("\\.", "");
 
-        final Tree tree = parser.parse(sentence);
+        final Sentence parsedSentence = parser.parseSentence(sentence);
+        final Tree tree = parsedSentence.getPosTree();
         final List<Tree> trees = tree.getChild(0).getChildrenAsList();
         for (final Tree part : trees) {
             System.out.print(part.label());
@@ -62,6 +63,6 @@ public class TaggingTest {
         }
         System.out.println("\n");
 
-        System.out.println(parser.getDependencies(tree));
+        System.out.println(parsedSentence.getDependencies());
     }
 }
