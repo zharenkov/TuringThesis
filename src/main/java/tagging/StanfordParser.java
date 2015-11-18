@@ -6,15 +6,21 @@ import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.Tokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
+import edu.stanford.nlp.trees.GrammaticalStructure;
+import edu.stanford.nlp.trees.GrammaticalStructureFactory;
+import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreebankLanguagePack;
 
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.List;
 
 public class StanfordParser {
     private final static String PCG_MODEL = "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz";
 
-    private final TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(), "invertible=true");
+    private final TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(),
+            "invertible=true");
 
     private final LexicalizedParser parser = LexicalizedParser.loadModel(PCG_MODEL);
 
@@ -26,5 +32,12 @@ public class StanfordParser {
     private List<CoreLabel> tokenize(String str) {
         Tokenizer<CoreLabel> tokenizer = tokenizerFactory.getTokenizer(new StringReader(str));
         return tokenizer.tokenize();
+    }
+
+    public Collection getDependencies(String sentence) {
+        final TreebankLanguagePack tlp = new PennTreebankLanguagePack();
+        final GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
+        final GrammaticalStructure gs = gsf.newGrammaticalStructure(parse(sentence));
+        return gs.typedDependenciesCollapsed();
     }
 }
