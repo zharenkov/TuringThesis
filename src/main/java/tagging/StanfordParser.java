@@ -39,6 +39,7 @@ public class StanfordParser {
 
     public Sentence parseSentence(String sentence) {
         final Tree posTree = getPosTree(sentence);
-        return new Sentence(posTree, getDependencies(posTree));
+        return new Sentence(posTree, getDependencies(posTree),
+                StanfordNamedEntityRecognizer.findNamedEntities(sentence));
     }
 }
