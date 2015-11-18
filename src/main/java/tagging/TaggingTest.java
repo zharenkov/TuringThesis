@@ -62,6 +62,6 @@ public class TaggingTest {
         }
         System.out.println("\n");
 
-        System.out.println(parser.getDependencies(sentence));
+        System.out.println(parser.getDependencies(tree));
     }
 }

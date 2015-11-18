@@ -11,6 +11,7 @@ import edu.stanford.nlp.trees.GrammaticalStructureFactory;
 import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
+import edu.stanford.nlp.trees.TypedDependency;
 
 import java.io.StringReader;
 import java.util.Collection;
@@ -34,10 +35,10 @@ public class StanfordParser {
         return tokenizer.tokenize();
     }
 
-    public Collection getDependencies(String sentence) {
+    public Collection<TypedDependency> getDependencies(Tree sentenceParseTree) {
         final TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         final GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
-        final GrammaticalStructure gs = gsf.newGrammaticalStructure(parse(sentence));
+        final GrammaticalStructure gs = gsf.newGrammaticalStructure(sentenceParseTree);
         return gs.typedDependenciesCollapsed();
     }
 }
