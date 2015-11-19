@@ -1,9 +1,12 @@
 package tagging;
 
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +29,52 @@ public class Sentence {
 
     public Collection<TypedDependency> getDependencies() {
         return dependencies;
+    }
+
+    public List<TypedDependency> getDependenciesForLeaf(Tree governor) {
+        final List<TypedDependency> dependenciesForLeaf = new ArrayList<>();
+        final int leafIndex = calculateLeafIndex(governor);
+        for (final TypedDependency typedDependency : dependencies) {
+            // The typed dependencies are 1-indexed not zero indexed
+            if (typedDependency.gov().index() - 1 == leafIndex) {
+                dependenciesForLeaf.add(typedDependency);
+            }
+        }
+        return dependenciesForLeaf;
+    }
+
+    public List<TypedDependency> getDependenciesForWord(IndexedWord governor) {
+        final List<TypedDependency> dependenciesForLeaf = new ArrayList<>();
+        for (final TypedDependency typedDependency : dependencies) {
+            // The typed dependencies are 1-indexed not zero indexed
+            if (typedDependency.gov().equals(governor)) {
+                dependenciesForLeaf.add(typedDependency);
+            }
+        }
+        return dependenciesForLeaf;
+    }
+
+    private int calculateLeafIndex(Tree leaf) {
+        final List<Tree> leaves = posTree.getLeaves();
+        for (int i = 0; i < leaves.size(); i++) {
+            if (leaves.get(i).equals(leaf)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public String getNp(IndexedWord part) {
+        final StringBuilder np = new StringBuilder();
+        for (final TypedDependency typedDependency : getDependenciesForWord(part)) {
+            if (typedDependency.gov().equals(part)) {
+                if (typedDependency.reln().getLongName().toLowerCase().contains("compound")) {
+                    np.append(typedDependency.dep().originalText()).append(" ");
+                }
+            }
+        }
+        np.append(part.originalText());
+        return np.toString();
     }
 
     public Map<String, NamedEntity> getNamedEntities() {
