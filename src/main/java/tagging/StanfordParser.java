@@ -57,7 +57,7 @@ public class StanfordParser {
             if (pos.equals("md")) {
                 return Tense.FUTURE;
             }
-            if (pos.equals("vbd") || pos.equals("vbn")) {
+            if (pos.equals("vbd")) {
                 return Tense.PAST;
             }
         }
