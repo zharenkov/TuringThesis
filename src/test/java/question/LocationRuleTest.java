@@ -16,9 +16,19 @@ public class LocationRuleTest {
     }
 
     @Test
-    public void testGenerateQuestions() throws Exception {
+    public void testGenerateQuestionsWashington() {
         assertQuestionCreated("George Washington was born in Virginia", "Where was George Washington born?");
+    }
+
+    @Test
+    public void testGenerateQuestionsFremantle() {
         assertQuestionCreated("Fremantle Prison is located in Australia", "Where is Fremantle Prison located?");
+    }
+
+    @Test
+    public void testGenerateQuestionsBecket() {
+        assertQuestionCreated("Saint Thomas Becket was murdered in Canterbury Cathedral",
+                "Where was Saint Thomas Becket murdered?");
     }
 
     private void assertQuestionCreated(String sentence, String... question) {
