@@ -2,8 +2,8 @@ package question;
 
 import tagging.Sentence;
 
-import java.util.List;
+import java.util.Set;
 
 public interface Rule {
-    List<String> generateQuestions(Sentence sentence);
+    Set<String> generateQuestions(Sentence sentence);
 }

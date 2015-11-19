@@ -1,5 +1,6 @@
 package tagging;
 
+import com.google.common.base.Joiner;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
@@ -79,5 +80,9 @@ public class Sentence {
 
     public Map<String, NamedEntity> getNamedEntities() {
         return namedEntities;
+    }
+
+    public String getString() {
+        return Joiner.on(' ').join(posTree.getLeaves());
     }
 }

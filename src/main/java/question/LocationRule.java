@@ -7,31 +7,34 @@ import generation.QuestionGenerator;
 import tagging.NamedEntity;
 import tagging.Sentence;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LocationRule implements Rule {
 
     @Override
-    public List<String> generateQuestions(Sentence sentence) {
-        final List<String> questions = new ArrayList<>();
-        System.out.println("Starting location scanning");
-        processTree(sentence.getPosTree(), sentence);
-        System.out.println("Ending location scanning");
+    public Set<String> generateQuestions(Sentence sentence) {
+        final Set<String> questions = new HashSet<>();
+        System.out.println("Starting location scanning\n-----------------------------------");
+        System.out.println("Sentence: '" + sentence.getString() + "'");
+        processTree(sentence.getPosTree(), sentence, questions);
+        System.out.println("-----------------------------------\nEnding location scanning");
         return questions;
     }
 
-    private void processTree(Tree tree, Sentence sentence) {
+    private void processTree(Tree tree, Sentence sentence, Set<String> questions) {
         if (tree.label().value().equals("PP")) {
             System.out.println("Found a PP");
-            validatePP(tree, sentence);
+            validatePP(tree, sentence, questions);
+            System.out.println();
         }
         for (final Tree child : tree.getChildrenAsList()) {
-            processTree(child, sentence);
+            processTree(child, sentence, questions);
         }
     }
 
-    private void validatePP(Tree pp, Sentence sentence) {
+    private void validatePP(Tree pp, Sentence sentence, Set<String> questions) {
         // Check the preposition of the PP
         if (pp.firstChild().firstChild().value().equals("in")) {
             System.out.println("PP starts with 'in'");
@@ -43,13 +46,13 @@ public class LocationRule implements Rule {
                 final Tree ppParent = pp.parent(sentence.getPosTree());
                 if (ppParent.label().value().equalsIgnoreCase("vp")) {
                     System.out.println("PP contained within VP");
-                    pullVerb(ppParent, sentence);
+                    constructQuestion(ppParent, sentence, questions);
                 }
             }
         }
     }
 
-    private void pullVerb(Tree vp, Sentence sentence) {
+    private void constructQuestion(Tree vp, Sentence sentence, Set<String> questions) {
         String verb = vp.firstChild().firstChild().value();
 
         final Tree verbTree = vp.getLeaves().get(0);
@@ -63,7 +66,8 @@ public class LocationRule implements Rule {
                 verb = typedDependency.dep().originalText() + " " + verb;
             }
         }
-        //final String subject = sentence.getDependencies();
-        System.out.println(QuestionGenerator.generateLocationQuestion(verb, subject));
+        final String question = QuestionGenerator.generateLocationQuestion(verb, subject);
+        System.out.println("Question generated: " + question);
+        questions.add(question);
     }
 }
