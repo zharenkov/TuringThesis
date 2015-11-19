@@ -3,6 +3,7 @@ package question;
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
+import generation.QuestionGenerator;
 import tagging.NamedEntity;
 import tagging.Sentence;
 
@@ -49,17 +50,20 @@ public class LocationRule implements Rule {
     }
 
     private void pullVerb(Tree vp, Sentence sentence) {
-        final String verb = vp.firstChild().firstChild().value();
+        String verb = vp.firstChild().firstChild().value();
 
         final Tree verbTree = vp.getLeaves().get(0);
         final List<TypedDependency> verbDependencies = sentence.getDependenciesForLeaf(verbTree);
         String subject = "";
-        for(final TypedDependency typedDependency : verbDependencies) {
-            if(typedDependency.reln().getLongName().toLowerCase().contains("subj")) {
+        for (final TypedDependency typedDependency : verbDependencies) {
+            if (typedDependency.reln().getLongName().toLowerCase().contains("subj")) {
                 subject = sentence.getNp(typedDependency.dep());
+            }
+            if (typedDependency.reln().getLongName().toLowerCase().contains("aux")) {
+                verb = typedDependency.dep().originalText() + " " + verb;
             }
         }
         //final String subject = sentence.getDependencies();
-        System.out.printf("Where %s %s?\n", subject, verb);
+        System.out.println(QuestionGenerator.generateLocationQuestion(verb, subject));
     }
 }

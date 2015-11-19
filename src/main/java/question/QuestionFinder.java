@@ -7,7 +7,7 @@ import tagging.StanfordParser;
 import java.util.Arrays;
 import java.util.List;
 
-public class QuestionGenerator {
+public class QuestionFinder {
     final static StanfordParser parser = new StanfordParser();
     final static List<Rule> questionRules = Arrays.asList(new LocationRule());
 

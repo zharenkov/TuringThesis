@@ -2,6 +2,7 @@ package generation;
 
 import simplenlg.features.Feature;
 import simplenlg.features.InterrogativeType;
+import simplenlg.features.Tense;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.NPPhraseSpec;
@@ -15,7 +16,15 @@ public class GenerationTest {
     private static final Realiser realiser = new Realiser(lexicon);
 
     public static void main(String[] args) {
-        printQuestion("George Washington", "was the first president of the United States");
+        //printQuestion("George Washington", "was the first president of the United States");
+
+        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase("born");
+        vpPhraseSpec.setFeature(Feature.TENSE, Tense.PAST);
+        final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase("George Washington");
+        final SPhraseSpec sPhraseSpec = nlgFactory.createClause(npPhraseSpec, vpPhraseSpec);
+        sPhraseSpec.setFeature(Feature.TENSE, Tense.PAST);
+        sPhraseSpec.setFeature(Feature.INTERROGATIVE_TYPE, InterrogativeType.WHERE);
+        System.out.println(realiser.realiseSentence(sPhraseSpec));
     }
 
     private static String turnSentenceIntoQuestion(String sentence) {
