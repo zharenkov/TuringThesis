@@ -39,9 +39,15 @@ public class StanfordParser {
     }
 
     public static Sentence parseSentence(String sentence) {
+        sentence = cleanSentence(sentence);
+
         final Tree posTree = getPosTree(sentence);
         return new Sentence(posTree, getDependencies(posTree),
                 StanfordNamedEntityRecognizer.findNamedEntities(sentence));
+    }
+
+    private static String cleanSentence(String sentence) {
+        return sentence.replaceAll("\\p{Punct}", "").replaceAll("[ ]+", " ");
     }
 
     public static Tense calculateTense(String clause) {
