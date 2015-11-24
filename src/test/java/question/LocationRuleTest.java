@@ -1,10 +1,12 @@
 package question;
 
+import org.hamcrest.collection.IsEmptyIterable;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import tagging.StanfordParser;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class LocationRuleTest {
@@ -37,8 +39,23 @@ public class LocationRuleTest {
                 "Where is the Astrodome located?");
     }
 
+    @Test
+    public void testGenerateQuestionsInAbsentia() {
+        assertNoQuestionsCreated("The senator voted in absentia");
+    }
+
+    @Test
+    public void testGenerateQuestionsInAgony() {
+        assertNoQuestionsCreated("The actor yelled in agony");
+    }
+
     private void assertQuestionCreated(String sentence, String... question) {
         assertThat(locationRule.generateQuestions(StanfordParser.parseSentence(sentence)),
                 IsIterableContainingInAnyOrder.containsInAnyOrder(question));
+    }
+
+    private void assertNoQuestionsCreated(String sentence) {
+        assertThat(locationRule.generateQuestions(StanfordParser.parseSentence(sentence)),
+                IsEmptyIterable.emptyIterable());
     }
 }
