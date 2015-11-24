@@ -69,8 +69,13 @@ public class Sentence {
         final StringBuilder np = new StringBuilder();
         for (final TypedDependency typedDependency : getDependenciesForWord(part)) {
             if (typedDependency.gov().equals(part)) {
-                if (typedDependency.reln().getLongName().toLowerCase().contains("compound")) {
-                    np.append(typedDependency.dep().originalText()).append(" ");
+                final String label = typedDependency.reln().getLongName().toLowerCase();
+                String originalText = typedDependency.dep().originalText();
+                if(label.contains("det")) {
+                    originalText = originalText.toLowerCase();
+                }
+                if (label.contains("compound") || label.contains("det")) {
+                    np.append(originalText).append(" ");
                 }
             }
         }

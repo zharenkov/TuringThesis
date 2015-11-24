@@ -31,6 +31,12 @@ public class LocationRuleTest {
                 "Where was Saint Thomas Becket murdered?");
     }
 
+    @Test
+    public void testGenerateQuestionsAstrodome() {
+        assertQuestionCreated("The Astrodome is located in Houston, Texas",
+                "Where is the Astrodome located?");
+    }
+
     private void assertQuestionCreated(String sentence, String... question) {
         assertThat(locationRule.generateQuestions(StanfordParser.parseSentence(sentence)),
                 IsIterableContainingInAnyOrder.containsInAnyOrder(question));
