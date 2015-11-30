@@ -28,4 +28,16 @@ public class QuestionGenerator {
 
         return realiser.realiseSentence(sPhraseSpec);
     }
+
+    public static String generateNpVpQuestion(String np, String vp, InterrogativeType type) {
+        final Tense tense = StanfordParser.calculateTense(vp);
+        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
+        vpPhraseSpec.setFeature(Feature.TENSE, tense);
+        final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
+
+        final SPhraseSpec sPhraseSpec = nlgFactory.createClause(npPhraseSpec, vpPhraseSpec);
+        sPhraseSpec.setFeature(Feature.INTERROGATIVE_TYPE, type);
+
+        return realiser.realiseSentence(sPhraseSpec);
+    }
 }

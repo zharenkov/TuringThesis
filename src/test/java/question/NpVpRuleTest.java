@@ -10,6 +10,7 @@ public class NpVpRuleTest {
 
     @BeforeClass
     public static void init() {
+        npVpRule = new NpVpRule();
     }
 
     @Test
@@ -20,8 +21,8 @@ public class NpVpRuleTest {
 
     @Test
     public void testGenerateQuestionsBooth() {
-        assertQuestionCreated(npVpRule, "John Wilkes Booth assassinated president Abraham Lincoln.",
-                "Who assassinated president Abraham Lincoln?");
+        assertQuestionCreated(npVpRule, "John Wilkes Booth killed president Abraham Lincoln in 1865.",
+                "Who killed president Abraham Lincoln in 1865?");
     }
 
     @Test
