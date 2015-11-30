@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
 import generation.QuestionGenerator;
 import simplenlg.features.InterrogativeType;
+import tagging.NamedEntity;
 import tagging.Sentence;
 
 import java.util.HashSet;
@@ -41,9 +42,15 @@ public class NpVpRule implements Rule {
         System.out.println("Found NP followed by VP");
         final String npString = Joiner.on(' ').join(np.getLeaves());
         final String vpString = Joiner.on(' ').join(vp.getLeaves());
-        // TODO calculate whether it is a WHO or a WHAT
-        final String question = QuestionGenerator.generateNpVpQuestion(npString, vpString,
-                InterrogativeType.WHO_SUBJECT);
+
+        final InterrogativeType type;
+        if (sentence.getNamedEntities().get(npString) == NamedEntity.PERSON) {
+            type = InterrogativeType.WHO_SUBJECT;
+        } else {
+            type = InterrogativeType.WHAT_SUBJECT;
+        }
+
+        final String question = QuestionGenerator.generateNpVpQuestion(npString, vpString, type);
         System.out.println("Generated question: " + question);
         questions.add(question);
     }
