@@ -33,6 +33,12 @@ public class LocationRuleTest {
     }
 
     @Test
+    public void testGenerateQuestionsBulge() {
+        assertQuestionCreated(locationRule, "The battle was launched through Wallonia",
+                "Where was the battle launched?");
+    }
+
+    @Test
     public void testGenerateQuestionsAstrodome() {
         assertQuestionCreated(locationRule, "The Astrodome is located in Houston, Texas",
                 "Where is the Astrodome located?");

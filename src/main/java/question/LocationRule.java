@@ -1,6 +1,7 @@
 package question;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
 import generation.QuestionGenerator;
@@ -12,6 +13,10 @@ import java.util.List;
 import java.util.Set;
 
 public class LocationRule implements Rule {
+    private static final Set<String> locationalPrepositions = ImmutableSet.of("above", "across", "against", "along",
+            "among", "around", "at", "behind", "below", "beneath", "beside", "besides", "between", "beyond", "by",
+            "down", "from", "in", "inside", "into", "near", "onto", "through", "to", "toward", "under", "underneath",
+            "up", "within");
 
     @Override
     public Set<String> generateQuestions(Sentence sentence) {
@@ -36,8 +41,8 @@ public class LocationRule implements Rule {
 
     private void validatePP(Tree pp, Sentence sentence, Set<String> questions) {
         // Check the preposition of the PP
-        if (pp.firstChild().firstChild().value().equals("in")) {
-            System.out.println("PP starts with 'in'");
+        if (locationalPrepositions.contains(pp.firstChild().firstChild().value())) {
+            System.out.println("PP starts with locational preposition");
             final String phrase = Joiner.on(' ').join(pp.getChild(1).getLeaves());
             // Check the NP part of the PP to see if it is a location
             if (sentence.getNamedEntities().get(phrase) == NamedEntity.LOCATION) {
