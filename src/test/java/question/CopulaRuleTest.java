@@ -18,4 +18,16 @@ public class CopulaRuleTest {
         assertQuestionCreated(copulaRule, "Barack Obama is the current president of the United States of America.",
                 "Who is the current president of the United States of America?");
     }
+
+    @Test
+    public void testGenerateQuestionsLeopold() {
+        assertQuestionCreated(copulaRule, "Leopold II was Holy Roman Emperor from 1790 to 1792.",
+                "Who was Holy Roman Emperor from 1790 to 1792?");
+    }
+
+    @Test
+    public void testGenerateQuestionsCulprit() {
+        assertQuestionCreated(copulaRule, "Paracetamol is a widely used pain medication to reduce fever.",
+                "What is a widely used pain medication to reduce fever?");
+    }
 }

@@ -18,7 +18,7 @@ public class CopulaRule implements Rule {
         System.out.println("Starting Copula scanning\n-----------------------------------");
         System.out.println("Sentence: '" + sentence.getString() + "'");
         processTree(sentence.getPosTree(), sentence, questions);
-        System.out.println("-----------------------------------\nEnding location scanning");
+        System.out.println("-----------------------------------\nEnding copula scanning");
         return questions;
     }
 
@@ -38,10 +38,11 @@ public class CopulaRule implements Rule {
                         final String verbString = typedDependency.dep().originalText();
 
                         //Find the noun subject to determine if this will be a WHO or WHAT question
-                        InterrogativeType type = InterrogativeType.WHO_OBJECT;
+                        InterrogativeType type = InterrogativeType.WHAT_OBJECT;
                         for (final TypedDependency dependency : dependencies) {
-                            if (dependency.reln().getLongName().toLowerCase().contains("nsubj")) {
-                                final String subjectString = sentence.getNp(typedDependency.dep());
+                            final String relation = dependency.reln().getShortName().toLowerCase();
+                            if (relation.contains("nsubj")) {
+                                final String subjectString = sentence.getNp(dependency.dep());
                                 type = findInterrogativeTypeObject(sentence, subjectString);
                                 break;
                             }
