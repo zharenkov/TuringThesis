@@ -1,22 +1,13 @@
 package tagging;
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
-import edu.stanford.nlp.process.CoreLabelTokenFactory;
-import edu.stanford.nlp.process.PTBTokenizer;
-import edu.stanford.nlp.process.Tokenizer;
-import edu.stanford.nlp.process.TokenizerFactory;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
-import edu.stanford.nlp.trees.PennTreebankLanguagePack;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
-import simplenlg.features.Tense;
+import edu.stanford.nlp.ling.*;
+import edu.stanford.nlp.parser.lexparser.*;
+import edu.stanford.nlp.process.*;
+import edu.stanford.nlp.trees.*;
+import simplenlg.features.*;
 
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class StanfordParser {
     private static final String PCG_MODEL = "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz";
@@ -57,7 +48,7 @@ public class StanfordParser {
             if (pos.equals("md")) {
                 return Tense.FUTURE;
             }
-            if (pos.equals("vbd")) {
+            if (pos.equals("vbd") || pos.equals("vbn")) {
                 return Tense.PAST;
             }
         }
