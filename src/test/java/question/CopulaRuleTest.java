@@ -16,6 +16,6 @@ public class CopulaRuleTest {
     @Test
     public void testGenerateQuestionsObama() {
         assertQuestionCreated(copulaRule, "Barack Obama is the current president of the United States of America.",
-                "Who the current president of the United States of America?");
+                "Who is the current president of the United States of America?");
     }
 }

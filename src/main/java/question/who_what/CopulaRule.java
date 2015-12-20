@@ -9,6 +9,8 @@ import tagging.*;
 
 import java.util.*;
 
+import static question.who_what.SubjectIdentifier.findInterrogativeTypeObject;
+
 public class CopulaRule implements Rule {
     @Override
     public Set<String> generateQuestions(Sentence sentence) {
@@ -34,7 +36,16 @@ public class CopulaRule implements Rule {
                         System.out.printf("Found noun with copula relation: '%s'\n", word.toString());
                         final String npString = getNp(word, posTree);
                         final String verbString = typedDependency.dep().originalText();
-                        final InterrogativeType type = SubjectIdentifier.findInterrogativeTypeObject(sentence, npString);
+
+                        //Find the noun subject to determine if this will be a WHO or WHAT question
+                        InterrogativeType type = InterrogativeType.WHO_OBJECT;
+                        for (final TypedDependency dependency : dependencies) {
+                            if (dependency.reln().getLongName().toLowerCase().contains("nsubj")) {
+                                final String subjectString = sentence.getNp(typedDependency.dep());
+                                type = findInterrogativeTypeObject(sentence, subjectString);
+                                break;
+                            }
+                        }
 
                         final String question = QuestionGenerator.generateNpVpQuestion(npString, verbString, type);
                         System.out.println("Generated question: " + question);
