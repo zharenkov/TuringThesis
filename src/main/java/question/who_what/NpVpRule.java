@@ -1,4 +1,4 @@
-package question.who;
+package question.who_what;
 
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
@@ -43,13 +43,7 @@ public class NpVpRule implements Rule {
         System.out.println("Found NP followed by VP");
         final String npString = Joiner.on(' ').join(np.getLeaves());
         final String vpString = Joiner.on(' ').join(vp.getLeaves());
-
-        final InterrogativeType type;
-        if (sentence.getNamedEntities().get(npString) == NamedEntity.PERSON) {
-            type = InterrogativeType.WHO_SUBJECT;
-        } else {
-            type = InterrogativeType.WHAT_SUBJECT;
-        }
+        final InterrogativeType type = SubjectIdentifier.findInterrogativeTypeSubject(sentence, npString);
 
         final String question = QuestionGenerator.generateNpVpQuestion(npString, vpString, type);
         System.out.println("Generated question: " + question);

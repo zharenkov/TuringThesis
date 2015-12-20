@@ -2,7 +2,7 @@ package question;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import question.who.*;
+import question.who_what.*;
 
 import static question.QuestionAssertions.assertQuestionCreated;
 
