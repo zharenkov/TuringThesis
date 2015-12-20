@@ -30,4 +30,11 @@ public class CopulaRuleTest {
         assertQuestionCreated(copulaRule, "Paracetamol is a widely used pain medication to reduce fever.",
                 "What is a widely used pain medication to reduce fever?");
     }
+
+    @Test
+    public void testGenerateQuestionsIndia() {
+        // TODO fix past tense
+        /*assertQuestionCreated(copulaRule, "John seemed to be the most likely culprit.",
+                "Who seemed to be the most likely culprit?");*/
+    }
 }
