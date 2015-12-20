@@ -3,7 +3,7 @@ package question;
 import org.junit.*;
 import question.who_what.*;
 
-import static question.QuestionAssertions.assertQuestionCreated;
+import static question.QuestionAssertions.*;
 
 public class CopulaRuleTest {
     private static Rule copulaRule;
@@ -32,9 +32,9 @@ public class CopulaRuleTest {
     }
 
     @Test
-    public void testGenerateQuestionsIndia() {
-        // TODO fix past tense
-        /*assertQuestionCreated(copulaRule, "John seemed to be the most likely culprit.",
-                "Who seemed to be the most likely culprit?");*/
+    public void testGenerateQuestionsFlare() {
+        // SimpleNLG has problems turning 'appeared' into the present tense when the question becomes present tense
+        assertQuestionCreated(copulaRule, "The solar flare appeared to be the most likely culprit.",
+                "What did the most likely culprit appeared to be?");
     }
 }

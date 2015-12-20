@@ -6,12 +6,11 @@ import edu.stanford.nlp.trees.*;
 import generation.*;
 import question.*;
 import simplenlg.features.*;
-import tagging.*;
 import tagging.Sentence;
 
 import java.util.*;
 
-import static question.who_what.SubjectIdentifier.findInterrogativeTypeObject;
+import static question.who_what.SubjectIdentifier.*;
 
 public class CopulaRule implements Rule {
     @Override
@@ -55,7 +54,7 @@ public class CopulaRule implements Rule {
                             }
                         }
 
-                        final String question = QuestionGenerator.generateNpVpQuestion(npString, verbString, type);
+                        final String question = QuestionGenerator.generateCopulaQuestion(npString, verbString, type);
                         System.out.println("Generated question: " + question);
                         questions.add(question);
                     }

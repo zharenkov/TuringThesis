@@ -1,15 +1,11 @@
 package generation;
 
-import simplenlg.features.Feature;
-import simplenlg.features.InterrogativeType;
-import simplenlg.features.Tense;
-import simplenlg.framework.NLGFactory;
-import simplenlg.lexicon.Lexicon;
-import simplenlg.phrasespec.NPPhraseSpec;
-import simplenlg.phrasespec.SPhraseSpec;
-import simplenlg.phrasespec.VPPhraseSpec;
-import simplenlg.realiser.english.Realiser;
-import tagging.StanfordParser;
+import simplenlg.features.*;
+import simplenlg.framework.*;
+import simplenlg.lexicon.*;
+import simplenlg.phrasespec.*;
+import simplenlg.realiser.english.*;
+import tagging.*;
 
 public class QuestionGenerator {
     private static final Lexicon lexicon = Lexicon.getDefaultLexicon();
@@ -37,6 +33,18 @@ public class QuestionGenerator {
 
         final SPhraseSpec sPhraseSpec = nlgFactory.createClause(npPhraseSpec, vpPhraseSpec);
         sPhraseSpec.setFeature(Feature.INTERROGATIVE_TYPE, type);
+
+        return realiser.realiseSentence(sPhraseSpec);
+    }
+
+    public static String generateCopulaQuestion(String np, String vp, InterrogativeType type) {
+        final Tense tense = StanfordParser.calculateTense(vp);
+        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
+        final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
+
+        final SPhraseSpec sPhraseSpec = nlgFactory.createClause(npPhraseSpec, vpPhraseSpec);
+        sPhraseSpec.setFeature(Feature.INTERROGATIVE_TYPE, type);
+        sPhraseSpec.setFeature(Feature.TENSE, tense);
 
         return realiser.realiseSentence(sPhraseSpec);
     }
