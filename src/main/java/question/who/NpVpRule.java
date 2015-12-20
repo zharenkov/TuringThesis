@@ -1,8 +1,9 @@
-package question;
+package question.who;
 
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
 import generation.QuestionGenerator;
+import question.*;
 import simplenlg.features.InterrogativeType;
 import tagging.NamedEntity;
 import tagging.Sentence;

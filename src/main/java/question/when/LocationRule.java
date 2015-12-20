@@ -1,10 +1,11 @@
-package question;
+package question.when;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
 import generation.QuestionGenerator;
+import question.*;
 import tagging.NamedEntity;
 import tagging.Sentence;
 
