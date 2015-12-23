@@ -41,7 +41,6 @@ public class CopulaRule implements Rule {
                         // The typed dependencies are 1-indexed not zero indexed
                         final Tree verbTree = posTree.getLeaves().get(verb.index() - 1);
                         final String verbString = getVp(verbTree, posTree);
-                        System.out.println(verbString);
 
                         // Find the noun subject to determine if this will be a WHO or WHAT question
                         InterrogativeType type = InterrogativeType.WHAT_OBJECT;
