@@ -12,7 +12,7 @@ public class QuestionFinder {
 
     public static void main(String[] args) {
         final String sentence = Joiner.on(' ').join(args);
-        final Sentence parsedSentence = StanfordParser.parseSentence(sentence);
+        final Sentence parsedSentence = StanfordParser.parseSentence(sentence, true);
         for(final Rule rule : questionRules) {
             rule.generateQuestions(parsedSentence);
         }

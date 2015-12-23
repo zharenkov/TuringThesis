@@ -29,8 +29,10 @@ public class StanfordParser {
         return gs.typedDependenciesCollapsed();
     }
 
-    public static Sentence parseSentence(String sentence) {
-        sentence = cleanSentence(sentence);
+    public static Sentence parseSentence(String sentence, boolean removePunctuation) {
+        if (removePunctuation) {
+            sentence = cleanSentence(sentence);
+        }
 
         final Tree posTree = getPosTree(sentence);
         return new Sentence(posTree, getDependencies(posTree),
