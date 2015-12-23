@@ -43,14 +43,13 @@ public class StanfordParser {
 
     public static Tense calculateTense(String clause) {
         final Tree posTree = getPosTree(clause);
-        for (Tree word : posTree.getLeaves()) {
-            final String pos = word.parent(posTree).label().value().toLowerCase();
-            if (pos.equals("md")) {
-                return Tense.FUTURE;
-            }
-            if (pos.equals("vbd") || pos.equals("vbn")) {
-                return Tense.PAST;
-            }
+        final Tree word = posTree.getLeaves().get(0);
+        final String pos = word.parent(posTree).label().value().toLowerCase();
+        if (pos.equals("md")) {
+            return Tense.FUTURE;
+        }
+        if (pos.equals("vbd") || pos.equals("vbn")) {
+            return Tense.PAST;
         }
         return Tense.PRESENT;
     }
