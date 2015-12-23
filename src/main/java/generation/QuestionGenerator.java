@@ -1,5 +1,6 @@
 package generation;
 
+import com.google.common.base.*;
 import simplenlg.features.*;
 import simplenlg.framework.*;
 import simplenlg.lexicon.*;
@@ -47,5 +48,15 @@ public class QuestionGenerator {
         sPhraseSpec.setFeature(Feature.TENSE, tense);
 
         return realiser.realiseSentence(sPhraseSpec);
+    }
+
+    public static String generateAppositiveQuestion(String npString, InterrogativeType type) {
+        final String wh;
+        if (type == InterrogativeType.WHO_SUBJECT || type == InterrogativeType.WHO_OBJECT) {
+            wh = "Who";
+        } else {
+            wh = "What";
+        }
+        return Joiner.on(' ').join(wh, "is", npString) + "?";
     }
 }
