@@ -1,20 +1,18 @@
 package question;
 
-import com.google.common.base.Joiner;
-import question.when.*;
-import tagging.Sentence;
-import tagging.StanfordParser;
+import com.google.common.base.*;
+import question.where.*;
+import question.who_what.*;
+import tagging.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class QuestionFinder {
-    final static StanfordParser parser = new StanfordParser();
-    final static List<Rule> questionRules = Arrays.asList(new LocationRule());
+    final static List<Rule> questionRules = Arrays.asList(new LocationRule(), new CopulaRule(), new NpVpRule());
 
     public static void main(String[] args) {
         final String sentence = Joiner.on(' ').join(args);
-        final Sentence parsedSentence = parser.parseSentence(sentence);
+        final Sentence parsedSentence = StanfordParser.parseSentence(sentence);
         for(final Rule rule : questionRules) {
             rule.generateQuestions(parsedSentence);
         }

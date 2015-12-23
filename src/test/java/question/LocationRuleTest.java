@@ -1,11 +1,9 @@
 package question;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import question.when.*;
+import org.junit.*;
+import question.where.*;
 
-import static question.QuestionAssertions.assertNoQuestionsCreated;
-import static question.QuestionAssertions.assertQuestionCreated;
+import static question.QuestionAssertions.*;
 
 public class LocationRuleTest {
     private static Rule locationRule;

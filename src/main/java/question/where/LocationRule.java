@@ -1,17 +1,13 @@
-package question.when;
+package question.where;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TypedDependency;
-import generation.QuestionGenerator;
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import edu.stanford.nlp.trees.*;
+import generation.*;
 import question.*;
-import tagging.NamedEntity;
-import tagging.Sentence;
+import tagging.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class LocationRule implements Rule {
     private static final Set<String> locationalPrepositions = ImmutableSet.of("above", "across", "against", "along",
