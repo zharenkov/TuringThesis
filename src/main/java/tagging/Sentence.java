@@ -5,6 +5,7 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Contains parse information for a single sentence.
  */
-public class Sentence {
+public class Sentence implements Serializable {
     private final Tree posTree;
     private final Collection<TypedDependency> dependencies;
     private final Map<String, NamedEntity> namedEntities;

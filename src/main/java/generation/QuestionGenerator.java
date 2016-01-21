@@ -1,12 +1,16 @@
 package generation;
 
-import com.google.common.base.*;
-import simplenlg.features.*;
-import simplenlg.framework.*;
-import simplenlg.lexicon.*;
-import simplenlg.phrasespec.*;
-import simplenlg.realiser.english.*;
-import tagging.*;
+import com.google.common.base.Joiner;
+import simplenlg.features.Feature;
+import simplenlg.features.InterrogativeType;
+import simplenlg.features.Tense;
+import simplenlg.framework.NLGFactory;
+import simplenlg.lexicon.Lexicon;
+import simplenlg.phrasespec.NPPhraseSpec;
+import simplenlg.phrasespec.SPhraseSpec;
+import simplenlg.phrasespec.VPPhraseSpec;
+import simplenlg.realiser.english.Realiser;
+import tagging.StanfordCoreNlpClient;
 
 public class QuestionGenerator {
     private static final Lexicon lexicon = Lexicon.getDefaultLexicon();
@@ -14,7 +18,7 @@ public class QuestionGenerator {
     private static final Realiser realiser = new Realiser(lexicon);
 
     public static String generateLocationQuestion(String vp, String subject) {
-        final Tense tense = StanfordParser.calculateTense(vp);
+        final Tense tense = StanfordCoreNlpClient.calculateTense(vp);
         final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
         vpPhraseSpec.setFeature(Feature.TENSE, tense);
         final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(subject);
@@ -27,7 +31,7 @@ public class QuestionGenerator {
     }
 
     public static String generateNpVpQuestion(String np, String vp, InterrogativeType type) {
-        final Tense tense = StanfordParser.calculateTense(vp);
+        final Tense tense = StanfordCoreNlpClient.calculateTense(vp);
         final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
         vpPhraseSpec.setFeature(Feature.TENSE, tense);
         final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
@@ -39,7 +43,7 @@ public class QuestionGenerator {
     }
 
     public static String generateCopulaQuestion(String np, String vp, InterrogativeType type) {
-        final Tense tense = StanfordParser.calculateTense(vp);
+        final Tense tense = StanfordCoreNlpClient.calculateTense(vp);
         final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
         final NPPhraseSpec npPhraseSpec = nlgFactory.createNounPhrase(np);
 

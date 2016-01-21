@@ -1,7 +1,7 @@
 package question;
 
 import static com.google.common.truth.Truth.*;
-import static tagging.StanfordParser.*;
+import static tagging.StanfordCoreNlpClient.parseSentence;
 
 
 /**

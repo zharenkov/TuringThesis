@@ -38,7 +38,7 @@ public class TaggingTest {
 
         sentence = sentence.replaceAll("\\.", "");
 
-        final Sentence parsedSentence = StanfordParser.parseSentence(sentence, false);
+        final Sentence parsedSentence = StanfordCoreNlpClient.parseSentence(sentence, false);
         final Tree tree = parsedSentence.getPosTree();
         final List<Tree> trees = tree.getChild(0).getChildrenAsList();
         for (final Tree part : trees) {
