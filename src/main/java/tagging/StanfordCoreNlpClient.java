@@ -10,14 +10,18 @@ public class StanfordCoreNlpClient {
     private static NlpServer nlpServer;
 
     static {
+        System.err.print("Searching for Stanford CoreNLP server running on localhost...");
         try {
             final Registry registry = LocateRegistry.getRegistry();
             nlpServer = (NlpServer) registry.lookup(StanfordCoreNlpServer.RMI_REGISTRY_KEY);
+            System.err.println("FOUND");
         } catch (Exception e) {
+            System.err.println("NOT FOUND");
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
-            System.err.println("Creating local fallback instance");
+            System.err.println("Creating local fallback instance...");
             nlpServer = new StanfordCoreNlpServer();
+            System.err.println("DONE");
         }
     }
 
