@@ -28,13 +28,13 @@ class StanfordParser {
     private final AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(
             serializedClassifier);
 
-    public Sentence parseSentence(String sentence, boolean removePunctuation) {
+    public ParsedSentence parseSentence(String sentence, boolean removePunctuation) {
         if (removePunctuation) {
             sentence = cleanSentence(sentence);
         }
 
         final Tree posTree = getPosTree(sentence);
-        return new Sentence(posTree, getDependencies(posTree), findNamedEntities(sentence));
+        return new ParsedSentence(posTree, getDependencies(posTree), findNamedEntities(sentence));
     }
 
     public Tense calculateTense(String clause) {

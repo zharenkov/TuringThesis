@@ -2,13 +2,13 @@ package question.when;
 
 import edu.stanford.nlp.trees.Tree;
 import question.Rule;
-import tagging.Sentence;
+import tagging.ParsedSentence;
 
 import java.util.List;
 import java.util.Set;
 
-import static tagging.Sentence.getString;
-import static tagging.Sentence.labelEquals;
+import static tagging.ParsedSentence.getString;
+import static tagging.ParsedSentence.labelEquals;
 
 public class DateParentheticalRule extends Rule {
     @Override
@@ -17,7 +17,7 @@ public class DateParentheticalRule extends Rule {
     }
 
     @Override
-    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
+    protected void findQuestions(Tree tree, ParsedSentence sentence, Set<String> questions) {
         final List<Tree> childrenAsList = tree.getChildrenAsList();
         for (int i = 0; i < childrenAsList.size() - 1; i++) {
             final Tree child = childrenAsList.get(i);
@@ -39,7 +39,7 @@ public class DateParentheticalRule extends Rule {
         }
     }
 
-    private boolean prnContainsTwoDates(Tree prn, Sentence sentence) {
+    private boolean prnContainsTwoDates(Tree prn, ParsedSentence sentence) {
         final String string = getString(prn);
         final String[] parts = string.split("-");
         System.out.println("Searching for dates in: " + string);

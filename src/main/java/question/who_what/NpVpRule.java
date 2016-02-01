@@ -5,7 +5,7 @@ import edu.stanford.nlp.trees.Tree;
 import generation.QuestionGenerator;
 import question.Rule;
 import simplenlg.features.InterrogativeType;
-import tagging.Sentence;
+import tagging.ParsedSentence;
 
 import java.util.List;
 import java.util.Set;
@@ -17,7 +17,7 @@ public class NpVpRule extends Rule {
     }
 
     @Override
-    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
+    protected void findQuestions(Tree tree, ParsedSentence sentence, Set<String> questions) {
         final List<Tree> children = tree.getChildrenAsList();
         // Search for a NP followed immediately by a VP
         for (int i = 0; i < children.size() - 1; i++) {
@@ -29,7 +29,7 @@ public class NpVpRule extends Rule {
         }
     }
 
-    private void constructQuestion(Tree np, Tree vp, Sentence sentence, Set<String> questions) {
+    private void constructQuestion(Tree np, Tree vp, ParsedSentence sentence, Set<String> questions) {
         System.out.printf("Checking %s %s\n", np.label(), vp.label());
         if (!np.label().value().equals("NP") || !vp.label().value().equals("VP")) {
             return;

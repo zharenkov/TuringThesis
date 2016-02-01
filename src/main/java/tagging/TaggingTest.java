@@ -1,12 +1,14 @@
 package tagging;
 
-import com.google.common.base.*;
-import edu.stanford.nlp.trees.*;
-import lemmatizing.*;
+import com.google.common.base.Joiner;
+import edu.stanford.nlp.trees.Tree;
+import lemmatizing.Lemmatizer;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.List;
+import java.util.Scanner;
 
 public class TaggingTest {
     final static StanfordParser parser = new StanfordParser();
@@ -34,11 +36,11 @@ public class TaggingTest {
     }
 
     private static void printSentenceParseTree(String sentence) {
-        System.out.println("Sentence being analyzed: \"" + sentence + "\"\n---------------------------");
+        System.out.println("ParsedSentence being analyzed: \"" + sentence + "\"\n---------------------------");
 
         sentence = sentence.replaceAll("\\.", "");
 
-        final Sentence parsedSentence = StanfordCoreNlpClient.parseSentence(sentence, false);
+        final ParsedSentence parsedSentence = StanfordCoreNlpClient.parseSentence(sentence, false);
         final Tree tree = parsedSentence.getPosTree();
         final List<Tree> trees = tree.getChild(0).getChildrenAsList();
         for (final Tree part : trees) {

@@ -25,7 +25,7 @@ public class StanfordCoreNlpClient {
         }
     }
 
-    public static Sentence parseSentence(String sentence, boolean removePunctuation) {
+    public static ParsedSentence parseSentence(String sentence, boolean removePunctuation) {
         try {
             return nlpServer.parseSentence(sentence, removePunctuation);
         } catch (Exception e) {

@@ -31,7 +31,7 @@ public class StanfordCoreNlpServer implements NlpServer {
     }
 
     @Override
-    public Sentence parseSentence(String sentence, boolean removePunctuation) throws RemoteException {
+    public ParsedSentence parseSentence(String sentence, boolean removePunctuation) throws RemoteException {
         return parser.parseSentence(sentence, removePunctuation);
     }
 

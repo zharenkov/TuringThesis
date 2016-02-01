@@ -7,7 +7,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import generation.QuestionGenerator;
 import question.Rule;
 import simplenlg.features.InterrogativeType;
-import tagging.Sentence;
+import tagging.ParsedSentence;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class CopulaRule extends Rule {
     }
 
     @Override
-    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
+    protected void findQuestions(Tree tree, ParsedSentence sentence, Set<String> questions) {
         final List<Tree> words = tree.getLeaves();
         // Search for a noun and see if it has a copula
         for (final Tree word : words) {

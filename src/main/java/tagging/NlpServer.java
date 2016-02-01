@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 public interface NlpServer extends Remote {
-    Sentence parseSentence(String sentence, boolean removePunctuation) throws RemoteException;
+    ParsedSentence parseSentence(String sentence, boolean removePunctuation) throws RemoteException;
 
     Tense calculateTense(String clause) throws RemoteException;
 

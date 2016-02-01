@@ -14,12 +14,12 @@ import java.util.Map;
 /**
  * Contains parse information for a single sentence.
  */
-public class Sentence implements Serializable {
+public class ParsedSentence implements Serializable {
     private final Tree posTree;
     private final Collection<TypedDependency> dependencies;
     private final Map<String, NamedEntity> namedEntities;
 
-    Sentence(Tree posTree, Collection<TypedDependency> dependencies, Map<String, NamedEntity> namedEntities) {
+    ParsedSentence(Tree posTree, Collection<TypedDependency> dependencies, Map<String, NamedEntity> namedEntities) {
         this.posTree = posTree;
         this.dependencies = dependencies;
         this.namedEntities = namedEntities;

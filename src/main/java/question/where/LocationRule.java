@@ -7,7 +7,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import generation.QuestionGenerator;
 import question.Rule;
 import tagging.NamedEntity;
-import tagging.Sentence;
+import tagging.ParsedSentence;
 
 import java.util.List;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class LocationRule extends Rule {
     }
 
     @Override
-    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
+    protected void findQuestions(Tree tree, ParsedSentence sentence, Set<String> questions) {
         if (tree.label().value().equals("PP")) {
             System.out.println("Found a PP");
             validatePP(tree, sentence, questions);
@@ -35,7 +35,7 @@ public class LocationRule extends Rule {
         }
     }
 
-    private void validatePP(Tree pp, Sentence sentence, Set<String> questions) {
+    private void validatePP(Tree pp, ParsedSentence sentence, Set<String> questions) {
         // Check the preposition of the PP
         if (locationalPrepositions.contains(pp.firstChild().firstChild().value())) {
             System.out.println("PP starts with locational preposition");
@@ -53,7 +53,7 @@ public class LocationRule extends Rule {
         }
     }
 
-    private void constructQuestion(Tree vp, Sentence sentence, Set<String> questions) {
+    private void constructQuestion(Tree vp, ParsedSentence sentence, Set<String> questions) {
         String verb = vp.firstChild().firstChild().value();
 
         final Tree verbTree = vp.getLeaves().get(0);
