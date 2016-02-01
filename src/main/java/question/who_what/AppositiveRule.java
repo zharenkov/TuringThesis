@@ -1,15 +1,17 @@
 package question.who_what;
 
-import com.google.common.base.*;
-import edu.stanford.nlp.trees.*;
-import generation.*;
-import question.*;
-import simplenlg.features.*;
-import tagging.*;
+import com.google.common.base.Joiner;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TypedDependency;
+import generation.QuestionGenerator;
+import question.Rule;
+import simplenlg.features.InterrogativeType;
+import tagging.Sentence;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-import static question.who_what.SubjectIdentifier.*;
+import static question.who_what.SubjectIdentifier.findInterrogativeTypeSubject;
 
 /**
  * Appositives must always have commas to separate them from the rest of the sentence but we can use a different way to
@@ -19,29 +21,25 @@ import static question.who_what.SubjectIdentifier.*;
  * This rule will only generate questions in the present tense due to the difficulty in determining tense with just noun
  * phrases.
  */
-public class AppositiveRule implements Rule {
+public class AppositiveRule extends Rule {
     @Override
-    public Set<String> generateQuestions(Sentence sentence) {
-        final Set<String> questions = new HashSet<>();
-        System.out.println("Starting Appositive scanning\n-----------------------------------");
-        System.out.println("Sentence: '" + sentence.getString() + "'");
-        processTree(sentence.getPosTree(), sentence, questions);
-        System.out.println("-----------------------------------\nEnding Appositive scanning");
-        return questions;
+    protected String getRuleName() {
+        return "appositive";
     }
 
-    private void processTree(Tree posTree, Sentence sentence, Set<String> questions) {
-        final List<Tree> words = posTree.getLeaves();
+    @Override
+    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
+        final List<Tree> words = tree.getLeaves();
         // Search for a noun and see if it has a copula
         for (final Tree word : words) {
-            final Tree parent = word.parent(posTree);
+            final Tree parent = word.parent(tree);
             final String label = parent.label().value();
             if (label.startsWith("NN")) {
                 final List<TypedDependency> dependencies = sentence.getDependenciesForLeaf(word);
                 for (final TypedDependency typedDependency : dependencies) {
                     if (typedDependency.reln().getLongName().toLowerCase().contains("appos")) {
-                        final String np1String = getNp(word, posTree);
-                        final String np2String = getNp(words.get(typedDependency.dep().index() - 1), posTree);
+                        final String np1String = getNp(word, tree);
+                        final String np2String = getNp(words.get(typedDependency.dep().index() - 1), tree);
                         System.out.printf("Found noun phrases with appositive relation: '%s' '%s'\n", np1String,
                                 np2String);
 

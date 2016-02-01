@@ -1,38 +1,37 @@
 package question.where;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import edu.stanford.nlp.trees.*;
-import generation.*;
-import question.*;
-import tagging.*;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TypedDependency;
+import generation.QuestionGenerator;
+import question.Rule;
+import tagging.NamedEntity;
+import tagging.Sentence;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-public class LocationRule implements Rule {
+public class LocationRule extends Rule {
     private static final Set<String> locationalPrepositions = ImmutableSet.of("above", "across", "against", "along",
             "among", "around", "at", "behind", "below", "beneath", "beside", "besides", "between", "beyond", "by",
             "down", "from", "in", "inside", "into", "near", "onto", "through", "to", "toward", "under", "underneath",
             "up", "within");
 
     @Override
-    public Set<String> generateQuestions(Sentence sentence) {
-        final Set<String> questions = new HashSet<>();
-        System.out.println("Starting location scanning\n-----------------------------------");
-        System.out.println("Sentence: '" + sentence.getString() + "'");
-        processTree(sentence.getPosTree(), sentence, questions);
-        System.out.println("-----------------------------------\nEnding location scanning");
-        return questions;
+    protected String getRuleName() {
+        return "location";
     }
 
-    private void processTree(Tree tree, Sentence sentence, Set<String> questions) {
+    @Override
+    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
         if (tree.label().value().equals("PP")) {
             System.out.println("Found a PP");
             validatePP(tree, sentence, questions);
             System.out.println();
         }
         for (final Tree child : tree.getChildrenAsList()) {
-            processTree(child, sentence, questions);
+            findQuestions(child, sentence, questions);
         }
     }
 

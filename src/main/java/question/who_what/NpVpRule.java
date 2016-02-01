@@ -3,35 +3,29 @@ package question.who_what;
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
 import generation.QuestionGenerator;
-import question.*;
+import question.Rule;
 import simplenlg.features.InterrogativeType;
-import tagging.NamedEntity;
 import tagging.Sentence;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NpVpRule implements Rule {
+public class NpVpRule extends Rule {
     @Override
-    public Set<String> generateQuestions(Sentence sentence) {
-        final Set<String> questions = new HashSet<>();
-        System.out.println("Starting NP-VP scanning\n-----------------------------------");
-        System.out.println("Sentence: '" + sentence.getString() + "'");
-        processTree(sentence.getPosTree(), sentence, questions);
-        System.out.println("-----------------------------------\nEnding location scanning");
-        return questions;
+    protected String getRuleName() {
+        return "np-vp";
     }
 
-    private void processTree(Tree posTree, Sentence sentence, Set<String> questions) {
-        final List<Tree> children = posTree.getChildrenAsList();
+    @Override
+    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
+        final List<Tree> children = tree.getChildrenAsList();
         // Search for a NP followed immediately by a VP
         for (int i = 0; i < children.size() - 1; i++) {
             constructQuestion(children.get(i), children.get(i + 1), sentence, questions);
-            processTree(children.get(i), sentence, questions);
+            findQuestions(children.get(i), sentence, questions);
         }
         if (children.size() >= 1) {
-            processTree(children.get(children.size() - 1), sentence, questions);
+            findQuestions(children.get(children.size() - 1), sentence, questions);
         }
     }
 

@@ -4,26 +4,20 @@ import edu.stanford.nlp.trees.Tree;
 import question.Rule;
 import tagging.Sentence;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static tagging.Sentence.getString;
 import static tagging.Sentence.labelEquals;
 
-public class DateParentheticalRule implements Rule {
-
+public class DateParentheticalRule extends Rule {
     @Override
-    public Set<String> generateQuestions(Sentence sentence) {
-        final Set<String> questions = new HashSet<>();
-        System.out.println("Starting parenthetical date scanning\n-----------------------------------");
-        System.out.println("Sentence: '" + sentence.getString() + "'");
-        processTree(sentence.getPosTree(), sentence, questions);
-        System.out.println("-----------------------------------\nEnding parenthetical date scanning");
-        return questions;
+    protected String getRuleName() {
+        return "date parenthetical";
     }
 
-    private void processTree(Tree tree, Sentence sentence, Set<String> questions) {
+    @Override
+    protected void findQuestions(Tree tree, Sentence sentence, Set<String> questions) {
         final List<Tree> childrenAsList = tree.getChildrenAsList();
         for (int i = 0; i < childrenAsList.size() - 1; i++) {
             final Tree child = childrenAsList.get(i);
@@ -41,7 +35,7 @@ public class DateParentheticalRule implements Rule {
 
 
         for (final Tree child : tree.getChildrenAsList()) {
-            processTree(child, sentence, questions);
+            findQuestions(child, sentence, questions);
         }
     }
 
