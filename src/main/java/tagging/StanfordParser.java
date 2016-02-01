@@ -2,22 +2,28 @@ package tagging;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ling.*;
-import edu.stanford.nlp.parser.lexparser.*;
-import edu.stanford.nlp.process.*;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.process.Tokenizer;
+import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.util.Triple;
-import simplenlg.features.*;
+import simplenlg.features.Tense;
 
-import java.io.*;
-import java.util.*;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class StanfordParser {
     private final String PCG_MODEL = "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz";
     private final TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(),
             "invertible=true");
     private final LexicalizedParser parser = LexicalizedParser.loadModel(PCG_MODEL);
-    private final String serializedClassifier = "edu/stanford/nlp/models/ner/english.all.3class.distsim.crf" +
+    private final String serializedClassifier = "edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf" +
             ".ser.gz";
     private final AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(
             serializedClassifier);

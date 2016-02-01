@@ -72,7 +72,7 @@ public class Sentence implements Serializable {
             if (typedDependency.gov().equals(part)) {
                 final String label = typedDependency.reln().getLongName().toLowerCase();
                 String originalText = typedDependency.dep().originalText();
-                if(label.contains("det")) {
+                if (label.contains("det")) {
                     originalText = originalText.toLowerCase();
                 }
                 if (label.contains("compound") || label.contains("det")) {
@@ -86,6 +86,30 @@ public class Sentence implements Serializable {
 
     public Map<String, NamedEntity> getNamedEntities() {
         return namedEntities;
+    }
+
+    public static boolean labelEquals(Tree tree, String label) {
+        return tree.label().value().toLowerCase().equals(label.toLowerCase());
+    }
+
+    public static boolean labelContains(Tree tree, String label) {
+        return tree.label().value().toLowerCase().contains(label.toLowerCase());
+    }
+
+    public static String getString(Tree tree) {
+        return Joiner.on(' ').join(tree.getLeaves());
+    }
+
+    public boolean isAPerson(Tree tree) {
+        return getNamedEntities().get(getString(tree)) == NamedEntity.PERSON;
+    }
+
+    public boolean isADate(Tree tree) {
+        return isADate(getString(tree));
+    }
+
+    public boolean isADate(String string) {
+        return getNamedEntities().get(string) == NamedEntity.DATE;
     }
 
     public String getString() {
