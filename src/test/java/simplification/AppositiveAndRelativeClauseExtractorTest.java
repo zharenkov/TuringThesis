@@ -8,6 +8,13 @@ import static simplification.AppositiveAndRelativeClauseExtractor.removeNonRestr
 public class AppositiveAndRelativeClauseExtractorTest {
 
     @Test
+    public void testRemoveNonRestrictiveAppositivesAndRelativeClausesNoAppositivesNoRelativeClauses() throws Exception {
+        // The sentence contains no appositives and no relative clauses so it should remain unchanged
+        final String original = "Bob, Sally, and John like cats.";
+        assertEquals(original, removeNonRestrictiveAppositivesAndRelativeClauses(original));
+    }
+
+    @Test
     public void testRemoveNonRestrictiveAppositivesAndRelativeClausesSimpleAppositive() throws Exception {
         // "my dear friend" is a non-restrictive appositive
         final String original = "Bob Jones, my dear friend, likes cats.";
