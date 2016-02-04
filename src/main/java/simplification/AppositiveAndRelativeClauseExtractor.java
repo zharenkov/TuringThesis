@@ -9,28 +9,32 @@ import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AppositiveExtractor {
+public class AppositiveAndRelativeClauseExtractor {
     private static final String COMMA = ",";
 
     /**
-     * Returns the given sentence with all non-restrictive appositives removed.
+     * Returns the given sentence with all non-restrictive appositives and relative clauses removed.
      *
      * @param sentence the given sentence
-     * @return the given sentence with all non-restrictive appositives removed
+     * @return the given sentence with all non-restrictive appositives and relative clauses removed
      */
-    public static String removeNonRestrictiveAppositives(String sentence) {
+    public static String removeNonRestrictiveAppositivesAndRelativeClauses(String sentence) {
         final Sentence parsed = new Sentence(sentence);
         final List<String> words = parsed.words();
         System.out.println("Original sentence: " + words);
 
         final SemanticGraph dependencies = parsed.dependencyGraph();
-        final List<SemanticGraphEdge> appositiveRelations = dependencies.findAllRelns(
-                UniversalEnglishGrammaticalRelations.APPOSITIONAL_MODIFIER);
+        final List<SemanticGraphEdge> appositivesAndRelativeClauses = new ArrayList<>();
+        appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(
+                UniversalEnglishGrammaticalRelations.APPOSITIONAL_MODIFIER));
+        appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(
+                UniversalEnglishGrammaticalRelations.RELATIVE_CLAUSE_MODIFIER));
 
         final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
-        for (final SemanticGraphEdge edge : appositiveRelations) {
+        for (final SemanticGraphEdge edge : appositivesAndRelativeClauses) {
             // IndexedWord index is 1-based not 0-based
             final IndexedWord governor = edge.getGovernor();
             final int governorIndex = governor.index() - 1;
@@ -52,16 +56,16 @@ public class AppositiveExtractor {
                     break;
                 }
             }
-            // TODO handle the case of appositives occurring before the governor
+            // TODO handle the case of appositives and relative clauses occurring before the governor
             if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
-                System.out.println("The appositive is not bounded by commas after the governor");
+                System.out.println("The appositive/relative clause is not bounded by commas after the governor");
                 continue;
             }
             partsToRemove.add(Range.closed(leftCommaBound, rightCommaBound));
         }
 
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
-        System.out.println("With appositives removed: " + answer);
+        System.out.println("With appositives and relative clauses removed: " + answer);
         return WordListUtil.constructSentenceFromWordList(answer);
     }
 }
