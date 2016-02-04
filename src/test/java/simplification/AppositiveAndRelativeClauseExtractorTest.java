@@ -16,6 +16,14 @@ public class AppositiveAndRelativeClauseExtractorTest {
     }
 
     @Test
+    public void testRemoveNonRestrictiveAppositivesAndRelativeClausesAppositiveAtEndOfSentence() throws Exception {
+        // "the third president" is a non-restrictive appositive
+        final String original = "I like Jefferson, the third president.";
+        final String modified = "I like Jefferson.";
+        assertEquals(modified, removeNonRestrictiveAppositivesAndRelativeClauses(original));
+    }
+
+    @Test
     public void testRemoveNonRestrictiveAppositivesAndRelativeClausesAppositiveAndConjunction() throws Exception {
         // "the third U.S. president" is a non-restrictive appositive
         final String original = "Jefferson, the third U.S. president, loved to eat apples, peaches, and oranges.";
@@ -36,6 +44,14 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "who was my dear friend" is a non-restrictive relative clause
         final String original = "Bob Jones, who was my dear friend, likes cats.";
         final String modified = "Bob Jones likes cats.";
+        assertEquals(modified, removeNonRestrictiveAppositivesAndRelativeClauses(original));
+    }
+
+    @Test
+    public void testRemoveNonRestrictiveAppositivesAndRelativeClausesRelativeClauseAtEndOfSentence() throws Exception {
+        // "who was the third president" is a non-restrictive relative clause
+        final String original = "I like Jefferson, who was the third president.";
+        final String modified = "I like Jefferson.";
         assertEquals(modified, removeNonRestrictiveAppositivesAndRelativeClauses(original));
     }
 

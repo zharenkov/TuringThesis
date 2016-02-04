@@ -43,7 +43,7 @@ public class AppositiveAndRelativeClauseExtractor {
 
             // See if the dependent is enclosed within commas
             int leftCommaBound = -1;
-            int rightCommaBound = -1;
+            int rightCommaBound = words.size() - 1;
             for (int i = dependentIndex; i >= 0; i--) {
                 if (words.get(i).equals(COMMA)) {
                     leftCommaBound = i;
@@ -60,6 +60,11 @@ public class AppositiveAndRelativeClauseExtractor {
             if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
                 System.out.println("The appositive/relative clause is not bounded by commas after the governor");
                 continue;
+            }
+            // If the appositive or relative clause is at the end of the sentence, make sure we're not deleting the
+            // period.
+            if (words.get(rightCommaBound).equals(".")) {
+                rightCommaBound--;
             }
             partsToRemove.add(Range.closed(leftCommaBound, rightCommaBound));
         }
