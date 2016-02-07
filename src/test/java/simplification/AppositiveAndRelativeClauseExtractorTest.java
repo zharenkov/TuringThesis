@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 
-// TODO assert on all simple sentences that should be created
 public class AppositiveAndRelativeClauseExtractorTest {
     private static final Extractor extractor = AppositiveAndRelativeClauseExtractor.getExtractor();
 
