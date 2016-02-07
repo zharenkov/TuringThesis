@@ -94,8 +94,13 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
     private static Set<String> generateSimplifiedSentences(SemanticGraphEdge edge, Sentence sentence, Range<Integer> dependentRange) {
         final List<String> dependentWordList = sentence.words().subList(dependentRange.lowerEndpoint(),
                 dependentRange.upperEndpoint() + 1);
-        final String dependentString = WordListUtil.constructSentenceFromWordList(dependentWordList).replaceAll(
-                "\\p{Punct}", "").trim();
+        final List<String> dependentWordListNoPunctuation = new ArrayList<>();
+        for (final String word : dependentWordList) {
+            if (!word.matches("\\p{Punct}")) {
+                dependentWordListNoPunctuation.add(word);
+            }
+        }
+        final String dependentString = WordListUtil.constructSentenceFromWordList(dependentWordListNoPunctuation);
 
         final IndexedWord governor = edge.getGovernor();
         final Tree root = sentence.parse();

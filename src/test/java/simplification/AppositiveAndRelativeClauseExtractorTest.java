@@ -20,7 +20,8 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "my dear friend" is a non-restrictive appositive
         final String original = "Bob Jones, my dear friend, likes cats.";
         final String modified = "Bob Jones likes cats.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Bob Jones is my dear friend.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1);
     }
 
     @Test
@@ -28,7 +29,8 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "the third president" is a non-restrictive appositive
         final String original = "I like Jefferson, the third president.";
         final String modified = "I like Jefferson.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Jefferson is the third president.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1);
     }
 
     @Test
@@ -36,15 +38,18 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "the third U.S. president" is a non-restrictive appositive
         final String original = "Jefferson, the third U.S. president, loved to eat apples, peaches, and oranges.";
         final String modified = "Jefferson loved to eat apples, peaches, and oranges.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Jefferson was the third U.S. president.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1);
     }
 
     @Test
     public void testExtractMultipleAppositives() throws Exception {
-        // "the first president" and "the third president" are non-restrictive appositives
-        final String original = "Washington, the first president, and Jefferson, the third president, were friends.";
-        final String modified = "Washington and Jefferson were friends.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        // "the first president" and "the noted inventor" are non-restrictive appositives
+        final String original = "Bob, my dear friend, married Sally, a math teacher.";
+        final String modified = "Bob married Sally.";
+        final String simple1 = "Bob was my dear friend.";
+        final String simple2 = "Sally was a math teacher.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1, simple2);
     }
 
     @Test
