@@ -2,6 +2,7 @@ package simplification;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.RangeSet;
+import edu.stanford.nlp.trees.Tree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,15 @@ public class WordListUtil {
             modifiedWords.add(words.get(i));
         }
         return modifiedWords;
+    }
+
+    public static String constructPhraseFromTree(Tree tree) {
+        final List<Tree> leaves = tree.getLeaves();
+        final List<String> words = new ArrayList<>(leaves.size());
+        for (final Tree leaf : leaves) {
+            words.add(leaf.value());
+        }
+        return constructSentenceFromWordList(words);
     }
 
     /**

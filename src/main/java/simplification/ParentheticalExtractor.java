@@ -8,6 +8,7 @@ import edu.stanford.nlp.simple.Sentence;
 import java.util.List;
 import java.util.Stack;
 
+// TODO implement Extractor interface
 public class ParentheticalExtractor {
     private static final String LEFT_PARENTHESIS = "-LRB-";
     private static final String RIGHT_PARENTHESIS = "-RRB-";
