@@ -118,7 +118,12 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
         if (edge.getRelation().equals(APPOSITIONAL_MODIFIER)) {
             return ImmutableSet.of(Joiner.on(' ').join(governorNpString, be, dependentString) + ".");
         } else if (edge.getRelation().equals(RELATIVE_CLAUSE_MODIFIER)) {
-
+            final String[] split = dependentString.split(" ");
+            // Remove the relative pronoun that is at the start of the relative clause
+            final String dependentStringWithoutRelativePronoun = Joiner.on(' ').join(
+                    Arrays.copyOfRange(split, 1, split.length));
+            final String start = governorNpString.substring(0, 1).toUpperCase() + governorNpString.substring(1);
+            return ImmutableSet.of(Joiner.on(' ').join(start, dependentStringWithoutRelativePronoun) + ".");
         }
         return Collections.emptySet();
     }

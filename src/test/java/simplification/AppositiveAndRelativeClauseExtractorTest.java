@@ -57,7 +57,8 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "who was my dear friend" is a non-restrictive relative clause
         final String original = "Bob Jones, who was my dear friend, likes cats.";
         final String modified = "Bob Jones likes cats.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Bob Jones was my dear friend.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1);
     }
 
     @Test
@@ -65,7 +66,8 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "who was the third president" is a non-restrictive relative clause
         final String original = "I like Jefferson, who was the third president.";
         final String modified = "I like Jefferson.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Jefferson was the third president.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1);
     }
 
     @Test
@@ -73,7 +75,8 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "who was the third president" is a non-restrictive relative clause
         final String original = "Jefferson, who was the third president, loved to eat apples, peaches, and oranges.";
         final String modified = "Jefferson loved to eat apples, peaches, and oranges.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Jefferson was the third president.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1);
     }
 
     @Test
@@ -81,14 +84,18 @@ public class AppositiveAndRelativeClauseExtractorTest {
         // "who was the first president" and "who was the third president" are non-restrictive relative clauses
         final String original = "Washington, who was the first president, and Jefferson, who was the third president, were friends.";
         final String modified = "Washington and Jefferson were friends.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String simple1 = "Washington was the first president.";
+        final String simple2 = "Jefferson was the third president.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1, simple2);
     }
 
     @Test
     public void testExtractAppositiveAndRelativeClause() throws Exception {
         // "who was the first president" is a non-restrictive relative clause and "the third president" is an appositive
-        final String original = "Washington, who was the first president, and Jefferson, the third president, were friends.";
-        final String modified = "Washington and Jefferson were friends.";
-        assertThat(extractor.extract(original).getSimplifiedSentences()).contains(modified);
+        final String original = "Bob, my dear friend, married his sweetheart Sally, who was a math teacher.";
+        final String modified = "Bob married his sweetheart Sally.";
+        final String simple1 = "Bob was my dear friend.";
+        final String simple2 = "His sweetheart Sally was a math teacher.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simple1, simple2);
     }
 }
