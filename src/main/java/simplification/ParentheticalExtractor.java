@@ -8,7 +8,6 @@ import edu.stanford.nlp.simple.Sentence;
 
 import java.util.*;
 
-// TODO implement Extractor interface
 public class ParentheticalExtractor implements Extractor {
     private static final String LEFT_PARENTHESIS = "-LRB-";
     private static final String RIGHT_PARENTHESIS = "-RRB-";
@@ -64,6 +63,7 @@ public class ParentheticalExtractor implements Extractor {
                     simplifiedSentences.add(spaceJoiner.join(personName, "was born", dates.get(0) + "."));
                     simplifiedSentences.add(spaceJoiner.join(personName, "died", dates.get(1) + "."));
                 }
+                // TODO implement case with verb + one date (e.g. "born October 12, 1987")
             }
         }
 
