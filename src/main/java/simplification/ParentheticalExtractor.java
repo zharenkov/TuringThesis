@@ -5,6 +5,7 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import edu.stanford.nlp.simple.Sentence;
+import edu.stanford.nlp.trees.Tree;
 
 import java.util.*;
 
@@ -52,18 +53,30 @@ public class ParentheticalExtractor implements Extractor {
         // Check to see if we can derive simple sentences from each parenthetical
         for (final Range<Integer> parenthetical : rangeSet.asRanges()) {
             final List<String> nerTags = parsed.nerTags();
-            System.out.println(nerTags);
             // If the word before the parenthetical is a person
             if (nerTags.get(parenthetical.lowerEndpoint() - 1).equalsIgnoreCase("person")) {
                 final List<String> dates = getDates(words, nerTags, parenthetical);
+                final Joiner spaceJoiner = Joiner.on(' ');
+                final String personName = getPersonName(words, nerTags, parenthetical.lowerEndpoint() - 1);
                 System.out.println(dates);
                 if (dates.size() == 2) {
-                    final Joiner spaceJoiner = Joiner.on(' ');
-                    final String personName = getPersonName(words, nerTags, parenthetical.lowerEndpoint() - 1);
                     simplifiedSentences.add(spaceJoiner.join(personName, "was born", dates.get(0) + "."));
                     simplifiedSentences.add(spaceJoiner.join(personName, "died", dates.get(1) + "."));
                 }
-                // TODO implement case with verb + one date (e.g. "born October 12, 1987")
+                final List<String> posTags = parsed.posTags();
+                // If the first word of the parenthetical is a verb, construct a simple sentence with the VP
+                final String posFirstWordParenthetical = posTags.get(parenthetical.lowerEndpoint() + 1).toLowerCase();
+                if (posFirstWordParenthetical.startsWith("vb")) {
+                    final Tree parse = parsed.parse();
+                    final Tree vp = TreeUtil.getVpFromWord(parse,
+                            parse.getLeaves().get(parenthetical.lowerEndpoint() + 1));
+                    final String vpString = WordListUtil.constructPhraseFromTree(vp);
+                    if (posFirstWordParenthetical.equals("vbd") || posFirstWordParenthetical.equals("vbn")) {
+                        simplifiedSentences.add(spaceJoiner.join(personName, "was", vpString + "."));
+                    } else {
+                        simplifiedSentences.add(spaceJoiner.join(personName, vpString + "."));
+                    }
+                }
             }
         }
 

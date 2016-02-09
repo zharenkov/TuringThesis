@@ -15,7 +15,7 @@ public class ParentheticalExtractorTest {
     }
 
     @Test
-    public void testRemoveParentheticalsSimpleParenthetical() throws Exception {
+    public void testRemoveParentheticalsBirthDeath() throws Exception {
         // "February 22, 1732 – December 14, 1799" is a parenthetical
         final String original = "George Washington (February 22, 1732 – December 14, 1799) was the first president.";
         final String modified = "George Washington was the first president.";
@@ -23,6 +23,24 @@ public class ParentheticalExtractorTest {
         final String simplified2 = "George Washington died December 14, 1799.";
         assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simplified1,
                 simplified2);
+    }
+
+    @Test
+    public void testRemoveParentheticalsBirth() throws Exception {
+        // "born December 18, 1963" is a parenthetical
+        final String original = "Brad Pitt (born December 18, 1963) is an American actor and producer.";
+        final String modified = "Brad Pitt is an American actor and producer.";
+        final String simplified1 = "Brad Pitt was born December 18, 1963.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simplified1);
+    }
+
+    @Test
+    public void testRemoveParentheticalsName() throws Exception {
+        // "born Leslie Lynch King" is a parenthetical
+        final String original = "Gerald Rudolph Ford (born Leslie Lynch King) was an American politician.";
+        final String modified = "Gerald Rudolph Ford was an American politician.";
+        final String simplified1 = "Gerald Rudolph Ford was born Leslie Lynch King.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simplified1);
     }
 
     @Test

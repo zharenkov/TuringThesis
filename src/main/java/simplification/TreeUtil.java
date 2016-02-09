@@ -32,4 +32,22 @@ public class TreeUtil {
         }
         return currentTree;
     }
+
+    /**
+     * Returns the first parent of the given word in the phrase structure tree represented by {@code root} that has the label "VP".
+     *
+     * @param root the given root of the phrase structure tree
+     * @param word the given word
+     * @return the {@link Tree} representing the VP or {@code null} if no such tree exists
+     */
+    public static Tree getVpFromWord(Tree root, Tree word) {
+        Tree currentTree = word;
+        while (!currentTree.label().value().equalsIgnoreCase("vp")) {
+            currentTree = getParent(root, currentTree);
+            if (currentTree == root) {
+                return null;
+            }
+        }
+        return currentTree;
+    }
 }
