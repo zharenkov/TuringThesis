@@ -49,8 +49,10 @@ public class SimplificationDemo {
         System.setErr(ERR);
         System.out.printf("%d total simplified sentences\n", totalSimplifiedSentences);
 
-        for (final List<String> listOfSimplifiedSentences : simplifiedSentences) {
+        for (int i = 0; i < simplifiedSentences.size(); i++) {
+            final List<String> listOfSimplifiedSentences = simplifiedSentences.get(i);
             System.out.println(DIVIDER);
+            System.out.println("Original Sentence: " + sentences.get(i) + "\n");
             for (final String simplifiedSentece : listOfSimplifiedSentences) {
                 System.out.println(simplifiedSentece);
             }
