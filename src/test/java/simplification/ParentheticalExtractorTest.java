@@ -44,6 +44,24 @@ public class ParentheticalExtractorTest {
     }
 
     @Test
+    public void testRemoveParentheticalsAcronymOrganization() throws Exception {
+        // "GIF" is a parenthetical
+        final String original = "Major League Baseball (MLB) is a professional sports organization.";
+        final String modified = "Major League Baseball is a professional sports organization.";
+        final String simplified1 = "MLB stands for Major League Baseball.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simplified1);
+    }
+
+    @Test
+    public void testRemoveParentheticalsAcronym() throws Exception {
+        // "GIF" is a parenthetical
+        final String original = "The Graphics Interchange Format (GIF) is a standard for images.";
+        final String modified = "The Graphics Interchange Format is a standard for images.";
+        final String simplified1 = "GIF stands for The Graphics Interchange Format.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified, simplified1);
+    }
+
+    @Test
     public void testRemoveParentheticalsNestedParentheticals() throws Exception {
         // "my (somewhat) good friend" is a parenthetical
         final String original = "John (my (somewhat) good friend) likes cats.";

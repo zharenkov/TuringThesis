@@ -12,6 +12,7 @@ import java.util.*;
 public class ParentheticalExtractor implements Extractor {
     private static final String LEFT_PARENTHESIS = "-LRB-";
     private static final String RIGHT_PARENTHESIS = "-RRB-";
+    private static final Joiner SPACE_JOINER = Joiner.on(' ');
 
     private static ParentheticalExtractor extractor;
 
@@ -56,12 +57,11 @@ public class ParentheticalExtractor implements Extractor {
             // If the word before the parenthetical is a person
             if (nerTags.get(parenthetical.lowerEndpoint() - 1).equalsIgnoreCase("person")) {
                 final List<String> dates = getDates(words, nerTags, parenthetical);
-                final Joiner spaceJoiner = Joiner.on(' ');
                 final String personName = getPersonName(words, nerTags, parenthetical.lowerEndpoint() - 1);
                 System.out.println(dates);
                 if (dates.size() == 2) {
-                    simplifiedSentences.add(spaceJoiner.join(personName, "was born", dates.get(0) + "."));
-                    simplifiedSentences.add(spaceJoiner.join(personName, "died", dates.get(1) + "."));
+                    simplifiedSentences.add(SPACE_JOINER.join(personName, "was born", dates.get(0) + "."));
+                    simplifiedSentences.add(SPACE_JOINER.join(personName, "died", dates.get(1) + "."));
                 }
                 final List<String> posTags = parsed.posTags();
                 // If the first word of the parenthetical is a verb, construct a simple sentence with the VP
@@ -72,10 +72,19 @@ public class ParentheticalExtractor implements Extractor {
                             parse.getLeaves().get(parenthetical.lowerEndpoint() + 1));
                     final String vpString = WordListUtil.constructPhraseFromTree(vp);
                     if (posFirstWordParenthetical.equals("vbd") || posFirstWordParenthetical.equals("vbn")) {
-                        simplifiedSentences.add(spaceJoiner.join(personName, "was", vpString + "."));
+                        simplifiedSentences.add(SPACE_JOINER.join(personName, "was", vpString + "."));
                     } else {
-                        simplifiedSentences.add(spaceJoiner.join(personName, vpString + "."));
+                        simplifiedSentences.add(SPACE_JOINER.join(personName, vpString + "."));
                     }
+                }
+            }
+            // Check if the parenthetical is an acronym (one word with all upper-case letters)
+            if (parenthetical.upperEndpoint() - parenthetical.lowerEndpoint() == 2) {
+                final String word = words.get(parenthetical.lowerEndpoint() + 1);
+                if (word.toUpperCase().equals(word)) {
+                    final String fullName = getFullName(parsed.parse(), words, nerTags,
+                            parenthetical.lowerEndpoint() - 1);
+                    simplifiedSentences.add(SPACE_JOINER.join(word, "stands for", fullName + "."));
                 }
             }
         }
@@ -116,5 +125,22 @@ public class ParentheticalExtractor implements Extractor {
         }
         Collections.reverse(nameParts);
         return Joiner.on(' ').join(nameParts);
+    }
+
+    private static String getFullName(Tree root, List<String> words, List<String> nerTags, int indexOfLastPartOfName) {
+        if (nerTags.get(indexOfLastPartOfName).equalsIgnoreCase("organization")) {
+            final List<String> nameParts = new ArrayList<>();
+            for (int i = indexOfLastPartOfName; i >= 0; i--) {
+                if (!nerTags.get(i).equalsIgnoreCase("organization")) {
+                    break;
+                }
+                nameParts.add(words.get(i));
+            }
+            Collections.reverse(nameParts);
+            return Joiner.on(' ').join(nameParts);
+        } else {
+            return WordListUtil.constructPhraseFromTree(
+                    TreeUtil.getNpFromWord(root, root.getLeaves().get(indexOfLastPartOfName)));
+        }
     }
 }
