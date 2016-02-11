@@ -8,6 +8,7 @@ import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ParentheticalExtractor implements Extractor {
     private static final String LEFT_PARENTHESIS = "-LRB-";
@@ -84,7 +85,8 @@ public class ParentheticalExtractor implements Extractor {
             // Check if the parenthetical is an acronym (one word with all upper-case letters)
             if (parenthetical.upperEndpoint() - parenthetical.lowerEndpoint() == 2) {
                 final String word = words.get(parenthetical.lowerEndpoint() + 1);
-                if (word.toUpperCase().equals(word)) {
+                final Pattern pattern = Pattern.compile("[A-Z]+");
+                if (pattern.matcher(word).matches()) {
                     final String fullName = getFullName(parsed.parse(), words, nerTags,
                             parenthetical.lowerEndpoint() - 1);
                     simplifiedSentences.add(SPACE_JOINER.join(word, "stands for", fullName + "."));

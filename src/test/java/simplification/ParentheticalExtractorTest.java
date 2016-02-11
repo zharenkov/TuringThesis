@@ -62,6 +62,15 @@ public class ParentheticalExtractorTest {
     }
 
     @Test
+    public void testRemoveParentheticalsNotAcronym() throws Exception {
+        // "GIF" is a parenthetical
+        final String original = "USS Missouri (BB-63) is a battleship.";
+        final String modified = "USS Missouri is a battleship.";
+        assertThat(extractor.extract(original).getSimplifiedSentences()).containsExactly(modified);
+    }
+
+
+    @Test
     public void testRemoveParentheticalsNestedParentheticals() throws Exception {
         // "my (somewhat) good friend" is a parenthetical
         final String original = "John (my (somewhat) good friend) likes cats.";
