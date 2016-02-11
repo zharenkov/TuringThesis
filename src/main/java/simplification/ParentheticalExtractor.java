@@ -43,6 +43,9 @@ public class ParentheticalExtractor implements Extractor {
                 }
                 parenthesis.add("(");
             } else if (words.get(i).equals(RIGHT_PARENTHESIS)) {
+                if (parenthesis.isEmpty()) {
+                    System.err.println("Mismatching parenthesis! Aborting extraction.");
+                }
                 parenthesis.pop();
                 if (parenthesis.isEmpty()) {
                     rangeSet.add(Range.closed(start, i));
