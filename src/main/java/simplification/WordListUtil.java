@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 public class WordListUtil {
-    private static final Set<String> NO_WHITESPACE_BEFORE = ImmutableSet.of(",", ";", "!", ".", "'", "''");
-    private static final Set<String> NO_WHITESPACE_AFTER = ImmutableSet.of(":", "`", "``");
+    private static final Set<String> NO_WHITESPACE_BEFORE = ImmutableSet.of(",", ";", "!", ".", "'", "''", ":");
+    private static final Set<String> NO_WHITESPACE_AFTER = ImmutableSet.of("`", "``");
 
     /**
      * Returns the given list of words with the given parts removed. The given list will not be modified by this method.
