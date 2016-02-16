@@ -16,19 +16,8 @@ public class GenerationTest {
     private static final Realiser realiser = new Realiser(lexicon);
 
     public static void main(String[] args) {
-        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase("bear in Virginia");
-        System.out.println(vpPhraseSpec.getVerb());
-        System.out.println(vpPhraseSpec.getVerb().getAllFeatures());
-        vpPhraseSpec.setFeature(Feature.PASSIVE, true);
-        vpPhraseSpec.setFeature(Feature.TENSE, Tense.PAST);
-        System.out.println(realiser.realise(vpPhraseSpec));
-
-        final VPPhraseSpec vpPhraseSpec2 = nlgFactory.createVerbPhrase("die in Virginia");
-        System.out.println(vpPhraseSpec2.getVerb());
-        System.out.println(vpPhraseSpec2.getVerb().getAllFeatures());
-        vpPhraseSpec2.setFeature(Feature.PASSIVE, false);
-        vpPhraseSpec2.setFeature(Feature.TENSE, Tense.PAST);
-        System.out.println(realiser.realise(vpPhraseSpec2));
+        System.out.println(VerbPhraseGeneration.realizeVerbPhraseWithFeatures("bear in Virginia", true, Tense.PAST));
+        System.out.println(VerbPhraseGeneration.realizeVerbPhraseWithFeatures("die in Virginia", true, Tense.PAST));
     }
 
     private static String turnSentenceIntoQuestion(String sentence) {
