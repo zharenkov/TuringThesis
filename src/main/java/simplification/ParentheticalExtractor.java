@@ -6,6 +6,8 @@ import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
+import generation.VerbPhraseGeneration;
+import simplenlg.features.Tense;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -75,11 +77,13 @@ public class ParentheticalExtractor implements Extractor {
                     final Tree vp = TreeUtil.getVpFromWord(parse,
                             parse.getLeaves().get(parenthetical.lowerEndpoint() + 1));
                     final String vpString = WordListUtil.constructPhraseFromTree(vp);
+                    final String realizedVp;
                     if (posFirstWordParenthetical.equals("vbd") || posFirstWordParenthetical.equals("vbn")) {
-                        simplifiedSentences.add(SPACE_JOINER.join(personName, "was", vpString + "."));
+                        realizedVp = VerbPhraseGeneration.realizeVerbPhraseWithFeatures(vpString, true, Tense.PAST);
                     } else {
-                        simplifiedSentences.add(SPACE_JOINER.join(personName, vpString + "."));
+                        realizedVp = VerbPhraseGeneration.realizeVerbPhraseWithFeatures(vpString, true, Tense.PRESENT);
                     }
+                    simplifiedSentences.add(SPACE_JOINER.join(personName, realizedVp + "."));
                 }
             }
             // Check if the parenthetical is an acronym (one word with all upper-case letters)
