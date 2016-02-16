@@ -16,8 +16,8 @@ public class GenerationTest {
     private static final Realiser realiser = new Realiser(lexicon);
 
     public static void main(String[] args) {
-        System.out.println(VerbPhraseGeneration.realizeVerbPhraseWithFeatures("born in Virginia", true, Tense.PAST));
-        System.out.println(VerbPhraseGeneration.realizeVerbPhraseWithFeatures("died in Virginia", true, Tense.PAST));
+        System.out.println(TextRealization.realizeVerbPhraseWithFeatures("born in Virginia", true, Tense.PAST));
+        System.out.println(TextRealization.realizeVerbPhraseWithFeatures("died in Virginia", true, Tense.PAST));
     }
 
     private static String turnSentenceIntoQuestion(String sentence) {

@@ -11,7 +11,7 @@ import simplenlg.realiser.english.Realiser;
 
 import java.util.Set;
 
-public class VerbPhraseGeneration {
+public class TextRealization {
     private static final Lexicon lexicon = Lexicon.getDefaultLexicon();
     private static final NLGFactory nlgFactory = new NLGFactory(lexicon);
     private static final Realiser realiser = new Realiser(lexicon);

@@ -6,7 +6,7 @@ import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
-import generation.VerbPhraseGeneration;
+import generation.TextRealization;
 import simplenlg.features.Tense;
 
 import java.util.*;
@@ -79,9 +79,9 @@ public class ParentheticalExtractor implements Extractor {
                     final String vpString = WordListUtil.constructPhraseFromTree(vp);
                     final String realizedVp;
                     if (posFirstWordParenthetical.equals("vbd") || posFirstWordParenthetical.equals("vbn")) {
-                        realizedVp = VerbPhraseGeneration.realizeVerbPhraseWithFeatures(vpString, true, Tense.PAST);
+                        realizedVp = TextRealization.realizeVerbPhraseWithFeatures(vpString, true, Tense.PAST);
                     } else {
-                        realizedVp = VerbPhraseGeneration.realizeVerbPhraseWithFeatures(vpString, true, Tense.PRESENT);
+                        realizedVp = TextRealization.realizeVerbPhraseWithFeatures(vpString, true, Tense.PRESENT);
                     }
                     simplifiedSentences.add(SPACE_JOINER.join(personName, realizedVp + "."));
                 }
