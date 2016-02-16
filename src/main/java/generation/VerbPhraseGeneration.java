@@ -1,6 +1,7 @@
 package generation;
 
 import com.google.common.collect.ImmutableSet;
+import edu.stanford.nlp.simple.Sentence;
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.framework.NLGFactory;
@@ -28,9 +29,11 @@ public class VerbPhraseGeneration {
     public static String realizeVerbPhraseWithFeatures(String vp, boolean passiveVoice, Tense tense) {
         final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
         final String verb = vp.split(" ")[0];
+        final String lemma = new Sentence(verb).lemma(0);
+        System.out.printf("Realizing verb '%s' (lemma '%s')\n", verb, lemma);
 
         // Intransitive verbs cannot take on passive voice
-        if (passiveVoice && !INTRANSITIVE_VERBS.contains(verb)) {
+        if (passiveVoice && !INTRANSITIVE_VERBS.contains(lemma)) {
             vpPhraseSpec.setFeature(Feature.PASSIVE, true);
         }
         vpPhraseSpec.setFeature(Feature.TENSE, tense);
