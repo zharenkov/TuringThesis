@@ -1,5 +1,6 @@
 package generation;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.nlp.simple.Sentence;
 import simplenlg.features.Feature;
@@ -17,6 +18,25 @@ public class TextRealization {
     private static final Realiser realiser = new Realiser(lexicon);
 
     private static final Set<String> INTRANSITIVE_VERBS = ImmutableSet.of("die");
+    private static final Joiner SPACES = Joiner.on(' ');
+
+    /**
+     * Realizes a sentence by joining the given parts with spaces.
+     * <p>
+     * A period will be added at the end of the sentence if one does not already exist.
+     * <br>
+     * The first letter of the sentence will be capitalized if it is not already.
+     *
+     * @param parts the given parts
+     * @return the realized sentences.
+     */
+    public static String realizeSentence(String... parts) {
+        final StringBuilder builder = new StringBuilder(SPACES.join(parts));
+        if (builder.charAt(builder.length() - 1) != '.') {
+            builder.append('.');
+        }
+        return Character.toUpperCase(builder.charAt(0)) + builder.substring(1);
+    }
 
     /**
      * Realizes the given verb phrase with the given features.

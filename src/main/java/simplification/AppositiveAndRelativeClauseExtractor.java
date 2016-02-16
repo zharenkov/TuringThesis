@@ -10,6 +10,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
+import generation.TextRealization;
 
 import java.util.*;
 
@@ -116,7 +117,7 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
         }
 
         if (edge.getRelation().equals(APPOSITIONAL_MODIFIER)) {
-            return ImmutableSet.of(Joiner.on(' ').join(governorNpString, be, dependentString) + ".");
+            return ImmutableSet.of(TextRealization.realizeSentence(governorNpString, be, dependentString));
         } else {
             final String dependent;
             if (edge.getRelation().equals(RELATIVE_CLAUSE_MODIFIER)) {
@@ -126,7 +127,7 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
             } else {
                 dependent = be + " " + dependentString;
             }
-            return ImmutableSet.of(Joiner.on(' ').join(governorNpString, dependent) + ".");
+            return ImmutableSet.of(TextRealization.realizeSentence(governorNpString, dependent));
         }
     }
 }

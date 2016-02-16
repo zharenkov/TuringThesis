@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 public class ParentheticalExtractor implements Extractor {
     private static final String LEFT_PARENTHESIS = "-LRB-";
     private static final String RIGHT_PARENTHESIS = "-RRB-";
-    private static final Joiner SPACE_JOINER = Joiner.on(' ');
 
     private static ParentheticalExtractor extractor;
 
@@ -66,8 +65,8 @@ public class ParentheticalExtractor implements Extractor {
                 final String personName = getPersonName(words, nerTags, parenthetical.lowerEndpoint() - 1);
                 System.out.println(dates);
                 if (dates.size() == 2) {
-                    simplifiedSentences.add(SPACE_JOINER.join(personName, "was born", dates.get(0) + "."));
-                    simplifiedSentences.add(SPACE_JOINER.join(personName, "died", dates.get(1) + "."));
+                    simplifiedSentences.add(TextRealization.realizeSentence(personName, "was born", dates.get(0)));
+                    simplifiedSentences.add(TextRealization.realizeSentence(personName, "died", dates.get(1)));
                 }
                 final List<String> posTags = parsed.posTags();
                 // If the first word of the parenthetical is a verb, construct a simple sentence with the VP
@@ -83,7 +82,7 @@ public class ParentheticalExtractor implements Extractor {
                     } else {
                         realizedVp = TextRealization.realizeVerbPhraseWithFeatures(vpString, true, Tense.PRESENT);
                     }
-                    simplifiedSentences.add(SPACE_JOINER.join(personName, realizedVp + "."));
+                    simplifiedSentences.add(TextRealization.realizeSentence(personName, realizedVp));
                 }
             }
             // Check if the parenthetical is an acronym (one word with all upper-case letters)
@@ -93,7 +92,7 @@ public class ParentheticalExtractor implements Extractor {
                 if (pattern.matcher(word).matches()) {
                     final String fullName = getFullName(parsed.parse(), words, nerTags,
                             parenthetical.lowerEndpoint() - 1);
-                    simplifiedSentences.add(SPACE_JOINER.join(word, "stands for", fullName + "."));
+                    simplifiedSentences.add(TextRealization.realizeSentence(word, "stands for", fullName + "."));
                 }
             }
         }
