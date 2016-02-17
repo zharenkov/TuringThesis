@@ -11,6 +11,7 @@ import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import generation.TextRealization;
+import simplenlg.features.Tense;
 
 import java.util.*;
 

@@ -1,6 +1,7 @@
 package simplification;
 
 import edu.stanford.nlp.simple.Sentence;
+import simplenlg.features.Tense;
 
 public class TenseUtil {
     public static Tense calculateTense(Sentence sentence) {

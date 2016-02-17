@@ -2,7 +2,6 @@ package tagging;
 
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.trees.Tree;
-import lemmatizing.Lemmatizer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,12 +53,6 @@ public class TaggingTest {
         final List<Tree> leaves = tree.getLeaves();
         for (final Tree leaf : leaves) {
             System.out.printf("(%s - %s), ", leaf.parent(tree).label(), leaf);
-        }
-        System.out.println("\n");
-
-        System.out.print("Lemmatized: ");
-        for (final Tree leaf : leaves) {
-            System.out.printf("%s ", Lemmatizer.lemmatize(leaf.nodeString(), leaf.parent(tree).label().value()));
         }
         System.out.println("\n");
 
