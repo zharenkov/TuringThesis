@@ -1,4 +1,4 @@
-package simplification;
+package util;
 
 import edu.stanford.nlp.simple.Sentence;
 import simplenlg.features.Tense;

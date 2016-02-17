@@ -1,4 +1,4 @@
-package simplification;
+package util;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.Tree;

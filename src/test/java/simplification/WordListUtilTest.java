@@ -6,6 +6,7 @@ import com.google.common.collect.Range;
 import com.google.common.collect.TreeRangeSet;
 import edu.stanford.nlp.simple.Sentence;
 import org.junit.Test;
+import util.WordListUtil;
 
 import java.util.Collections;
 import java.util.List;

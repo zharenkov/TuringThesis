@@ -12,11 +12,13 @@ import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import generation.TextRealization;
 import simplenlg.features.Tense;
+import util.TreeUtil;
+import util.WordListUtil;
 
 import java.util.*;
 
 import static edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations.*;
-import static simplification.TenseUtil.calculateTense;
+import static util.TenseUtil.calculateTense;
 
 public class AppositiveAndRelativeClauseExtractor implements Extractor {
     private static final String COMMA = ",";

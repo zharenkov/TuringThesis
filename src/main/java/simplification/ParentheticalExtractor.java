@@ -8,6 +8,8 @@ import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import generation.TextRealization;
 import simplenlg.features.Tense;
+import util.TreeUtil;
+import util.WordListUtil;
 
 import java.util.*;
 import java.util.regex.Pattern;
