@@ -1,11 +1,13 @@
-package question;
+package demo;
 
 import com.google.common.base.Joiner;
+import question.Rule;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class QuestionFinder {
+public class QuestionGenerationDemo {
+    // Add all rules that should be used to generate questions here
     final static List<Rule> questionRules = Arrays.asList();
 
     public static void main(String[] args) {
