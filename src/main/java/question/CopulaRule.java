@@ -55,17 +55,19 @@ public class CopulaRule extends Rule {
                     final List<Tree> children = phraseAboveUpperMostVerbPhrase.getChildrenAsList();
                     final int indexOfUpperMostVerbPhrase = phraseAboveUpperMostVerbPhrase.objectIndexOf(
                             upperMostVerbPhrase);
-                    final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
-                    if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
-                        final String leftNp = WordListUtil.constructPhraseFromTree(leftOfVerbPhrase);
-                        final String wh;
-                        if (NerUtil.isPerson(leftNp) || NerUtil.isPerson(rightNp)) {
-                            wh = "Who";
-                        } else {
-                            wh = "What";
+                    if (indexOfUpperMostVerbPhrase > 0) {
+                        final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
+                        if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
+                            final String leftNp = WordListUtil.constructPhraseFromTree(leftOfVerbPhrase);
+                            final String wh;
+                            if (NerUtil.isPerson(leftNp) || NerUtil.isPerson(rightNp)) {
+                                wh = "Who";
+                            } else {
+                                wh = "What";
+                            }
+                            questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), rightNp));
+                            questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), leftNp));
                         }
-                        questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), rightNp));
-                        questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), leftNp));
                     }
                 }
             }
