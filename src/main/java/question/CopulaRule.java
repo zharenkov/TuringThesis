@@ -3,6 +3,8 @@ package question;
 import com.google.common.collect.ImmutableSet;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
+import generation.TextRealization;
+import util.NerUtil;
 import util.ReversePhraseBuilder;
 import util.WordListUtil;
 
@@ -56,7 +58,14 @@ public class CopulaRule extends Rule {
                     final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
                     if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
                         final String leftNp = WordListUtil.constructPhraseFromTree(leftOfVerbPhrase);
-                        // TODO replace leftNp and rightNp with wh-
+                        final String wh;
+                        if (NerUtil.isPerson(leftNp) || NerUtil.isPerson(rightNp)) {
+                            wh = "Who";
+                        } else {
+                            wh = "What";
+                        }
+                        questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), rightNp));
+                        questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), leftNp));
                     }
                 }
             }
