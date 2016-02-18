@@ -12,7 +12,23 @@ public class TreeUtil {
      * @return the parent tree of the given child tree
      */
     public static Tree getParent(Tree root, Tree child) {
-        return child.parent(root);
+        return getParent(root, child, 1);
+    }
+
+    /**
+     * Returns the ancestor that is {@code n} generations separated from the given {@code child} tree using the given
+     * {@code root} tree to perform the search.
+     *
+     * @param root  the root of the phrase structure tree
+     * @param child the given child tree
+     * @param n     the number of generations to go back
+     * @return the parent tree of the given child tree
+     */
+    public static Tree getParent(Tree root, Tree child, int n) {
+        for (int i = 0; i < n; i++) {
+            child = child.parent(root);
+        }
+        return child;
     }
 
     /**
