@@ -19,6 +19,8 @@ public class TextRealization {
 
     private static final Set<String> INTRANSITIVE_VERBS = ImmutableSet.of("die");
     private static final Joiner SPACES = Joiner.on(' ');
+    private static final char QUESTION_MARK = '?';
+    private static final char PERIOD = '.';
 
     /**
      * Realizes a sentence by joining the given parts with spaces.
@@ -28,12 +30,30 @@ public class TextRealization {
      * The first letter of the sentence will be capitalized if it is not already.
      *
      * @param parts the given parts
-     * @return the realized sentences.
+     * @return the realized sentence.
      */
     public static String realizeSentence(String... parts) {
+        return realizeWithPunctuation(PERIOD, parts);
+    }
+
+    /**
+     * Realizes a sentence by joining the given parts with spaces.
+     * <p>
+     * A question mark will be added at the end of the sentence if one does not already exist.
+     * <br>
+     * The first letter of the sentence will be capitalized if it is not already.
+     *
+     * @param parts the given parts
+     * @return the realized question.
+     */
+    public static String realizeQuestion(String... parts) {
+        return realizeWithPunctuation(QUESTION_MARK, parts);
+    }
+
+    private static String realizeWithPunctuation(char punctuation, String... parts) {
         final StringBuilder builder = new StringBuilder(SPACES.join(parts));
-        if (builder.charAt(builder.length() - 1) != '.') {
-            builder.append('.');
+        if (builder.charAt(builder.length() - 1) != punctuation) {
+            builder.append(punctuation);
         }
         return Character.toUpperCase(builder.charAt(0)) + builder.substring(1);
     }
