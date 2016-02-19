@@ -81,7 +81,7 @@ public class WordListUtil {
             }
         }
 
-        return answer.toString().trim();
+        return answer.toString().replaceAll(" 's ", "'s ").trim();
     }
 
     private static void removeWhitespaceAtEnd(StringBuilder stringBuilder) {
