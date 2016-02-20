@@ -2,12 +2,12 @@ package question;
 
 import edu.stanford.nlp.simple.Sentence;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public abstract class Rule {
     public Set<String> generateQuestions(String sentence) {
-        final Set<String> questions = new HashSet<>();
+        final Set<String> questions = new LinkedHashSet<>();
         System.out.println("Starting " + getRuleName() + " scanning\n-----------------------------------");
         System.out.println("Examining: '" + sentence + "'");
         final Sentence parsedSentence = new Sentence(sentence);
