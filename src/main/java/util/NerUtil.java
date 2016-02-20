@@ -27,7 +27,6 @@ public class NerUtil {
      * @return whether the word at the given index in the given sentence represents a person
      */
     public static boolean isPerson(Sentence sentence, int index) {
-        System.out.println(sentence.word(index));
         return sentence.nerTag(index).equalsIgnoreCase("person");
     }
 }
