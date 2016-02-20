@@ -1,9 +1,15 @@
 package util;
 
 import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.trees.CollinsHeadFinder;
+import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
 
+import java.util.List;
+
 public class TreeUtil {
+    private static final HeadFinder HEAD_FINDER = new CollinsHeadFinder();
+
     /**
      * Returns the parent of the given {@code child} tree using the given {@code root} tree to perform the search.
      *
@@ -88,5 +94,32 @@ public class TreeUtil {
      */
     public static boolean labelEquals(Tree tree, String label) {
         return tree.label().value().equalsIgnoreCase(label.toLowerCase());
+    }
+
+    /**
+     * Returns the head of the given tree.
+     *
+     * @param tree the given tree
+     * @return the head of the tree
+     */
+    public static Tree findHead(Tree tree) {
+        return HEAD_FINDER.determineHead(tree);
+    }
+
+    /**
+     * Returns the index of the given leaf in the tree represented by the given root.
+     *
+     * @param root the given root
+     * @param leaf the given leaf
+     * @return the index of the given leaf
+     */
+    public static int getLeafIndex(Tree root, Tree leaf) {
+        final List<Tree> leaves = root.getLeaves();
+        for (int i = 0; i < leaves.size(); i++) {
+            if (leaves.get(i) == leaf) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

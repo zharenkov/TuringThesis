@@ -6,6 +6,7 @@ import edu.stanford.nlp.trees.Tree;
 import generation.TextRealization;
 import util.NerUtil;
 import util.ReversePhraseBuilder;
+import util.TreeUtil;
 import util.WordListUtil;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class CopulaRule extends Rule {
                 Tree verbPhraseTree = getParent(root, verbTree, 2);
                 final Tree rightChildOfVp = verbPhraseTree.getChild(1);
                 if (rightChildOfVp.label().value().equalsIgnoreCase("np")) {
+                    final Tree rightHead = TreeUtil.findHead(rightChildOfVp);
                     final String rightNp = WordListUtil.constructPhraseFromTree(rightChildOfVp);
                     final ReversePhraseBuilder verbPhrase = new ReversePhraseBuilder();
 
@@ -62,9 +64,12 @@ public class CopulaRule extends Rule {
                     if (indexOfUpperMostVerbPhrase > 0) {
                         final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
                         if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
+                            final Tree leftHead = TreeUtil.findHead(leftOfVerbPhrase);
                             final String leftNp = WordListUtil.constructPhraseFromTree(leftOfVerbPhrase);
+                            final int leftIndex = TreeUtil.getLeafIndex(root, leftHead.getLeaves().get(0));
+                            final int rightIndex = TreeUtil.getLeafIndex(root, rightHead.getLeaves().get(0));
                             final String wh;
-                            if (NerUtil.isPerson(leftNp) || NerUtil.isPerson(rightNp)) {
+                            if (NerUtil.isPerson(sentence, leftIndex) || NerUtil.isPerson(sentence, rightIndex)) {
                                 wh = "Who";
                             } else {
                                 wh = "What";
