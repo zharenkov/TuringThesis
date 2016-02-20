@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static util.TreeUtil.getParent;
+import static util.TreeUtil.labelEquals;
 
 public class CopulaRule extends Rule {
     private static final Set<String> COPULAS = ImmutableSet.of("be");
@@ -46,8 +47,11 @@ public class CopulaRule extends Rule {
 
                     Tree upperMostVerbPhrase = verbPhraseTree;
                     Tree phraseAboveUpperMostVerbPhrase = verbPhraseTree;
-                    while (phraseAboveUpperMostVerbPhrase.label().value().equalsIgnoreCase("vp")) {
-                        verbPhrase.addString(phraseAboveUpperMostVerbPhrase.getLeaves().get(0).label().value());
+                    while (labelEquals(phraseAboveUpperMostVerbPhrase, "vp")) {
+                        // Only add the first child if it is not a verb phrase
+                        if (!labelEquals(phraseAboveUpperMostVerbPhrase.firstChild(), "vp")) {
+                            verbPhrase.addString(phraseAboveUpperMostVerbPhrase.getLeaves().get(0).label().value());
+                        }
                         upperMostVerbPhrase = phraseAboveUpperMostVerbPhrase;
                         phraseAboveUpperMostVerbPhrase = getParent(root, phraseAboveUpperMostVerbPhrase);
                     }
