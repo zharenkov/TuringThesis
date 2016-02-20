@@ -17,6 +17,7 @@ public class TextRealization {
     private static final NLGFactory nlgFactory = new NLGFactory(lexicon);
     private static final Realiser realiser = new Realiser(lexicon);
 
+    private static final Set<Character> TRAILING_PUNCTUATION = ImmutableSet.of('.', ',', '?', ';', ':');
     private static final Set<String> INTRANSITIVE_VERBS = ImmutableSet.of("die");
     private static final Joiner SPACES = Joiner.on(' ');
     private static final char QUESTION_MARK = '?';
@@ -52,9 +53,15 @@ public class TextRealization {
 
     private static String realizeWithPunctuation(char punctuation, String... parts) {
         final StringBuilder builder = new StringBuilder(SPACES.join(parts));
-        if (builder.charAt(builder.length() - 1) != punctuation) {
-            builder.append(punctuation);
+
+        // Remove punctuation at end of string
+        int i = builder.length() - 1;
+        while (TRAILING_PUNCTUATION.contains(builder.charAt(i))) {
+            i--;
         }
+        builder.setLength(i + 1);
+
+        builder.append(punctuation);
         return Character.toUpperCase(builder.charAt(0)) + builder.substring(1);
     }
 
