@@ -78,4 +78,15 @@ public class TreeUtil {
         }
         return currentTree;
     }
+
+    /**
+     * Returns whether the label for the given tree equals the given label (case-insensitive).
+     *
+     * @param tree  the given tree
+     * @param label the given label
+     * @return whether the label for the given tree equals the given label (case-insensitive)
+     */
+    public static boolean labelEquals(Tree tree, String label) {
+        return tree.label().value().equalsIgnoreCase(label.toLowerCase());
+    }
 }
