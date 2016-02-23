@@ -1,5 +1,6 @@
 package util;
 
+import com.google.common.collect.Iterables;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.HeadFinder;
@@ -124,6 +125,13 @@ public class TreeUtil {
         return -1;
     }
 
+    /**
+     * Returns the string from the sentence represented by the given root that occurs before the given tree.
+     *
+     * @param root           the given root
+     * @param childToExclude the given tree
+     * @return the string before the given tree
+     */
     public static String getStringBeforeTree(Tree root, Tree childToExclude) {
         final List<String> words = new ArrayList<>();
         final Tree childToExcludeFirstLeaf = childToExclude.getLeaves().get(0);
@@ -137,10 +145,16 @@ public class TreeUtil {
         return WordListUtil.constructSentenceFromWordList(words);
     }
 
+    /**
+     * Returns the string from the sentence represented by the given root that occurs after the given tree.
+     *
+     * @param root           the given root
+     * @param childToExclude the given tree
+     * @return the string after the given tree
+     */
     public static String getStringAfterTree(Tree root, Tree childToExclude) {
         final ReversePhraseBuilder stringAfter = new ReversePhraseBuilder();
-        final List<Tree> childToExcludeLeaves = childToExclude.getLeaves();
-        final Tree childToExcludeLastLeaf = childToExcludeLeaves.get(childToExcludeLeaves.size() - 1);
+        final Tree childToExcludeLastLeaf = Iterables.getLast(childToExclude.getLeaves());
         final List<Tree> leaves = root.getLeaves();
         for (int i = leaves.size() - 1; i >= 0; i--) {
             final Tree leaf = leaves.get(i);
