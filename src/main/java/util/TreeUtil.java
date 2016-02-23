@@ -5,6 +5,7 @@ import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TreeUtil {
@@ -124,19 +125,16 @@ public class TreeUtil {
     }
 
     public static String getStringBeforeTree(Tree root, Tree childToExclude) {
-        final StringBuilder stringBefore = new StringBuilder();
+        final List<String> words = new ArrayList<>();
         final Tree childToExcludeFirstLeaf = childToExclude.getLeaves().get(0);
         for (final Tree leaf : root.getLeaves()) {
             if (leaf == childToExcludeFirstLeaf) {
                 break;
             } else {
-                if (stringBefore.length() > 0) {
-                    stringBefore.append(" ");
-                }
-                stringBefore.append(leaf.value());
+                words.add(leaf.value());
             }
         }
-        return stringBefore.toString();
+        return WordListUtil.constructSentenceFromWordList(words);
     }
 
     public static String getStringAfterTree(Tree root, Tree childToExclude) {
@@ -152,6 +150,6 @@ public class TreeUtil {
                 stringAfter.addString(leaf.value());
             }
         }
-        return stringAfter.toString();
+        return WordListUtil.constructSentenceFromWordList(stringAfter.getWords());
     }
 }

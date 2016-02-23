@@ -1,5 +1,6 @@
 package simplification;
 
+import com.google.common.base.Joiner;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import util.TreeUtil;
@@ -27,8 +28,7 @@ public class VerbPhraseExtractor implements Extractor {
     }
 
     public static void main(String[] args) {
-        final SimplificationResult simplificationResult = getExtractor().extract(
-                "USS Missouri is a United States Navy Iowa-class battleship and was the third ship of the U.S. Navy to be named in honor of the US state of Missouri.");
+        final SimplificationResult simplificationResult = getExtractor().extract(Joiner.on(' ').join(args));
         System.out.println(simplificationResult);
     }
 

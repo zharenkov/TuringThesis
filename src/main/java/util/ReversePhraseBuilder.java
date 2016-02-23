@@ -1,8 +1,10 @@
 package util;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Utility class to build up a space-separated phrase in reverse order. This is useful, for instance, when iterating
@@ -21,6 +23,15 @@ public class ReversePhraseBuilder {
         if (string.length() > 0) {
             phrase.addFirst(string);
         }
+    }
+
+    /**
+     * Returns an immutable list of the words currently in the phrase.
+     *
+     * @return the list of words currently in the phrase
+     */
+    public List<String> getWords() {
+        return ImmutableList.copyOf(phrase);
     }
 
     @Override
