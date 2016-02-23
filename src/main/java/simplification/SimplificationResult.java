@@ -24,4 +24,9 @@ public class SimplificationResult {
     public Set<String> getSimplifiedSentences() {
         return simplifiedSentences;
     }
+
+    @Override
+    public String toString() {
+        return simplifiedSentences.toString();
+    }
 }
