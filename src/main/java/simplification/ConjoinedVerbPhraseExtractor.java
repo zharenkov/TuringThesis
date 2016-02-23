@@ -14,15 +14,15 @@ import java.util.Set;
 import static generation.TextRealization.realizeSentence;
 import static util.TreeUtil.labelEquals;
 
-public class VerbPhraseExtractor implements Extractor {
-    private static VerbPhraseExtractor extractor;
+public class ConjoinedVerbPhraseExtractor implements Extractor {
+    private static ConjoinedVerbPhraseExtractor extractor;
 
-    private VerbPhraseExtractor() {
+    private ConjoinedVerbPhraseExtractor() {
     }
 
-    public static VerbPhraseExtractor getExtractor() {
+    public static ConjoinedVerbPhraseExtractor getExtractor() {
         if (extractor == null) {
-            extractor = new VerbPhraseExtractor();
+            extractor = new ConjoinedVerbPhraseExtractor();
         }
         return extractor;
     }

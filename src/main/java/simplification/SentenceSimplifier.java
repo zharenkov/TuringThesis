@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SentenceSimplifier {
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
-            AppositiveAndRelativeClauseExtractor.getExtractor(), VerbPhraseExtractor.getExtractor());
+            AppositiveAndRelativeClauseExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor());
 
     public static void main(String[] args) {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
