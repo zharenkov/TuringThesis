@@ -122,4 +122,36 @@ public class TreeUtil {
         }
         return -1;
     }
+
+    public static String getStringBeforeTree(Tree root, Tree childToExclude) {
+        final StringBuilder stringBefore = new StringBuilder();
+        final Tree childToExcludeFirstLeaf = childToExclude.getLeaves().get(0);
+        for (final Tree leaf : root.getLeaves()) {
+            if (leaf == childToExcludeFirstLeaf) {
+                break;
+            } else {
+                if (stringBefore.length() > 0) {
+                    stringBefore.append(" ");
+                }
+                stringBefore.append(leaf.value());
+            }
+        }
+        return stringBefore.toString();
+    }
+
+    public static String getStringAfterTree(Tree root, Tree childToExclude) {
+        final ReversePhraseBuilder stringAfter = new ReversePhraseBuilder();
+        final List<Tree> childToExcludeLeaves = childToExclude.getLeaves();
+        final Tree childToExcludeLastLeaf = childToExcludeLeaves.get(childToExcludeLeaves.size() - 1);
+        final List<Tree> leaves = root.getLeaves();
+        for (int i = leaves.size() - 1; i >= 0; i--) {
+            final Tree leaf = leaves.get(i);
+            if (leaf == childToExcludeLastLeaf) {
+                break;
+            } else {
+                stringAfter.addString(leaf.value());
+            }
+        }
+        return stringAfter.toString();
+    }
 }
