@@ -17,7 +17,7 @@ public class TextRealization {
     private static final NLGFactory nlgFactory = new NLGFactory(lexicon);
     private static final Realiser realiser = new Realiser(lexicon);
 
-    private static final Set<Character> TRAILING_PUNCTUATION = ImmutableSet.of('.', ',', '?', ';', ':');
+    private static final Set<Character> TRAILING_PUNCTUATION = ImmutableSet.of('.', ',', '?', ';', ':', ' ');
     private static final Set<String> INTRANSITIVE_VERBS = ImmutableSet.of("die");
     private static final Joiner SPACES = Joiner.on(' ');
     private static final char QUESTION_MARK = '?';
