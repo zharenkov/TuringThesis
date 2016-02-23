@@ -42,12 +42,12 @@ public class VerbPhraseExtractor implements Extractor {
         for (int i = 1; i < root.size(); i++) {
             final Tree tree = root.getNodeNumber(i);
             if (labelEquals(tree, "vp")) {
-                boolean hasConjunctedVpChildren = false;
+                boolean hasConjoinedVpChildren = false;
                 final List<Tree> vps = new ArrayList<>();
                 final StringBuilder nonVps = new StringBuilder();
                 for (final Tree child : tree.children()) {
                     if (labelEquals(child, "cc")) {
-                        hasConjunctedVpChildren = true;
+                        hasConjoinedVpChildren = true;
                     } else if (labelEquals(child, "vp")) {
                         vps.add(child);
                     } else {
@@ -57,7 +57,7 @@ public class VerbPhraseExtractor implements Extractor {
                         nonVps.append(WordListUtil.constructPhraseFromTree(child));
                     }
                 }
-                if (hasConjunctedVpChildren) {
+                if (hasConjoinedVpChildren) {
                     final String stringBeforeTree = TreeUtil.getStringBeforeTree(root, tree);
                     final String stringAfterTree = TreeUtil.getStringAfterTree(root, tree);
                     for (final Tree vp : vps) {
