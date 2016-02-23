@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import util.TreeUtil;
-import util.WordListUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,14 +53,14 @@ public class ConjoinedVerbPhraseExtractor implements Extractor {
                         if (nonVps.length() > 0) {
                             nonVps.append(" ");
                         }
-                        nonVps.append(WordListUtil.constructPhraseFromTree(child));
+                        nonVps.append(TreeUtil.constructPhraseFromTree(child));
                     }
                 }
                 if (hasConjoinedVpChildren) {
                     final String stringBeforeTree = TreeUtil.getStringBeforeTree(root, tree);
                     final String stringAfterTree = TreeUtil.getStringAfterTree(root, tree);
                     for (final Tree vp : vps) {
-                        final String vpString = WordListUtil.constructPhraseFromTree(vp);
+                        final String vpString = TreeUtil.constructPhraseFromTree(vp);
                         simplifiedSentences.add(
                                 realizeSentence(stringBeforeTree, vpString, nonVps.toString(), stringAfterTree));
                     }

@@ -7,7 +7,6 @@ import generation.TextRealization;
 import util.NerUtil;
 import util.ReversePhraseBuilder;
 import util.TreeUtil;
-import util.WordListUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class CopulaRule extends Rule {
                 final Tree rightChildOfVp = verbPhraseTree.getChild(1);
                 if (rightChildOfVp.label().value().equalsIgnoreCase("np")) {
                     final Tree rightHead = TreeUtil.findHead(rightChildOfVp);
-                    final String rightNp = WordListUtil.constructPhraseFromTree(rightChildOfVp);
+                    final String rightNp = TreeUtil.constructPhraseFromTree(rightChildOfVp);
                     final ReversePhraseBuilder verbPhrase = new ReversePhraseBuilder();
 
                     Tree upperMostVerbPhrase = verbPhraseTree;
@@ -65,7 +64,7 @@ public class CopulaRule extends Rule {
                         final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
                         if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
                             final Tree leftHead = TreeUtil.findHead(leftOfVerbPhrase);
-                            final String leftNp = WordListUtil.constructPhraseFromTree(leftOfVerbPhrase);
+                            final String leftNp = TreeUtil.constructPhraseFromTree(leftOfVerbPhrase);
                             final int leftIndex = TreeUtil.getLeafIndex(root, leftHead.getLeaves().get(0));
                             final int rightIndex = TreeUtil.getLeafIndex(root, rightHead.getLeaves().get(0));
                             final String wh;

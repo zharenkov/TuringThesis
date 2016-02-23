@@ -77,7 +77,7 @@ public class ParentheticalExtractor implements Extractor {
                     final Tree parse = parsed.parse();
                     final Tree vp = TreeUtil.getVpFromWord(parse,
                             parse.getLeaves().get(parenthetical.lowerEndpoint() + 1));
-                    final String vpString = WordListUtil.constructPhraseFromTree(vp);
+                    final String vpString = TreeUtil.constructPhraseFromTree(vp);
                     final String realizedVp;
                     if (posFirstWordParenthetical.equals("vbd") || posFirstWordParenthetical.equals("vbn")) {
                         realizedVp = TextRealization.realizeVerbPhraseWithFeatures(vpString, true, Tense.PAST);
@@ -149,7 +149,7 @@ public class ParentheticalExtractor implements Extractor {
             Collections.reverse(nameParts);
             return Joiner.on(' ').join(nameParts);
         } else {
-            return WordListUtil.constructPhraseFromTree(
+            return TreeUtil.constructPhraseFromTree(
                     TreeUtil.getNpFromWord(root, root.getLeaves().get(indexOfLastPartOfName)));
         }
     }

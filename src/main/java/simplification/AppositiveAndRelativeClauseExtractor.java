@@ -109,7 +109,7 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
         final IndexedWord governor = edge.getGovernor();
         final Tree root = sentence.parse();
         final Tree governorNp = TreeUtil.getNpFromWord(root, governor);
-        final String governorNpString = WordListUtil.constructPhraseFromTree(governorNp);
+        final String governorNpString = TreeUtil.constructPhraseFromTree(governorNp);
 
         final Tense tense = calculateTense(sentence);
         final String be;
