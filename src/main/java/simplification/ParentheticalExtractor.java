@@ -101,7 +101,7 @@ public class ParentheticalExtractor implements Extractor {
 
         final List<String> modified = WordListUtil.removeParts(words, rangeSet);
         System.out.println("With parentheticals removed: " + modified);
-        simplifiedSentences.add(WordListUtil.constructSentenceFromWordList(modified));
+        simplifiedSentences.add(WordListUtil.constructPhraseFromWordList(modified));
         return new SimplificationResult(simplifiedSentences);
     }
 
@@ -113,13 +113,13 @@ public class ParentheticalExtractor implements Extractor {
                 currentDate.add(words.get(i));
             } else {
                 if (!currentDate.isEmpty()) {
-                    dates.add(WordListUtil.constructSentenceFromWordList(currentDate));
+                    dates.add(WordListUtil.constructPhraseFromWordList(currentDate));
                     currentDate.clear();
                 }
             }
         }
         if (!currentDate.isEmpty()) {
-            dates.add(WordListUtil.constructSentenceFromWordList(currentDate));
+            dates.add(WordListUtil.constructPhraseFromWordList(currentDate));
             currentDate.clear();
         }
         return dates;

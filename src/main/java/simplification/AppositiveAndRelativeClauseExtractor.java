@@ -89,7 +89,7 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
 
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
         System.out.println("With appositives and relative clauses removed: " + answer);
-        final String simplifiedSentence = WordListUtil.constructSentenceFromWordList(answer);
+        final String simplifiedSentence = WordListUtil.constructPhraseFromWordList(answer);
         simplifiedSentences.add(simplifiedSentence);
         System.out.println("Simplified Sentences: " + simplifiedSentences);
         return new SimplificationResult(simplifiedSentences);
@@ -104,7 +104,7 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
                 dependentWordListNoPunctuation.add(word);
             }
         }
-        final String dependentString = WordListUtil.constructSentenceFromWordList(dependentWordListNoPunctuation);
+        final String dependentString = WordListUtil.constructPhraseFromWordList(dependentWordListNoPunctuation);
 
         final IndexedWord governor = edge.getGovernor();
         final Tree root = sentence.parse();

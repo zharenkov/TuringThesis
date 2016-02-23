@@ -57,6 +57,6 @@ public class WordListUtilTest {
 
     private static void assertConstructSentenceFromWordListCorrect(String sentence) {
         final List<String> words = new Sentence(sentence).words();
-        assertEquals(sentence, WordListUtil.constructSentenceFromWordList(words));
+        assertEquals(sentence, WordListUtil.constructPhraseFromWordList(words));
     }
 }

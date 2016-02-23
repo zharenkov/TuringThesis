@@ -38,22 +38,30 @@ public class WordListUtil {
         return modifiedWords;
     }
 
+    /**
+     * Takes a {@link Tree} from the CoreNLP parser and reconstructs a String for the words. This method will try and
+     * ensure that punctuation and spacing is correct in the returned phrase.
+     *
+     * @param tree the tree from the Stanford CoreNLP parser
+     * @return the String for the tree
+     */
     public static String constructPhraseFromTree(Tree tree) {
         final List<Tree> leaves = tree.getLeaves();
         final List<String> words = new ArrayList<>(leaves.size());
         for (final Tree leaf : leaves) {
             words.add(leaf.value());
         }
-        return constructSentenceFromWordList(words);
+        return constructPhraseFromWordList(words);
     }
 
     /**
-     * Takes a list of words from the Stanford CoreNLP parser and reconstructs a String for the words.
+     * Takes a list of words from the Stanford CoreNLP parser and reconstructs a String for the words. This method will
+     * try and ensure that punctuation and spacing is correct in the returned phrase.
      *
      * @param words the list of words from the Stanford CoreNLP parser
      * @return the String for the list of words
      */
-    public static String constructSentenceFromWordList(List<String> words) {
+    public static String constructPhraseFromWordList(List<String> words) {
         final StringBuilder answer = new StringBuilder();
         for (final String word : words) {
             if (NO_WHITESPACE_BEFORE.contains(word)) {

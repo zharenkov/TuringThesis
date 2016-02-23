@@ -142,7 +142,7 @@ public class TreeUtil {
                 words.add(leaf.value());
             }
         }
-        return WordListUtil.constructSentenceFromWordList(words);
+        return WordListUtil.constructPhraseFromWordList(words);
     }
 
     /**
@@ -164,6 +164,6 @@ public class TreeUtil {
                 stringAfter.addString(leaf.value());
             }
         }
-        return WordListUtil.constructSentenceFromWordList(stringAfter.getWords());
+        return WordListUtil.constructPhraseFromWordList(stringAfter.getWords());
     }
 }
