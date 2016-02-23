@@ -99,6 +99,17 @@ public class TreeUtil {
     }
 
     /**
+     * Returns whether the label for the given tree starts with the given prefix (case-insensitive).
+     *
+     * @param tree   the given tree
+     * @param prefix the given prefix
+     * @return whether the label for the given tree starts with the given prefix (case-insensitive)
+     */
+    public static boolean labelStartsWith(Tree tree, String prefix) {
+        return tree.label().value().toLowerCase().startsWith(prefix.toLowerCase());
+    }
+
+    /**
      * Returns the head of the given tree.
      *
      * @param tree the given tree
