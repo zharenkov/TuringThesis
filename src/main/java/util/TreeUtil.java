@@ -110,6 +110,17 @@ public class TreeUtil {
     }
 
     /**
+     * Returns whether the label for the given tree contains the given part (case-insensitive).
+     *
+     * @param tree the given tree
+     * @param part the given part
+     * @return whether the label for the given tree contains the given part (case-insensitive)
+     */
+    public static boolean labelContains(Tree tree, String part) {
+        return tree.label().value().toLowerCase().contains(part.toLowerCase());
+    }
+
+    /**
      * Returns the head of the given tree.
      *
      * @param tree the given tree

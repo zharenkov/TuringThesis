@@ -11,8 +11,7 @@ import util.TreeUtil;
 import java.util.List;
 import java.util.Set;
 
-import static util.TreeUtil.getParent;
-import static util.TreeUtil.labelEquals;
+import static util.TreeUtil.*;
 
 public class CopulaRule extends Rule {
     private static final Set<String> COPULAS = ImmutableSet.of("be");
@@ -39,47 +38,58 @@ public class CopulaRule extends Rule {
                 System.out.println("Copula detected at index " + i);
                 final Tree root = sentence.parse();
                 final Tree verbTree = root.getLeaves().get(i);
-                Tree verbPhraseTree = getParent(root, verbTree, 2);
-                final Tree rightChildOfVp = verbPhraseTree.getChild(1);
-                if (rightChildOfVp.label().value().equalsIgnoreCase("np")) {
-                    final Tree rightHead = TreeUtil.findHead(rightChildOfVp);
-                    final String rightNp = TreeUtil.constructPhraseFromTree(rightChildOfVp);
-                    final ReversePhraseBuilder verbPhrase = new ReversePhraseBuilder();
+                final Tree verbPhraseTree = getParent(root, verbTree, 2);
 
-                    Tree upperMostVerbPhrase = verbPhraseTree;
-                    Tree phraseAboveUpperMostVerbPhrase = verbPhraseTree;
-                    while (labelEquals(phraseAboveUpperMostVerbPhrase, "vp")) {
-                        // Only add the first child if it is not a verb phrase
-                        if (!labelEquals(phraseAboveUpperMostVerbPhrase.firstChild(), "vp")) {
-                            verbPhrase.addString(phraseAboveUpperMostVerbPhrase.getLeaves().get(0).label().value());
-                        }
-                        upperMostVerbPhrase = phraseAboveUpperMostVerbPhrase;
-                        phraseAboveUpperMostVerbPhrase = getParent(root, phraseAboveUpperMostVerbPhrase);
+                if (containsOnlyVerbsAndAdverbs(verbPhraseTree)) {
+                    break;
+                }
+
+                final Tree rightHead = TreeUtil.findHead(verbPhraseTree);
+                final String rightNp = TreeUtil.getStringAfterTree(root, verbTree);
+                final ReversePhraseBuilder verbPhrase = new ReversePhraseBuilder();
+
+                Tree upperMostVerbPhrase = verbPhraseTree;
+                Tree phraseAboveUpperMostVerbPhrase = verbPhraseTree;
+                while (labelEquals(phraseAboveUpperMostVerbPhrase, "vp")) {
+                    // Only add the first child if it is not a verb phrase
+                    if (!labelEquals(phraseAboveUpperMostVerbPhrase.firstChild(), "vp")) {
+                        verbPhrase.addString(phraseAboveUpperMostVerbPhrase.getLeaves().get(0).label().value());
                     }
+                    upperMostVerbPhrase = phraseAboveUpperMostVerbPhrase;
+                    phraseAboveUpperMostVerbPhrase = getParent(root, phraseAboveUpperMostVerbPhrase);
+                }
 
-                    final List<Tree> children = phraseAboveUpperMostVerbPhrase.getChildrenAsList();
-                    final int indexOfUpperMostVerbPhrase = phraseAboveUpperMostVerbPhrase.objectIndexOf(
-                            upperMostVerbPhrase);
-                    if (indexOfUpperMostVerbPhrase > 0) {
-                        final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
-                        if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
-                            final Tree leftHead = TreeUtil.findHead(leftOfVerbPhrase);
-                            final String leftNp = TreeUtil.constructPhraseFromTree(leftOfVerbPhrase);
-                            final int leftIndex = TreeUtil.getLeafIndex(root, leftHead.getLeaves().get(0));
-                            final int rightIndex = TreeUtil.getLeafIndex(root, rightHead.getLeaves().get(0));
-                            final String wh;
-                            if (NerUtil.isPerson(sentence, leftIndex) || NerUtil.isPerson(sentence, rightIndex)) {
-                                wh = "Who";
-                            } else {
-                                wh = "What";
-                            }
-                            questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), rightNp));
-                            questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), leftNp));
+                final List<Tree> children = phraseAboveUpperMostVerbPhrase.getChildrenAsList();
+                final int indexOfUpperMostVerbPhrase = phraseAboveUpperMostVerbPhrase.objectIndexOf(
+                        upperMostVerbPhrase);
+                if (indexOfUpperMostVerbPhrase > 0) {
+                    final Tree leftOfVerbPhrase = children.get(indexOfUpperMostVerbPhrase - 1);
+                    if (leftOfVerbPhrase.label().value().equalsIgnoreCase("np")) {
+                        final Tree leftHead = TreeUtil.findHead(leftOfVerbPhrase);
+                        final String leftNp = TreeUtil.constructPhraseFromTree(leftOfVerbPhrase);
+                        final int leftIndex = TreeUtil.getLeafIndex(root, leftHead.getLeaves().get(0));
+                        final int rightIndex = TreeUtil.getLeafIndex(root, rightHead.getLeaves().get(0));
+                        final String wh;
+                        if (NerUtil.isPerson(sentence, leftIndex) || NerUtil.isPerson(sentence, rightIndex)) {
+                            wh = "Who";
+                        } else {
+                            wh = "What";
                         }
+                        questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), rightNp));
+                        questions.add(TextRealization.realizeQuestion(wh, verbPhrase.toString(), leftNp));
                     }
                 }
             }
         }
+    }
+
+    private static boolean containsOnlyVerbsAndAdverbs(Tree tree) {
+        for (final Tree child : tree.children()) {
+            if (!labelContains(child, "vp") && !labelStartsWith(child, "vb")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
