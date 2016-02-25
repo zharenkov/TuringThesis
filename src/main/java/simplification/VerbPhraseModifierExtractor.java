@@ -65,6 +65,7 @@ public class VerbPhraseModifierExtractor implements Extractor {
                 // See if the dependent is enclosed within commas
                 int leftCommaBound = -1;
                 int rightCommaBound = words.size() - 1;
+                // TODO Refactor this and account for commas in dates
                 for (int i = dependentIndex; i >= 0; i--) {
                     if (words.get(i).equals(COMMA)) {
                         leftCommaBound = i;
