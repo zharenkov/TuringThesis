@@ -1,7 +1,9 @@
 package util;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Range;
 import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
@@ -187,6 +189,32 @@ public class TreeUtil {
             }
         }
         return WordListUtil.constructPhraseFromWordList(stringAfter.getWords());
+    }
+
+    /**
+     * Returns the range representing the bounds of the given tree in the given sentence.
+     *
+     * @param sentence the given sentence
+     * @param tree     the given tree
+     * @return the range of the given tree
+     */
+    public static Range<Integer> getRangeOfTree(Sentence sentence, Tree tree) {
+        final List<Tree> leaves = tree.getLeaves();
+        final Tree leftmostLeaf = leaves.get(0);
+        final Tree rightmostLeaf = leaves.get(leaves.size() - 1);
+        int leftIndex = 0;
+        int rightIndex = 0;
+        final List<Tree> allLeaves = sentence.parse().getLeaves();
+        for (int i = 0; i < allLeaves.size(); i++) {
+            final Tree leaf = allLeaves.get(i);
+            if (leaf.equals(leftmostLeaf)) {
+                leftIndex = i;
+            }
+            if (leaf.equals(rightmostLeaf)) {
+                rightIndex = i;
+            }
+        }
+        return Range.closed(leftIndex, rightIndex);
     }
 
     /**
