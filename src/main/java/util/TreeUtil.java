@@ -3,7 +3,6 @@ package util;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
@@ -194,23 +193,23 @@ public class TreeUtil {
     /**
      * Returns the range representing the bounds of the given tree in the given sentence.
      *
-     * @param sentence the given sentence
-     * @param tree     the given tree
+     * @param root the root of the given sentence
+     * @param tree the given tree
      * @return the range of the given tree
      */
-    public static Range<Integer> getRangeOfTree(Sentence sentence, Tree tree) {
+    public static Range<Integer> getRangeOfTree(Tree root, Tree tree) {
         final List<Tree> leaves = tree.getLeaves();
         final Tree leftmostLeaf = leaves.get(0);
         final Tree rightmostLeaf = leaves.get(leaves.size() - 1);
         int leftIndex = 0;
         int rightIndex = 0;
-        final List<Tree> allLeaves = sentence.parse().getLeaves();
-        for (int i = 0; i < allLeaves.size(); i++) {
-            final Tree leaf = allLeaves.get(i);
-            if (leaf.equals(leftmostLeaf)) {
+        final List<Tree> rootLeaves = root.getLeaves();
+        for (int i = 0; i < rootLeaves.size(); i++) {
+            final Tree leaf = rootLeaves.get(i);
+            if (leaf == leftmostLeaf) {
                 leftIndex = i;
             }
-            if (leaf.equals(rightmostLeaf)) {
+            if (leaf == rightmostLeaf) {
                 rightIndex = i;
             }
         }

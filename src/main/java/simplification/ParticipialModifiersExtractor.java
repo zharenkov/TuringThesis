@@ -63,9 +63,13 @@ public class ParticipialModifiersExtractor implements Extractor {
                 if (i > 0 && !posTags.get(i - 1).toLowerCase().startsWith("vb")) {
                     final Tree word = root.getLeaves().get(i);
                     final Tree participialPhrase = TreeUtil.getVpFromWord(root, word);
+                    if (participialPhrase == null) {
+                        System.out.println("Participial phrase not contained in VP");
+                        continue;
+                    }
 
                     // Calculate the bounds of the participial phrase and account for commas
-                    final Range<Integer> rangeOfParticipialPhrase = TreeUtil.getRangeOfTree(parsed, participialPhrase);
+                    final Range<Integer> rangeOfParticipialPhrase = TreeUtil.getRangeOfTree(root, participialPhrase);
                     int lowerBound = rangeOfParticipialPhrase.lowerEndpoint();
                     if (i > 0 && words.get(i - 1).equals(",")) {
                         lowerBound--;
