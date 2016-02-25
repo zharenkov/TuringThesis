@@ -1,5 +1,7 @@
 package demo;
 
+import com.google.common.base.Charsets;
+import org.apache.commons.io.FileUtils;
 import simplification.SentenceSimplifier;
 
 import java.io.*;
@@ -30,14 +32,14 @@ public class SimplificationDemo {
         }
 
         System.setOut(DUMMY_STREAM);
-        System.setErr(DUMMY_STREAM);
+        //System.setErr(DUMMY_STREAM);
         final Map<String, List<String>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
         for (final String sentence : sentences) {
             final List<String> strings = SentenceSimplifier.simplifySentence(sentence);
             sentenceToSimplifiedSentences.put(sentence, strings);
         }
         System.setOut(OUT);
-        System.setErr(ERR);
+        //System.setErr(ERR);
 
         final TopicSentencesSimplification simplification = new TopicSentencesSimplification(
                 sentenceToSimplifiedSentences);
@@ -51,11 +53,7 @@ public class SimplificationDemo {
                 file = new File(String.format(OUTPUT_FILE_NAME, n));
             }
             try {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-                try (PrintWriter out = new PrintWriter(file)) {
-                    out.println(simplification.toString());
-                }
+                FileUtils.writeStringToFile(file, simplification.toString(), Charsets.UTF_8.name());
             } catch (IOException e) {
                 e.printStackTrace();
             }
