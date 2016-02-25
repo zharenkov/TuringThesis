@@ -74,10 +74,14 @@ public class TextRealization {
      * @return the realized verb phrase
      */
     public static String realizeVerbPhraseWithFeatures(String vp, boolean passiveVoice, Tense tense) {
-        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(vp);
         final String verb = vp.split(" ")[0];
         final String lemma = new Sentence(verb).lemma(0);
         System.out.printf("Realizing verb '%s' (lemma '%s')\n", verb, lemma);
+        final String[] parts = vp.split(" ");
+        parts[0] = lemma;
+        final String lemmatizedVpString = Joiner.on(' ').join(parts);
+
+        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(lemmatizedVpString);
 
         // Intransitive verbs cannot take on passive voice
         if (passiveVoice && !INTRANSITIVE_VERBS.contains(lemma)) {
