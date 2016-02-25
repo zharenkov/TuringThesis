@@ -21,7 +21,6 @@ import static edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations.*;
 import static util.TenseUtil.calculateTense;
 
 public class AppositiveAndRelativeClauseExtractor implements Extractor {
-    private static final String COMMA = ",";
     private static AppositiveAndRelativeClauseExtractor extractor;
 
     private AppositiveAndRelativeClauseExtractor() {
@@ -52,39 +51,12 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
         for (final SemanticGraphEdge edge : appositivesAndRelativeClauses) {
             // IndexedWord index is 1-based not 0-based
             final IndexedWord governor = edge.getGovernor();
-            final int governorIndex = governor.index() - 1;
             final IndexedWord dependent = edge.getDependent();
-            final int dependentIndex = dependent.index() - 1;
-
-            // See if the dependent is enclosed within commas
-            int leftCommaBound = -1;
-            int rightCommaBound = words.size() - 1;
-            for (int i = dependentIndex; i >= 0; i--) {
-                if (words.get(i).equals(COMMA)) {
-                    leftCommaBound = i;
-                    break;
-                }
+            final Range<Integer> boundedPart = WordListUtil.findBoundedPart(governor, dependent, parsed);
+            if (boundedPart != null) {
+                partsToRemove.add(boundedPart);
+                simplifiedSentences.addAll(generateSimplifiedSentences(edge, parsed, boundedPart));
             }
-            for (int i = dependentIndex; i < words.size(); i++) {
-                if (words.get(i).equals(COMMA)) {
-                    rightCommaBound = i;
-                    break;
-                }
-            }
-            // TODO handle the case of appositives and relative clauses occurring before the governor
-            if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
-                System.out.println("The appositive/relative clause is not bounded by commas after the governor");
-                continue;
-            }
-            // If the appositive or relative clause is at the end of the sentence, make sure we're not deleting the
-            // period.
-            if (words.get(rightCommaBound).equals(".")) {
-                rightCommaBound--;
-            }
-            final Range<Integer> dependentRange = Range.closed(leftCommaBound, rightCommaBound);
-            partsToRemove.add(dependentRange);
-
-            simplifiedSentences.addAll(generateSimplifiedSentences(edge, parsed, dependentRange));
         }
 
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);

@@ -1,7 +1,10 @@
 package util;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
+import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.simple.Sentence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +13,49 @@ import java.util.Set;
 public class WordListUtil {
     private static final Set<String> NO_WHITESPACE_BEFORE = ImmutableSet.of(",", ";", "!", ".", "'", "''", ":");
     private static final Set<String> NO_WHITESPACE_AFTER = ImmutableSet.of("`", "``");
+    private static final String COMMA = ",";
+
+    /**
+     * Calculates whether the given dependent is enclosed within commas or the end of the given sentence after the given
+     * governor.
+     *
+     * @param governor  the given governor
+     * @param dependent the given dependent
+     * @param sentence  the given sentence
+     * @return {@code null} if the dependent is not enclosed, or a range representing the enclosure
+     */
+    public static Range<Integer> findBoundedPart(IndexedWord governor, IndexedWord dependent, Sentence sentence) {
+        final List<String> words = sentence.words();
+        final List<String> nerTags = sentence.nerTags();
+        final int governorIndex = governor.index() - 1;
+        final int dependentIndex = dependent.index() - 1;
+
+        // See if the dependent is enclosed within commas
+        int leftCommaBound = -1;
+        int rightCommaBound = words.size() - 1;
+        for (int i = dependentIndex; i >= 0; i--) {
+            if (words.get(i).equals(COMMA) && !nerTags.get(i).equalsIgnoreCase("date")) {
+                leftCommaBound = i;
+                break;
+            }
+        }
+        for (int i = dependentIndex; i < words.size(); i++) {
+            if (words.get(i).equals(COMMA) && !nerTags.get(i).equalsIgnoreCase("date")) {
+                rightCommaBound = i;
+                break;
+            }
+        }
+        if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
+            System.out.println("The dependent is not bounded by commas after the governor");
+            return null;
+        }
+        // If the appositive or relative clause is at the end of the sentence, make sure we're not deleting the
+        // period.
+        if (words.get(rightCommaBound).equals(".")) {
+            rightCommaBound--;
+        }
+        return Range.closed(leftCommaBound, rightCommaBound);
+    }
 
     /**
      * Returns the given list of words with the given parts removed. The given list will not be modified by this method.

@@ -18,7 +18,6 @@ import java.util.Set;
 
 public class VerbPhraseModifierExtractor implements Extractor {
     private static final Set<String> MODIFIER_TYPES = ImmutableSet.of("nmod");
-    private static final String COMMA = ",";
 
     private static VerbPhraseModifierExtractor extractor;
 
@@ -56,39 +55,14 @@ public class VerbPhraseModifierExtractor implements Extractor {
         final Set<String> simplifiedSentences = new HashSet<>();
         for (final SemanticGraphEdge edge : modifiers) {
             final IndexedWord governor = edge.getGovernor();
-            final int governorIndex = governor.index() - 1;
             final IndexedWord dependent = edge.getDependent();
-            final int dependentIndex = dependent.index() - 1;
 
             final String governorTag = governor.backingLabel().tag().toLowerCase();
             if (governorTag.startsWith("vb")) {
-                // See if the dependent is enclosed within commas
-                int leftCommaBound = -1;
-                int rightCommaBound = words.size() - 1;
-                // TODO Refactor this and account for commas in dates
-                for (int i = dependentIndex; i >= 0; i--) {
-                    if (words.get(i).equals(COMMA)) {
-                        leftCommaBound = i;
-                        break;
-                    }
+                final Range<Integer> boundedPart = WordListUtil.findBoundedPart(governor, dependent, parsed);
+                if (boundedPart != null) {
+                    partsToRemove.add(boundedPart);
                 }
-                for (int i = dependentIndex; i < words.size(); i++) {
-                    if (words.get(i).equals(COMMA)) {
-                        rightCommaBound = i;
-                        break;
-                    }
-                }
-                if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
-                    System.out.println("The verb modifier is not bounded by commas after the governor");
-                    continue;
-                }
-                // If the appositive or relative clause is at the end of the sentence, make sure we're not deleting the
-                // period.
-                if (words.get(rightCommaBound).equals(".")) {
-                    rightCommaBound--;
-                }
-                final Range<Integer> dependentRange = Range.closed(leftCommaBound, rightCommaBound);
-                partsToRemove.add(dependentRange);
             }
         }
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
