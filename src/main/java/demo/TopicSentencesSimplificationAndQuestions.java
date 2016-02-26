@@ -4,23 +4,22 @@ import question.Rules;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 public class TopicSentencesSimplificationAndQuestions implements Serializable {
-    private final Map<String, List<String>> sentenceToSimplifiedSentences;
+    private final Map<String, Set<String>> sentenceToSimplifiedSentences;
     private final Map<String, Set<String>> simplifiedSentenceToQuestions;
     private final int numberOfSimplifiedSentences;
     private final int numberOfGeneratedQuestions;
 
-    public TopicSentencesSimplificationAndQuestions(Map<String, List<String>> sentenceToSimplifiedSentences) {
+    public TopicSentencesSimplificationAndQuestions(Map<String, Set<String>> sentenceToSimplifiedSentences) {
         this.sentenceToSimplifiedSentences = sentenceToSimplifiedSentences;
         simplifiedSentenceToQuestions = new HashMap<>();
         int numberOfSimplifiedSentences = 0;
         int numberOfGeneratedQuestions = 0;
-        for (final List<String> value : sentenceToSimplifiedSentences.values()) {
+        for (final Set<String> value : sentenceToSimplifiedSentences.values()) {
             numberOfSimplifiedSentences += value.size();
             for (final String simplifiedSentence : value) {
                 final Set<String> generatedQuestions = Rules.generateQuestions(simplifiedSentence);
@@ -53,7 +52,7 @@ public class TopicSentencesSimplificationAndQuestions implements Serializable {
         builder.append(String.format("%d topic sentences\n", sentenceToSimplifiedSentences.size()));
         builder.append(String.format("%d simplified sentences\n", numberOfSimplifiedSentences));
         builder.append(String.format("%d generated questions\n", numberOfGeneratedQuestions));
-        for (Entry<String, List<String>> entry : sentenceToSimplifiedSentences.entrySet()) {
+        for (Entry<String, Set<String>> entry : sentenceToSimplifiedSentences.entrySet()) {
             builder.append("---------------------------------\n\n");
             builder.append("Original Sentence:\n");
             builder.append(entry.getKey()).append("\n\n");

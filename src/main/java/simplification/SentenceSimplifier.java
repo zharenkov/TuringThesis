@@ -3,8 +3,10 @@ package simplification;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SentenceSimplifier {
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
@@ -16,11 +18,11 @@ public class SentenceSimplifier {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
     }
 
-    public static List<String> simplifySentence(String originalSentence) {
-        List<String> sentences = new ArrayList<>();
+    public static Set<String> simplifySentence(String originalSentence) {
+        Set<String> sentences = new LinkedHashSet<>();
         sentences.add(originalSentence);
         for (final Extractor extractor : extractors) {
-            final List<String> simplifiedSentences = new ArrayList<>();
+            final Set<String> simplifiedSentences = new HashSet<>();
             for (final String sentence : sentences) {
                 simplifiedSentences.addAll(extractor.extract(sentence).getSimplifiedSentences());
             }

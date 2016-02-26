@@ -1,18 +1,18 @@
 package demo;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class TopicSentencesSimplification implements Serializable {
-    private final Map<String, List<String>> sentenceToSimplifiedSentences;
+    private final Map<String, Set<String>> sentenceToSimplifiedSentences;
     private final int numberOfSimplifiedSentences;
 
-    public TopicSentencesSimplification(Map<String, List<String>> sentenceToSimplifiedSentences) {
+    public TopicSentencesSimplification(Map<String, Set<String>> sentenceToSimplifiedSentences) {
         this.sentenceToSimplifiedSentences = sentenceToSimplifiedSentences;
         int numberOfSimplifiedSentences = 0;
-        for (final List<String> value : sentenceToSimplifiedSentences.values()) {
+        for (final Set<String> value : sentenceToSimplifiedSentences.values()) {
             numberOfSimplifiedSentences += value.size();
         }
         this.numberOfSimplifiedSentences = numberOfSimplifiedSentences;
@@ -39,7 +39,7 @@ public class TopicSentencesSimplification implements Serializable {
         final StringBuilder builder = new StringBuilder();
         builder.append(String.format("%d topic sentences\n", sentenceToSimplifiedSentences.size()));
         builder.append(String.format("%d simplified sentences\n", numberOfSimplifiedSentences));
-        for (Entry<String, List<String>> entry : sentenceToSimplifiedSentences.entrySet()) {
+        for (Entry<String, Set<String>> entry : sentenceToSimplifiedSentences.entrySet()) {
             builder.append("---------------------------------\n\n");
             builder.append("Original Sentence:\n");
             builder.append(entry.getKey()).append("\n\n");

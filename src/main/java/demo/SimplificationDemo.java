@@ -33,9 +33,9 @@ public class SimplificationDemo {
 
         System.setOut(DUMMY_STREAM);
         //System.setErr(DUMMY_STREAM);
-        final Map<String, List<String>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
+        final Map<String, Set<String>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
         for (final String sentence : sentences) {
-            final List<String> strings = SentenceSimplifier.simplifySentence(sentence);
+            final Set<String> strings = SentenceSimplifier.simplifySentence(sentence);
             sentenceToSimplifiedSentences.put(sentence, strings);
         }
         System.setOut(OUT);
