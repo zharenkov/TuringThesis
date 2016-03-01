@@ -59,6 +59,18 @@ public class TreeUtil {
     }
 
     /**
+     * Returns the first parent of the word represented by the given index in the phrase structure tree represented by {@code root} that has the label "NP".
+     *
+     * @param root  the given root of the phrase structure tree
+     * @param index the given index
+     * @return the {@link Tree} representing the NP or {@code null} if no such tree exists
+     */
+    public static Tree getNpFromWord(Tree root, int index) {
+        final Tree wordTree = root.getLeaves().get(index);
+        return getNpFromWord(root, wordTree);
+    }
+
+    /**
      * Returns the first parent of the given word in the phrase structure tree represented by {@code root} that has the label "NP".
      *
      * @param root the given root of the phrase structure tree
@@ -66,8 +78,7 @@ public class TreeUtil {
      * @return the {@link Tree} representing the NP or {@code null} if no such tree exists
      */
     public static Tree getNpFromWord(Tree root, IndexedWord word) {
-        final Tree wordTree = root.getLeaves().get(word.index() - 1);
-        return getNpFromWord(root, wordTree);
+        return getNpFromWord(root, word.index() - 1);
     }
 
     /**
