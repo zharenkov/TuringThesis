@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public class WordListUtil {
+    private static final Set<String> DATE_LOCATION_NER_TAGS = ImmutableSet.of("date", "location");
     private static final Set<String> NO_WHITESPACE_BEFORE = ImmutableSet.of(",", ";", "!", ".", "'", "''", ":");
     private static final Set<String> NO_WHITESPACE_AFTER = ImmutableSet.of("`", "``");
     private static final String COMMA = ",";
@@ -34,13 +35,13 @@ public class WordListUtil {
         int leftCommaBound = -1;
         int rightCommaBound = words.size() - 1;
         for (int i = dependentIndex; i >= 0; i--) {
-            if (words.get(i).equals(COMMA) && !nerTags.get(i).equalsIgnoreCase("date")) {
+            if (words.get(i).equals(COMMA) && isBoundaryComma(i, sentence)) {
                 leftCommaBound = i;
                 break;
             }
         }
         for (int i = dependentIndex; i < words.size(); i++) {
-            if (words.get(i).equals(COMMA) && !nerTags.get(i).equalsIgnoreCase("date")) {
+            if (words.get(i).equals(COMMA) && isBoundaryComma(i, sentence)) {
                 rightCommaBound = i;
                 break;
             }
@@ -55,6 +56,22 @@ public class WordListUtil {
             rightCommaBound--;
         }
         return Range.closed(leftCommaBound, rightCommaBound);
+    }
+
+    /**
+     * Returns whether the given index is a boundary comma. A boundary comma is not part of a date or a location.
+     *
+     * @param index    the given index
+     * @param sentence the sentence where the comma is located in
+     * @return whether the comma at the given index is a boundary comma
+     */
+    public static boolean isBoundaryComma(int index, Sentence sentence) {
+        final String word = sentence.word(index);
+        return word.equals(",") && !isDateOrLocation(index, sentence);
+    }
+
+    private static boolean isDateOrLocation(int index, Sentence sentence) {
+        return DATE_LOCATION_NER_TAGS.contains(sentence.nerTag(index).toLowerCase());
     }
 
     /**
