@@ -4,25 +4,13 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
-import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.simple.Sentence;
-import edu.stanford.nlp.trees.Tree;
 import generation.TextRealization;
-import simplenlg.features.Tense;
-import util.TenseUtil;
-import util.TreeUtil;
 import util.WordListUtil;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations.ADV_CLAUSE_MODIFIER;
-import static edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations.NOMINAL_SUBJECT;
-import static generation.TextRealization.realizeSentence;
-import static generation.TextRealization.realizeVerbPhraseWithFeatures;
 
 public class ParticipialModifiersExtractor implements Extractor {
     private static ParticipialModifiersExtractor extractor;
@@ -46,63 +34,42 @@ public class ParticipialModifiersExtractor implements Extractor {
     public SimplificationResult extract(String sentence) {
         System.out.println("Original sentence: " + sentence);
         final Sentence parsed = new Sentence(sentence);
-        final Tree root = parsed.parse();
-        final SemanticGraph dependencyGraph = parsed.dependencyGraph();
+        System.out.println("NER tags: " + parsed.nerTags());
+        //final Tree root = parsed.parse();
         final List<String> words = parsed.words();
         final List<String> posTags = parsed.posTags();
 
-        final List<SemanticGraphEdge> relations = dependencyGraph.findAllRelns(ADV_CLAUSE_MODIFIER);
-        System.out.println("Relations: " + relations);
-
         final Set<String> simplifiedSentences = new HashSet<>();
         final RangeSet<Integer> rangeSet = TreeRangeSet.create();
-        for (int i = 0; i < posTags.size(); i++) {
+        for (int i = 2; i < posTags.size(); i++) {
             final String posTag = posTags.get(i);
+            // If the word is a participle
             if (posTag.equalsIgnoreCase("vbg") || posTag.equalsIgnoreCase("vbn")) {
-                // Participial phrases should not come after a verb
-                if (i > 0 && !posTags.get(i - 1).toLowerCase().startsWith("vb")) {
-                    final Tree word = root.getLeaves().get(i);
-                    final Tree participialPhrase = TreeUtil.getVpFromWord(root, word);
-                    if (participialPhrase == null) {
-                        System.out.println("Participial phrase not contained in VP");
-                        continue;
-                    }
-
-                    // Calculate the bounds of the participial phrase and account for commas
-                    final Range<Integer> rangeOfParticipialPhrase = TreeUtil.getRangeOfTree(root, participialPhrase);
-                    int lowerBound = rangeOfParticipialPhrase.lowerEndpoint();
-                    if (i > 0 && words.get(i - 1).equals(",")) {
-                        lowerBound--;
-                    }
-                    int upperBound = rangeOfParticipialPhrase.upperEndpoint();
-                    if (i < posTags.size() - 1 && words.get(i + 1).equals(",")) {
-                        upperBound++;
-                    }
-                    rangeSet.add(Range.closed(lowerBound, upperBound));
-
-                    for (final SemanticGraphEdge edge : relations) {
-                        final IndexedWord dependent = edge.getDependent();
-                        final int dependentIndex = dependent.index() - 1;
-                        if (rangeOfParticipialPhrase.contains(dependentIndex)) {
-                            final List<SemanticGraphEdge> governorRelations = dependencyGraph.getOutEdgesSorted(
-                                    edge.getGovernor());
-                            for (final SemanticGraphEdge governorEdge : governorRelations) {
-                                if (governorEdge.getRelation().equals(NOMINAL_SUBJECT)) {
-                                    final IndexedWord subject = governorEdge.getDependent();
-                                    final Tree subjectNp = TreeUtil.getNpFromWord(root, subject);
-                                    final String subjectNpString = TreeUtil.constructPhraseFromTree(subjectNp);
-
-                                    final String vp = TreeUtil.constructPhraseFromTree(participialPhrase);
-                                    final Tense tense = TenseUtil.calculateTense(parsed);
-                                    final String participialPhraseModified = realizeVerbPhraseWithFeatures(vp, false,
-                                            tense);
-                                    final String simplifiedSentence = realizeSentence(subjectNpString,
-                                            participialPhraseModified);
-                                    simplifiedSentences.add(simplifiedSentence);
-                                }
-                            }
+                System.out.printf("Found participle '%s' at index %d\n", words.get(i), i);
+                // Look for a participle that comes after a noun phrase and a comma
+                if (words.get(i - 1).equals(",") && !posTags.get(i - 2).startsWith("vb")) {
+                    final int leftBoundary = i - 1;
+                    int rightBoundary = -1;
+                    for (int k = i + 1; k < words.size(); k++) {
+                        if (WordListUtil.isBoundaryComma(k, parsed)) {
+                            rightBoundary = k;
+                            break;
                         }
                     }
+                    if (rightBoundary == -1) {
+                        rightBoundary = words.size() - 1;
+                    }
+                    rangeSet.add(Range.closed(leftBoundary, rightBoundary));
+
+                    // Disabled for now due to issues identifying the subject of a participial phrase
+                    /*final List<String> participialPhrase = words.subList(leftBoundary + 1, rightBoundary - 1);
+                    final String participialPhraseString = WordListUtil.constructPhraseFromWordList(participialPhrase);
+                    final String nounPhrase = TreeUtil.constructPhraseFromTree(TreeUtil.getNpFromWord(root, i - 2));
+
+                    final String realizedParticipialPhrase = TextRealization.realizeVerbPhraseWithFeatures(
+                            participialPhraseString, true, Tense.PAST);
+                    System.out.println(nounPhrase + " | " + realizedParticipialPhrase);
+                    simplifiedSentences.add(TextRealization.realizeSentence(nounPhrase, realizedParticipialPhrase));*/
                 }
             }
         }

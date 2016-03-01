@@ -12,7 +12,7 @@ public class SentenceSimplifier {
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
             AppositiveAndRelativeClauseExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor(),
             ConjoinedVerbExtractor.getExtractor(), VerbPhraseModifierExtractor.getExtractor(),
-            AppositiveAndRelativeClauseExtractor.getExtractor());
+            AppositiveAndRelativeClauseExtractor.getExtractor(), ParticipialModifiersExtractor.getExtractor());
 
     public static void main(String[] args) {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
