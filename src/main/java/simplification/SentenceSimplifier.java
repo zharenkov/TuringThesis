@@ -20,7 +20,7 @@ public class SentenceSimplifier {
 
     public static Set<String> simplifySentence(String originalSentence) {
         Set<String> sentences = new LinkedHashSet<>();
-        sentences.add(originalSentence);
+        sentences.add(originalSentence.replaceAll("\"", ""));
         for (final Extractor extractor : extractors) {
             final Set<String> simplifiedSentences = new HashSet<>();
             for (final String sentence : sentences) {
