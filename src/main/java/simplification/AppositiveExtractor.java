@@ -1,6 +1,5 @@
 package simplification;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -15,20 +14,23 @@ import simplenlg.features.Tense;
 import util.TreeUtil;
 import util.WordListUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations.*;
+import static edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations.APPOSITIONAL_MODIFIER;
 import static util.TenseUtil.calculateTense;
 
-public class AppositiveAndRelativeClauseExtractor implements Extractor {
-    private static AppositiveAndRelativeClauseExtractor extractor;
+public class AppositiveExtractor implements Extractor {
+    private static AppositiveExtractor extractor;
 
-    private AppositiveAndRelativeClauseExtractor() {
+    private AppositiveExtractor() {
     }
 
-    public static AppositiveAndRelativeClauseExtractor getExtractor() {
+    public static AppositiveExtractor getExtractor() {
         if (extractor == null) {
-            extractor = new AppositiveAndRelativeClauseExtractor();
+            extractor = new AppositiveExtractor();
         }
         return extractor;
     }
@@ -42,8 +44,6 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
         final SemanticGraph dependencies = parsed.dependencyGraph();
         final List<SemanticGraphEdge> appositivesAndRelativeClauses = new ArrayList<>();
         appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(APPOSITIONAL_MODIFIER));
-        appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(RELATIVE_CLAUSE_MODIFIER));
-        appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(CLAUSAL_MODIFIER));
         System.out.println("Relations: " + appositivesAndRelativeClauses);
 
         final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
@@ -60,7 +60,7 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
         }
 
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
-        System.out.println("With appositives and relative clauses removed: " + answer);
+        System.out.println("With appositives removed: " + answer);
         final String simplifiedSentence = WordListUtil.constructPhraseFromWordList(answer);
         simplifiedSentences.add(simplifiedSentence);
         System.out.println("Simplified Sentences: " + simplifiedSentences);
@@ -91,18 +91,6 @@ public class AppositiveAndRelativeClauseExtractor implements Extractor {
             be = "is";
         }
 
-        if (edge.getRelation().equals(APPOSITIONAL_MODIFIER)) {
-            return ImmutableSet.of(TextRealization.realizeSentence(governorNpString, be, dependentString));
-        } else {
-            final String dependent;
-            if (edge.getRelation().equals(RELATIVE_CLAUSE_MODIFIER)) {
-                final String[] split = dependentString.split(" ");
-                // Remove the relative pronoun that is at the start of the relative clause
-                dependent = Joiner.on(' ').join(Arrays.copyOfRange(split, 1, split.length));
-            } else {
-                dependent = be + " " + dependentString;
-            }
-            return ImmutableSet.of(TextRealization.realizeSentence(governorNpString, dependent));
-        }
+        return ImmutableSet.of(TextRealization.realizeSentence(governorNpString, be, dependentString));
     }
 }
