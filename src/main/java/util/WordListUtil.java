@@ -27,7 +27,6 @@ public class WordListUtil {
      */
     public static Range<Integer> findBoundedPart(IndexedWord governor, IndexedWord dependent, Sentence sentence) {
         final List<String> words = sentence.words();
-        final List<String> nerTags = sentence.nerTags();
         final int governorIndex = governor.index() - 1;
         final int dependentIndex = dependent.index() - 1;
 
@@ -49,11 +48,6 @@ public class WordListUtil {
         if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
             System.out.println("The dependent is not bounded by commas after the governor");
             return null;
-        }
-        // If the appositive or relative clause is at the end of the sentence, make sure we're not deleting the
-        // period.
-        if (words.get(rightCommaBound).equals(".")) {
-            rightCommaBound--;
         }
         return Range.closed(leftCommaBound, rightCommaBound);
     }
