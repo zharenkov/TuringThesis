@@ -13,17 +13,17 @@ import java.util.Set;
 
 import static util.TreeUtil.*;
 
-public class CopulaRule extends Rule {
+public class EquativeCopulaRule extends Rule {
     private static final Set<String> COPULAS = ImmutableSet.of("be");
 
-    private static CopulaRule instance;
+    private static EquativeCopulaRule instance;
 
-    private CopulaRule() {
+    private EquativeCopulaRule() {
     }
 
-    public static CopulaRule getRule() {
+    public static EquativeCopulaRule getRule() {
         if (instance == null) {
-            instance = new CopulaRule();
+            instance = new EquativeCopulaRule();
         }
         return instance;
     }
