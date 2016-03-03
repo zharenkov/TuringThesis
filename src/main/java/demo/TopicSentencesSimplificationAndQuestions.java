@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TopicSentencesSimplificationAndQuestions implements Serializable {
     private final Map<String, Set<String>> sentenceToSimplifiedSentences;
@@ -18,17 +22,38 @@ public class TopicSentencesSimplificationAndQuestions implements Serializable {
         this.sentenceToSimplifiedSentences = sentenceToSimplifiedSentences;
         simplifiedSentenceToQuestions = new HashMap<>();
         int numberOfSimplifiedSentences = 0;
-        int numberOfGeneratedQuestions = 0;
+        final AtomicInteger numberOfGeneratedQuestions = new AtomicInteger(0);
+        final int processors = Runtime.getRuntime().availableProcessors();
+        final ExecutorService executor = Executors.newFixedThreadPool(processors);
         for (final Set<String> value : sentenceToSimplifiedSentences.values()) {
             numberOfSimplifiedSentences += value.size();
-            for (final String simplifiedSentence : value) {
-                final Set<String> generatedQuestions = Rules.generateQuestions(simplifiedSentence);
-                simplifiedSentenceToQuestions.put(simplifiedSentence, generatedQuestions);
-                numberOfGeneratedQuestions += generatedQuestions.size();
-            }
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    for (final String simplifiedSentence : value) {
+                        final Set<String> generatedQuestions = Rules.generateQuestions(simplifiedSentence);
+                        simplifiedSentenceToQuestions.put(simplifiedSentence, generatedQuestions);
+                        numberOfGeneratedQuestions.addAndGet(generatedQuestions.size());
+                    }
+                }
+            });
         }
+
+        executor.shutdown();
+        final long startTime = System.currentTimeMillis();
+        System.err.println("Waiting for all generation tasks to finish");
+        try {
+            executor.awaitTermination(60, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.err.println("All generation tasks finished");
+        final long endTime = System.currentTimeMillis();
+        final long secondsToFinish = TimeUnit.SECONDS.convert(endTime - startTime, TimeUnit.MILLISECONDS);
+        System.err.println("Time to generation questions: " + secondsToFinish + " seconds");
+
         this.numberOfSimplifiedSentences = numberOfSimplifiedSentences;
-        this.numberOfGeneratedQuestions = numberOfGeneratedQuestions;
+        this.numberOfGeneratedQuestions = numberOfGeneratedQuestions.get();
     }
 
     @Override
