@@ -15,7 +15,8 @@ import java.util.Set;
 
 public class SentenceSimplifier {
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
-            AppositiveExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor(),
+            AppositiveExtractor.getExtractor(), EquativeCopulaExtractor.getExtractor(),
+            ConjoinedVerbPhraseExtractor.getExtractor(),
             ConjoinedVerbExtractor.getExtractor(), VerbPhraseModifierExtractor.getExtractor(),
             RelativeClauseExtractor.getExtractor(), ParticipialModifiersExtractor.getExtractor());
 
