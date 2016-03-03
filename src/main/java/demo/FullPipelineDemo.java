@@ -7,6 +7,9 @@ import simplification.SentenceSimplifier;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class FullPipelineDemo {
     private static final String TOPIC_SENTENCES_FILE_NAME = "topic_sentences.txt";
@@ -18,7 +21,7 @@ public class FullPipelineDemo {
         }
     });
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
         final ClassLoader classLoader = SimplificationDemo.class.getClassLoader();
         final URL resource = classLoader.getResource(TOPIC_SENTENCES_FILE_NAME);
         if (resource == null) {
@@ -34,10 +37,26 @@ public class FullPipelineDemo {
         System.setOut(DUMMY_STREAM);
         //System.setErr(DUMMY_STREAM);
         final Map<String, Set<String>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
+        final int processors = Runtime.getRuntime().availableProcessors();
+        final ExecutorService executor = Executors.newFixedThreadPool(processors);
         for (final String sentence : sentences) {
-            final Set<String> strings = SentenceSimplifier.simplifySentence(sentence);
-            sentenceToSimplifiedSentences.put(sentence, strings);
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    final Set<String> strings = SentenceSimplifier.simplifySentence(sentence);
+                    sentenceToSimplifiedSentences.put(sentence, strings);
+                }
+            });
         }
+        executor.shutdown();
+        final long startTime = System.currentTimeMillis();
+        System.err.println("Waiting for all simplification tasks to finish");
+        executor.awaitTermination(60, TimeUnit.MINUTES);
+        System.err.println("All simplification tasks finished");
+        final long endTime = System.currentTimeMillis();
+        final long secondsToFinish = TimeUnit.SECONDS.convert(endTime - startTime, TimeUnit.MILLISECONDS);
+        System.err.println("Time to finish simplification: " + secondsToFinish + " seconds");
+
         final TopicSentencesSimplificationAndQuestions simplification = new TopicSentencesSimplificationAndQuestions(
                 sentenceToSimplifiedSentences);
         System.setOut(OUT);
