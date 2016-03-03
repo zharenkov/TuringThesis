@@ -58,7 +58,7 @@ public class FullPipelineDemo {
         System.err.println("Time to finish simplification: " + secondsToFinish + " seconds");
 
         final TopicSentencesSimplificationAndQuestions simplification = new TopicSentencesSimplificationAndQuestions(
-                sentenceToSimplifiedSentences);
+                sentenceToSimplifiedSentences, sentences);
         System.setOut(OUT);
         //System.setErr(ERR);
         System.out.println(simplification);

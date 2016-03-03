@@ -4,8 +4,8 @@ import question.Rules;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,12 +13,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TopicSentencesSimplificationAndQuestions implements Serializable {
+    private final List<String> sentences;
     private final Map<String, Set<String>> sentenceToSimplifiedSentences;
     private final Map<String, Set<String>> simplifiedSentenceToQuestions;
     private final int numberOfSimplifiedSentences;
     private final int numberOfGeneratedQuestions;
 
-    public TopicSentencesSimplificationAndQuestions(Map<String, Set<String>> sentenceToSimplifiedSentences) {
+    public TopicSentencesSimplificationAndQuestions(Map<String, Set<String>> sentenceToSimplifiedSentences, List<String> sentences) {
+        this.sentences = sentences;
         this.sentenceToSimplifiedSentences = sentenceToSimplifiedSentences;
         simplifiedSentenceToQuestions = new HashMap<>();
         int numberOfSimplifiedSentences = 0;
@@ -77,12 +79,12 @@ public class TopicSentencesSimplificationAndQuestions implements Serializable {
         builder.append(String.format("%d topic sentences\n", sentenceToSimplifiedSentences.size()));
         builder.append(String.format("%d simplified sentences\n", numberOfSimplifiedSentences));
         builder.append(String.format("%d generated questions\n", numberOfGeneratedQuestions));
-        for (Entry<String, Set<String>> entry : sentenceToSimplifiedSentences.entrySet()) {
+        for (final String sentence : sentences) {
             builder.append("---------------------------------\n\n");
             builder.append("Original Sentence:\n");
-            builder.append(entry.getKey()).append("\n\n");
+            builder.append(sentence).append("\n\n");
             builder.append("Simplified Sentences:\n");
-            for (final String simplifiedSentence : entry.getValue()) {
+            for (final String simplifiedSentence : sentenceToSimplifiedSentences.get(sentence)) {
                 builder.append(simplifiedSentence).append("\n");
                 final Set<String> questions = simplifiedSentenceToQuestions.get(simplifiedSentence);
                 if (questions != null) {
