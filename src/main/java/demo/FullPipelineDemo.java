@@ -61,7 +61,6 @@ public class FullPipelineDemo {
                 sentenceToSimplifiedSentences, sentences);
         System.setOut(OUT);
         //System.setErr(ERR);
-        System.out.println(simplification);
 
         if (args.length == 1 && args[0].equals("out")) {
             int n = 0;
@@ -75,6 +74,8 @@ public class FullPipelineDemo {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            System.out.println(simplification);
         }
     }
 }
