@@ -1,6 +1,7 @@
 package util;
 
 import edu.stanford.nlp.simple.Sentence;
+import edu.stanford.nlp.trees.Tree;
 
 public class NerUtil {
     /**
@@ -28,5 +29,24 @@ public class NerUtil {
      */
     public static boolean isPerson(Sentence sentence, int index) {
         return sentence.nerTag(index).equalsIgnoreCase("person");
+    }
+
+    /**
+     * Returns whether the head word of the given tree in the given sentence represents a person.
+     *
+     * @param root the root of the phrase structure tree
+     * @param tree the given tree
+     * @return whether whether the head word of the given tree in the given sentence represents a person
+     */
+    public static boolean headOfTreeIsPerson(Sentence sentence, Tree root, Tree tree) {
+        final int leafIndex = TreeUtil.getLeafIndex(root, TreeUtil.findHead(tree).getLeaves().get(0));
+        if (leafIndex == -1) {
+            System.err.println("----------------------------------------");
+            System.err.printf("Could not find index for Tree [%s]\n", tree);
+            System.err.printf("In Sentence [%s]\n", root);
+            System.err.println("----------------------------------------");
+            return false;
+        }
+        return isPerson(sentence, leafIndex);
     }
 }
