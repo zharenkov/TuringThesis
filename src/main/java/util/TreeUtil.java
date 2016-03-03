@@ -59,6 +59,40 @@ public class TreeUtil {
     }
 
     /**
+     * Returns the highest parent of the given word in the phrase structure tree represented by {@code root} that has the label "NP".
+     *
+     * @param root the given root of the phrase structure tree
+     * @param word the given word
+     * @return the {@link Tree} representing the NP or {@code null} if no such tree exists
+     */
+    public static Tree getHighestNpFromWord(Tree root, Tree word) {
+        Tree currentTree = word;
+        while (!currentTree.label().value().equalsIgnoreCase("np")) {
+            currentTree = getParent(root, currentTree);
+            if (currentTree == root) {
+                return null;
+            }
+        }
+        Tree previousTree = currentTree;
+        while (labelEquals(currentTree, "np") || labelEquals(currentTree, "pp")) {
+            previousTree = currentTree;
+            currentTree = getParent(root, currentTree);
+        }
+        return previousTree;
+    }
+
+    /**
+     * Returns the highest parent of the given word in the phrase structure tree represented by {@code root} that has the label "NP".
+     *
+     * @param root  the given root of the phrase structure tree
+     * @param index the index of the given word
+     * @return the {@link Tree} representing the NP or {@code null} if no such tree exists
+     */
+    public static Tree getHighestNpFromWord(Tree root, int index) {
+        return getHighestNpFromWord(root, root.getLeaves().get(index));
+    }
+
+    /**
      * Returns the first parent of the word represented by the given index in the phrase structure tree represented by {@code root} that has the label "NP".
      *
      * @param root  the given root of the phrase structure tree
