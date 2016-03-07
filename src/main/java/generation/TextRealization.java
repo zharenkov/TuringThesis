@@ -10,6 +10,8 @@ import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.VPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class TextRealization {
@@ -18,7 +20,7 @@ public class TextRealization {
     private static final Realiser realiser = new Realiser(lexicon);
 
     private static final Set<Character> TRAILING_PUNCTUATION = ImmutableSet.of('.', ',', '?', ';', ':', ' ');
-    private static final Set<String> INTRANSITIVE_VERBS = ImmutableSet.of("die");
+    private static final Set<String> INTRANSITIVE_VERBS = ImmutableSet.of("die", "be");
     private static final Joiner SPACES = Joiner.on(' ');
     private static final char QUESTION_MARK = '?';
     private static final char PERIOD = '.';
@@ -90,6 +92,37 @@ public class TextRealization {
         }
         vpPhraseSpec.setFeature(Feature.TENSE, tense);
 
+        return realiser.realise(vpPhraseSpec).toString();
+    }
+
+    /**
+     * Realizes the given verb phrase with the given features.
+     *
+     * @param vp       the given verb phrase
+     * @param features the given features
+     * @return the realized verb phrase
+     */
+    public static String realizeVerbPhraseWithFeatures(String vp, Map<String, Object> features) {
+        final String verb = vp.split(" ")[0];
+        final String lemma = new Sentence(verb).lemma(0);
+        System.out.printf("Realizing verb '%s' (lemma '%s')\n", verb, lemma);
+        final String[] parts = vp.split(" ");
+        parts[0] = lemma;
+        final String lemmatizedVpString = Joiner.on(' ').join(parts);
+
+        final VPPhraseSpec vpPhraseSpec = nlgFactory.createVerbPhrase(lemmatizedVpString);
+
+        for (final Entry<String, Object> feature : features.entrySet()) {
+            final String featureName = feature.getKey();
+            final Object featureValue = feature.getValue();
+            if (featureName.equals(Feature.PASSIVE)) {
+                if (featureValue.equals(true) && !INTRANSITIVE_VERBS.contains(lemma)) {
+                    vpPhraseSpec.setFeature(Feature.PASSIVE, true);
+                }
+            } else {
+                vpPhraseSpec.setFeature(featureName, featureValue);
+            }
+        }
         return realiser.realise(vpPhraseSpec).toString();
     }
 }

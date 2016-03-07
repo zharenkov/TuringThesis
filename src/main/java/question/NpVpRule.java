@@ -3,12 +3,14 @@ package question;
 import com.google.common.base.Joiner;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
-import generation.TextRealization;
 import util.NerUtil;
+import util.PosUtil;
 import util.TreeUtil;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static generation.TextRealization.realizeQuestion;
 
 public class NpVpRule extends Rule {
     private static NpVpRule instance;
@@ -39,7 +41,33 @@ public class NpVpRule extends Rule {
                 final Tree nextSibling = node.getChild(k + 1);
                 if (TreeUtil.labelEquals(child, "np") && TreeUtil.labelEquals(nextSibling, "vp")) {
                     final String wh = NerUtil.getWhFromHead(sentence, root, child);
-                    questions.add(TextRealization.realizeQuestion(wh, TreeUtil.constructPhraseFromTree(nextSibling)));
+                    boolean passive = false;
+                    boolean past = false;
+                    for (final Tree vpLeaf : nextSibling.getLeaves()) {
+                        // If we reach a noun then don't look for 'by' afterwards
+                        if (PosUtil.isNoun(root, vpLeaf)) {
+                            break;
+                        }
+                        // Passive voice is marked by the word 'by'
+                        if (vpLeaf.value().equals("by")) {
+                            passive = true;
+                        }
+                        if (PosUtil.isPastTenseVerb(root, vpLeaf)) {
+                            past = true;
+                        }
+                    }
+                    final String verbString = TreeUtil.constructPhraseFromTree(nextSibling);
+                    if (passive && !(verbString.startsWith("is") || verbString.startsWith("was"))) {
+                        final String vb;
+                        if (past) {
+                            vb = "was";
+                        } else {
+                            vb = "is";
+                        }
+                        questions.add(realizeQuestion(wh, vb, verbString));
+                    } else {
+                        questions.add(realizeQuestion(wh, verbString));
+                    }
                 }
             }
         }
