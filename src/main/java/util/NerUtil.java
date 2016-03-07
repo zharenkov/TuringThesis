@@ -49,4 +49,19 @@ public class NerUtil {
         }
         return isPerson(sentence, leafIndex);
     }
+
+    /**
+     * Returns either 'who' or 'what' based on the head word of the given tree.
+     *
+     * @param sentence the sentence containing the given tree
+     * @param root     the root of the given sentence
+     * @param tree     the given tree
+     * @return 'who' if the head word is a person, 'what' otherwise
+     */
+    public static String getWhFromHead(Sentence sentence, Tree root, Tree tree) {
+        if (headOfTreeIsPerson(sentence, root, tree)) {
+            return "who";
+        }
+        return "what";
+    }
 }
