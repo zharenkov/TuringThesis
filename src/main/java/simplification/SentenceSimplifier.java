@@ -48,13 +48,15 @@ public class SentenceSimplifier {
     private static String cleanSentence(String sentence) {
         final Sentence parsed = new Sentence(sentence);
         final RangeSet<Integer> rangeSet = TreeRangeSet.create();
-        for (int i = 0; i < parsed.words().size() - 2; i++) {
-            final String word = parsed.words().get(i);
+        final List<String> words = parsed.words();
+        for (int i = 0; i < words.size() - 2; i++) {
+            final String word = words.get(i);
             // Check for IPA and remove it
             if (word.equals("/") && parsed.word(i + 2).equals("/")) {
                 rangeSet.add(Range.closed(i, i + 2));
             }
         }
-        return WordListUtil.constructPhraseFromWordList(WordListUtil.removeParts(parsed.words(), rangeSet));
+        final String ipaRemoved = WordListUtil.constructPhraseFromWordList(WordListUtil.removeParts(words, rangeSet));
+        return ipaRemoved.replaceAll(" -- ", "-");
     }
 }
