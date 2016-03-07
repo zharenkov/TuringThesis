@@ -17,7 +17,8 @@ public class SentenceSimplifier {
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
             AppositiveExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor(),
             ConjoinedVerbExtractor.getExtractor(), VerbPhraseModifierExtractor.getExtractor(),
-            RelativeClauseExtractor.getExtractor(), ParticipialModifiersExtractor.getExtractor());
+            RelativeClauseExtractor.getExtractor(), ParticipialModifiersExtractor.getExtractor(),
+            PrepositionalPhraseExtractor.getExtractor());
 
     public static void main(String[] args) {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
