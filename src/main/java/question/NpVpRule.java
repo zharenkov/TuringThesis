@@ -10,6 +10,7 @@ import util.TreeUtil;
 import java.util.HashSet;
 import java.util.Set;
 
+import static generation.TextRealization.isIntransitive;
 import static generation.TextRealization.realizeQuestion;
 
 public class NpVpRule extends Rule {
@@ -40,6 +41,7 @@ public class NpVpRule extends Rule {
                 final Tree child = node.getChild(k);
                 final Tree nextSibling = node.getChild(k + 1);
                 if (TreeUtil.labelEquals(child, "np") && TreeUtil.labelEquals(nextSibling, "vp")) {
+                    System.out.printf("Examining NP [%s] and VP [%s]\n", child, nextSibling);
                     final String wh = NerUtil.getWhFromHead(sentence, root, child);
                     boolean passive = false;
                     boolean past = false;
@@ -52,10 +54,13 @@ public class NpVpRule extends Rule {
                         if (vpLeaf.value().equals("by")) {
                             passive = true;
                         }
-                        if (PosUtil.isPastTenseVerb(root, vpLeaf)) {
-                            past = true;
-                        }
                     }
+                    final int verbHeadIndex = TreeUtil.findIndexOfHead(root, nextSibling);
+                    final Tree verbHead = root.getLeaves().get(verbHeadIndex);
+                    if (PosUtil.isPastTenseVerb(sentence, verbHeadIndex)) {
+                        past = true;
+                    }
+
                     final String verbString = TreeUtil.constructPhraseFromTree(nextSibling);
                     if (passive && !(verbString.startsWith("is") || verbString.startsWith("was"))) {
                         final String vb;
@@ -67,6 +72,32 @@ public class NpVpRule extends Rule {
                         questions.add(realizeQuestion(wh, vb, verbString));
                     } else {
                         questions.add(realizeQuestion(wh, verbString));
+                    }
+
+                    Tree npInVp = null;
+                    for (final Tree verbPhraseChild : nextSibling.children()) {
+                        if (TreeUtil.labelEquals(verbPhraseChild, "np")) {
+                            npInVp = verbPhraseChild;
+                            break;
+                        }
+                    }
+                    if (npInVp != null && !isIntransitive(TreeUtil.constructPhraseFromTree(verbHead))) {
+                        System.out.println("NP under VP: " + npInVp);
+                        final String verbLemma = new Sentence(TreeUtil.constructPhraseFromTree(verbHead)).lemma(0);
+                        if (verbLemma.equalsIgnoreCase("be")) {
+                            System.out.println("Ignoring 'be' VP");
+                        } else {
+                            final String whNpInVp = NerUtil.getWhFromHead(sentence, root, npInVp);
+                            final String doString;
+                            if (past) {
+                                doString = "did";
+                            } else {
+                                doString = "does";
+                            }
+                            final String subjectString = TreeUtil.constructPhraseFromTree(child);
+
+                            questions.add(realizeQuestion(whNpInVp, doString, subjectString, verbLemma));
+                        }
                     }
                 }
             }

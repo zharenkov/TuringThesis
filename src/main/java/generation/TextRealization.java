@@ -125,4 +125,16 @@ public class TextRealization {
         }
         return realiser.realise(vpPhraseSpec).toString();
     }
+
+    /**
+     * Returns whether the given VP has an intransitive verb as the first word.
+     *
+     * @param vp the given VP
+     * @return whether the given VP has an intransitive verb as the first word
+     */
+    public static boolean isIntransitive(String vp) {
+        final String verb = vp.split(" ")[0];
+        final String lemma = new Sentence(verb).lemma(0);
+        return INTRANSITIVE_VERBS.contains(lemma);
+    }
 }

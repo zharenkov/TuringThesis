@@ -177,6 +177,18 @@ public class TreeUtil {
     }
 
     /**
+     * Returns the head of the given tree in the given sentence.
+     *
+     * @param root the root of the given sentence
+     * @param tree the given tree
+     * @return the head of the tree
+     */
+    public static int findIndexOfHead(Tree root, Tree tree) {
+        final Tree head = HEAD_FINDER.determineHead(tree);
+        return getLeafIndex(root, head.getLeaves().get(0));
+    }
+
+    /**
      * Returns the index of the given leaf in the tree represented by the given root.
      *
      * @param root the given root
