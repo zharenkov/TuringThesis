@@ -1,39 +1,28 @@
 package crawling;
 
+import com.google.common.base.Charsets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import demo.SimplificationDemo;
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.Set;
 
 public class WikipediaCrawler {
-    private static final String RANDOM_FEATURED_ARTICLE_URL = "http://tools.wmflabs.org/magnustools/randomarticle.php?lang=en&project=wikipedia&categories=Featured+articles&d=0";
+    private static final String FEATURED_ARTICLE_URLS_FILENAME = "featured_article_urls.txt";
     private static final String WIKIPEDIA_API_URL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=";
 
-    public static String getHTML() throws Exception {
-        final URL randomArticleUrl = new URL(RANDOM_FEATURED_ARTICLE_URL);
-        final HttpURLConnection conn = (HttpURLConnection) randomArticleUrl.openConnection();
-        conn.setRequestMethod("GET");
-        final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        final String redirect = rd.readLine();
-        if (redirect == null) {
-            System.err.println("Could not load random featured article");
-            return "";
-        }
-        final String featuredArticleUrlString = redirect.substring(redirect.indexOf("url="),
-                redirect.lastIndexOf("'"));
-        final String featuredArticleTitle = featuredArticleUrlString.substring(
-                featuredArticleUrlString.lastIndexOf("/") + 1);
-        //System.out.println(featuredArticleTitle);
-
+    public static String getHTML(String url) throws Exception {
         final StringBuilder result = new StringBuilder();
-        final URL featuredArticleUrl = new URL(WIKIPEDIA_API_URL + featuredArticleTitle);
+        final URL featuredArticleUrl = new URL(WIKIPEDIA_API_URL + url);
         final HttpURLConnection conn2 = (HttpURLConnection) featuredArticleUrl.openConnection();
         conn2.setRequestMethod("GET");
         final BufferedReader rd2 = new BufferedReader(new InputStreamReader(conn2.getInputStream()));
@@ -47,9 +36,9 @@ public class WikipediaCrawler {
         return result.toString();
     }
 
-    public static String getTopicSentence() throws Exception {
+    public static String getTopicSentence(String url) throws Exception {
         final JsonParser parser = new JsonParser();
-        final String content = getHTML();
+        final String content = getHTML(url);
         final JsonObject json = parser.parse(content).getAsJsonObject();
         //System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content)));
 
@@ -66,13 +55,22 @@ public class WikipediaCrawler {
     }
 
     public static void main(String[] args) throws Exception {
-        final Set<String> topicSentences = new HashSet<>();
-        while (topicSentences.size() < 100) {
-            final String topicSentence = getTopicSentence();
-            final boolean newTopicSentence = topicSentences.add(topicSentence);
-            if (newTopicSentence) {
-                System.out.println(topicSentence);
-            }
+        final StringBuilder result = new StringBuilder();
+        final ClassLoader classLoader = SimplificationDemo.class.getClassLoader();
+        final URL resource = classLoader.getResource(FEATURED_ARTICLE_URLS_FILENAME);
+        if (resource == null) {
+            System.err.println("Cannot load topic sentences");
+            return;
         }
+        final Scanner scanner = new Scanner(new File(resource.getFile()));
+        while (scanner.hasNext()) {
+            final String url = scanner.nextLine();
+            final String topicSentence = getTopicSentence(url);
+            System.out.println(topicSentence);
+            result.append(topicSentence);
+            result.append("\n");
+        }
+        final File outputFile = new File("output/wikipedia_featured_articles/first_paragraphs.txt");
+        FileUtils.writeStringToFile(outputFile, result.toString(), Charsets.UTF_8.name());
     }
 }
