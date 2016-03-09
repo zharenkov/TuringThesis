@@ -2,13 +2,10 @@ package simplification;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import generation.TextRealization;
 import util.TreeUtil;
-import util.WordListUtil;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -41,7 +38,6 @@ public class SbarWhExtractor implements Extractor {
         System.out.println(posTags);
         final Set<String> simplifiedSentences = new LinkedHashSet<>();
         simplifiedSentences.add(sentence);
-        final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
         for (int i = 0; i < posTags.size(); i++) {
             final String posTag = posTags.get(i).toLowerCase();
             if (posTag.startsWith("wp") || posTag.equals("wdt")) {
@@ -64,14 +60,11 @@ public class SbarWhExtractor implements Extractor {
                         System.err.println("Could not find main NP");
                     } else {
                         final String sbarString = TreeUtil.getStringAfterTree(root, tree);
-                        partsToRemove.add(TreeUtil.getRangeOfTree(root, sbar));
                         simplifiedSentences.add(TextRealization.realizeSentence(np, sbarString));
                     }
                 }
             }
         }
-        simplifiedSentences.add(
-                WordListUtil.constructPhraseFromWordList(WordListUtil.removeParts(parsed.words(), partsToRemove)));
         return new SimplificationResult(simplifiedSentences);
     }
 
