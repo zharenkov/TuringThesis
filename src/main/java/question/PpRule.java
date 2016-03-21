@@ -1,5 +1,6 @@
 package question;
 
+import com.google.common.base.Joiner;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import simplenlg.features.Tense;
@@ -27,20 +28,9 @@ public class PpRule extends Rule {
     }
 
     public static void main(String[] args) {
-        final Rule rule = new PpRule();
         final Set<String> questions = new LinkedHashSet<>();
-        rule.findQuestions(new Sentence("Bob ate under the Brooklyn Bridge."), questions);
-        System.out.println(questions + "\n");
-        questions.clear();
-        rule.findQuestions(new Sentence("Bob ate some tea under the Brooklyn Bridge."), questions);
-        System.out.println(questions + "\n");
-        questions.clear();
-        rule.findQuestions(new Sentence("Bob was eating under the Brooklyn Bridge."), questions);
-        System.out.println(questions + "\n");
-        questions.clear();
-        rule.findQuestions(new Sentence("George Washington commanded the forces in Virginia."), questions);
-        System.out.println(questions + "\n");
-        questions.clear();
+        getRule().findQuestions(new Sentence(Joiner.on(' ').join(args)), questions);
+        System.out.println(questions);
     }
 
     @Override
