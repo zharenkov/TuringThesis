@@ -134,6 +134,29 @@ public class TreeUtil {
     }
 
     /**
+     * Returns a {@link Vp} representing the full VP starting with the parent of the given tree in the sentence
+     * represented by the given root.
+     *
+     * @param root the root of the given sentence
+     * @param tree the given tree
+     * @return a {@link Vp} representing the full VP
+     */
+    public static Vp getFullVpFromTree(Tree root, Tree tree) {
+        final ReversePhraseBuilder reversePhraseBuilder = new ReversePhraseBuilder();
+        Tree previousTree = tree;
+        Tree currentTree = getParent(root, tree);
+        while (labelEquals(currentTree, "vp")) {
+            reversePhraseBuilder.addString(constructPhraseFromTree(currentTree.getChild(0)));
+            previousTree = currentTree;
+            currentTree = getParent(root, currentTree);
+            if (currentTree == root) {
+                break;
+            }
+        }
+        return new Vp(reversePhraseBuilder.getWords(), previousTree);
+    }
+
+    /**
      * Returns whether the label for the given tree equals the given label (case-insensitive).
      *
      * @param tree  the given tree
@@ -245,6 +268,34 @@ public class TreeUtil {
             }
         }
         return WordListUtil.constructPhraseFromWordList(stringAfter.getWords());
+    }
+
+    /**
+     * Returns the string from the sentence represented by the given root that occurs between the given trees.
+     *
+     * @param root      the given root
+     * @param leftTree  the given left tree
+     * @param rightTree the given right tree
+     * @return the string between the given trees
+     */
+    public static String getStringBetweenTrees(Tree root, Tree leftTree, Tree rightTree) {
+        final List<String> stringBetween = new ArrayList<>();
+
+        final Tree leftBound = Iterables.getLast(leftTree.getLeaves());
+        final Tree rightBound = rightTree.getLeaves().get(0);
+
+        final List<Tree> leaves = root.getLeaves();
+        boolean add = false;
+        for (final Tree leaf : leaves) {
+            if (leaf == leftBound) {
+                add = true;
+            } else if (leaf == rightBound) {
+                break;
+            } else if (add) {
+                stringBetween.add(leaf.value());
+            }
+        }
+        return WordListUtil.constructPhraseFromWordList(stringBetween);
     }
 
     /**

@@ -32,6 +32,28 @@ public class NerUtil {
     }
 
     /**
+     * Returns whether the word at the given index in the given sentence represents a location.
+     *
+     * @param sentence the given sentence
+     * @param index    the given index
+     * @return whether the word at the given index in the given sentence represents a location
+     */
+    public static boolean isLocation(Sentence sentence, int index) {
+        return sentence.nerTag(index).equalsIgnoreCase("location");
+    }
+
+    /**
+     * Returns whether the word at the given index in the given sentence represents a date or time.
+     *
+     * @param sentence the given sentence
+     * @param index    the given index
+     * @return whether the word at the given index in the given sentence represents a date or time
+     */
+    public static boolean isTime(Sentence sentence, int index) {
+        return sentence.nerTag(index).equalsIgnoreCase("date") || sentence.nerTag(index).equalsIgnoreCase("time");
+    }
+
+    /**
      * Returns whether the head word of the given tree in the given sentence represents a person.
      *
      * @param root the root of the phrase structure tree
@@ -48,6 +70,44 @@ public class NerUtil {
             return false;
         }
         return isPerson(sentence, leafIndex);
+    }
+
+    /**
+     * Returns whether the head word of the given tree in the given sentence represents a location.
+     *
+     * @param root the root of the phrase structure tree
+     * @param tree the given tree
+     * @return whether whether the head word of the given tree in the given sentence represents a location
+     */
+    public static boolean headOfTreeIsLocation(Sentence sentence, Tree root, Tree tree) {
+        final int leafIndex = TreeUtil.getLeafIndex(root, TreeUtil.findHead(tree).getLeaves().get(0));
+        if (leafIndex == -1) {
+            System.err.println("----------------------------------------");
+            System.err.printf("Could not find index for Tree [%s]\n", tree);
+            System.err.printf("In Sentence [%s]\n", root);
+            System.err.println("----------------------------------------");
+            return false;
+        }
+        return isLocation(sentence, leafIndex);
+    }
+
+    /**
+     * Returns whether the head word of the given tree in the given sentence represents a time or date.
+     *
+     * @param root the root of the phrase structure tree
+     * @param tree the given tree
+     * @return whether whether the head word of the given tree in the given sentence represents a time or date
+     */
+    public static boolean headOfTreeIsTime(Sentence sentence, Tree root, Tree tree) {
+        final int leafIndex = TreeUtil.getLeafIndex(root, TreeUtil.findHead(tree).getLeaves().get(0));
+        if (leafIndex == -1) {
+            System.err.println("----------------------------------------");
+            System.err.printf("Could not find index for Tree [%s]\n", tree);
+            System.err.printf("In Sentence [%s]\n", root);
+            System.err.println("----------------------------------------");
+            return false;
+        }
+        return isTime(sentence, leafIndex);
     }
 
     /**
