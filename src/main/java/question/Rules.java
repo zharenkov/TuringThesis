@@ -8,7 +8,7 @@ import java.util.Set;
 public class Rules {
     // Add all rules that should be used to generate questions here
     final static List<Rule> questionRules = Arrays.asList(EquativeCopulaRule.getRule(),
-            AttributiveCopulaRule.getRule(), NpVpRule.getRule());
+            AttributiveCopulaRule.getRule(), NpVpRule.getRule(), PpRule.getRule());
 
     public static Set<String> generateQuestions(String simplifiedSentence) {
         final Set<String> generatedQuestions = new HashSet<>();
