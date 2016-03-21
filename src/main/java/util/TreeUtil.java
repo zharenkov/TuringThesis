@@ -44,6 +44,22 @@ public class TreeUtil {
      * Returns the first parent of the given word in the phrase structure tree represented by {@code root} that has the label "NP".
      *
      * @param root the given root of the phrase structure tree
+     * @return the {@link Tree} representing the NP or {@code null} if no such tree exists
+     */
+    public static Tree getFirstNp(Tree root) {
+        final Tree rootChild = root.getChild(0);
+        for (final Tree child : rootChild.getChildrenAsList()) {
+            if (labelEquals(child, "np")) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first parent of the given word in the phrase structure tree represented by {@code root} that has the label "NP".
+     *
+     * @param root the given root of the phrase structure tree
      * @param word the given word
      * @return the {@link Tree} representing the NP or {@code null} if no such tree exists
      */

@@ -61,6 +61,23 @@ public class PpRule extends Rule {
                             System.out.println("VP above PP: " + fullVp);
                             final Tense tense = TenseUtil.calculateTense(sentence);
 
+                            final Tree firstNp = TreeUtil.getFirstNp(root);
+                            if (firstNp == null) {
+                                continue;
+                            }
+                            final String subject = TreeUtil.constructPhraseFromTree(firstNp);
+
+                            final StringBuilder lastString = new StringBuilder();
+                            for (int k = 1; k < parent.numChildren(); k++) {
+                                final Tree vpChild = parent.getChild(k);
+                                if (TreeUtil.labelEquals(vpChild, "np")) {
+                                    if (lastString.length() > 0) {
+                                        lastString.append(' ');
+                                    }
+                                    lastString.append(TreeUtil.constructPhraseFromTree(vpChild));
+                                }
+                            }
+
                             final String secondWord;
                             final String remainingVp;
                             if (fullVp.hasAuxiliary()) {
@@ -76,12 +93,13 @@ public class PpRule extends Rule {
                                 remainingVp = sentence.lemma(vpLeafIndex);
                             }
 
-                            final String subject = TreeUtil.getStringBeforeTree(root, fullVp.getTree());
-
-                            System.out.printf("Finding string between %s and %s\n", parent.getChild(0), ppTree);
-                            final String lastString = TreeUtil.getStringBetweenTrees(root, parent.getChild(0), ppTree);
-
-                            questions.add(realizeQuestion(wh, secondWord, subject, remainingVp, lastString));
+                            if (remainingVp.equalsIgnoreCase("be")) {
+                                questions.add(realizeQuestion(wh, fullVp.getAllButFirstAuxiliary(), subject,
+                                        lastString.toString()));
+                            } else {
+                                questions.add(
+                                        realizeQuestion(wh, secondWord, subject, remainingVp, lastString.toString()));
+                            }
                         }
                     }
                 }
