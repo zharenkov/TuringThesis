@@ -70,7 +70,7 @@ public class PpRule extends Rule {
                             final StringBuilder lastString = new StringBuilder();
                             for (int k = 1; k < parent.numChildren(); k++) {
                                 final Tree vpChild = parent.getChild(k);
-                                if (TreeUtil.labelEquals(vpChild, "np")) {
+                                if (TreeUtil.labelEquals(vpChild, "np") || TreeUtil.labelEquals(vpChild, "adjp")) {
                                     if (lastString.length() > 0) {
                                         lastString.append(' ');
                                     }
@@ -87,7 +87,11 @@ public class PpRule extends Rule {
                                 if (tense == Tense.PAST) {
                                     secondWord = "did";
                                 } else {
-                                    secondWord = "do";
+                                    if (TreeUtil.npIsPlural(firstNp)) {
+                                        secondWord = "do";
+                                    } else {
+                                        secondWord = "does";
+                                    }
                                 }
                                 final int vpLeafIndex = TreeUtil.getLeafIndex(root, parent.getLeaves().get(0));
                                 remainingVp = sentence.lemma(vpLeafIndex);

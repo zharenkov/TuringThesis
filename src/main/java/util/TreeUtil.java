@@ -173,6 +173,22 @@ public class TreeUtil {
     }
 
     /**
+     * Returns whether the given NP tree is plural.
+     *
+     * @param tree the given NP tree
+     * @return {@code true} if the NP tree is plural
+     */
+    public static boolean npIsPlural(Tree tree) {
+        for (final Tree leaf : tree.getLeaves()) {
+            final String posTag = TreeUtil.getParent(tree, leaf).value().toLowerCase();
+            if (posTag.startsWith("nn") && posTag.startsWith("prp") && posTag.endsWith("s")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns whether the label for the given tree equals the given label (case-insensitive).
      *
      * @param tree  the given tree
