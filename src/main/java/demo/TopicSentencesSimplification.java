@@ -1,6 +1,8 @@
 package demo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -16,6 +18,16 @@ public class TopicSentencesSimplification implements Serializable {
             numberOfSimplifiedSentences += value.size();
         }
         this.numberOfSimplifiedSentences = numberOfSimplifiedSentences;
+    }
+
+    public List<String> getSentences() {
+        final List<String> sentences = new ArrayList<>(sentenceToSimplifiedSentences.size());
+        sentences.addAll(sentenceToSimplifiedSentences.keySet());
+        return sentences;
+    }
+
+    public Map<String, Set<String>> getSentenceToSimplifiedSentences() {
+        return sentenceToSimplifiedSentences;
     }
 
     @Override
