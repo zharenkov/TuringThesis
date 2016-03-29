@@ -49,7 +49,7 @@ public class NerUtil {
      * @param index    the given index
      * @return whether the word at the given index in the given sentence represents a date or time
      */
-    public static boolean isTime(Sentence sentence, int index) {
+    public static boolean isDateOrTime(Sentence sentence, int index) {
         return sentence.nerTag(index).equalsIgnoreCase("date") || sentence.nerTag(index).equalsIgnoreCase("time");
     }
 
@@ -107,7 +107,7 @@ public class NerUtil {
             System.err.println("----------------------------------------");
             return false;
         }
-        return isTime(sentence, leafIndex);
+        return isDateOrTime(sentence, leafIndex);
     }
 
     /**
