@@ -61,6 +61,11 @@ public class WordListUtil {
      */
     public static boolean isBoundaryComma(int index, Sentence sentence) {
         final String word = sentence.word(index);
+        if (index > 0 && index < sentence.words().size() - 1) {
+            if (NerUtil.isLocation(sentence, index - 1) && NerUtil.isLocation(sentence, index + 1)) {
+                return false;
+            }
+        }
         return word.equals(",") && !isDateOrLocation(index, sentence);
     }
 
