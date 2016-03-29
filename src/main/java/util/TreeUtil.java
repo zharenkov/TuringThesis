@@ -371,4 +371,14 @@ public class TreeUtil {
         }
         return WordListUtil.constructPhraseFromWordList(words);
     }
+
+    /**
+     * Returns whether the given tree represents a conjunction and that the conjunction is the word "and".
+     *
+     * @param tree the given tree
+     * @return {@code true} if the given tree is a CC with the word "and" as its leaf
+     */
+    public static boolean treeIsAndConjunction(Tree tree) {
+        return labelEquals(tree, "cc") && labelEquals(tree.getLeaves().get(0), "and");
+    }
 }

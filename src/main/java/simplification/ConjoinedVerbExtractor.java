@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import static generation.TextRealization.realizeSentence;
-import static util.TreeUtil.labelEquals;
-import static util.TreeUtil.labelStartsWith;
+import static util.TreeUtil.*;
 
 public class ConjoinedVerbExtractor implements Extractor {
     private static ConjoinedVerbExtractor extractor;
@@ -46,7 +45,7 @@ public class ConjoinedVerbExtractor implements Extractor {
                 final List<Tree> verbs = new ArrayList<>();
                 final StringBuilder nonVps = new StringBuilder();
                 for (final Tree child : tree.children()) {
-                    if (labelEquals(child, "cc")) {
+                    if (treeIsAndConjunction(child)) {
                         hasConjoinedVerbChildren = true;
                     } else if (labelStartsWith(child, "vb")) {
                         verbs.add(child);

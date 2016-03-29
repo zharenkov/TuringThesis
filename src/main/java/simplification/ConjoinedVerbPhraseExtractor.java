@@ -12,6 +12,7 @@ import java.util.Set;
 
 import static generation.TextRealization.realizeSentence;
 import static util.TreeUtil.labelEquals;
+import static util.TreeUtil.treeIsAndConjunction;
 
 public class ConjoinedVerbPhraseExtractor implements Extractor {
     private static ConjoinedVerbPhraseExtractor extractor;
@@ -45,7 +46,7 @@ public class ConjoinedVerbPhraseExtractor implements Extractor {
                 final List<Tree> vps = new ArrayList<>();
                 final StringBuilder nonVps = new StringBuilder();
                 for (final Tree child : tree.children()) {
-                    if (labelEquals(child, "cc")) {
+                    if (treeIsAndConjunction(child)) {
                         hasConjoinedVpChildren = true;
                     } else if (labelEquals(child, "vp")) {
                         vps.add(child);
