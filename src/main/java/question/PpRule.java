@@ -18,7 +18,8 @@ import static util.TreeUtil.getLabel;
 import static util.TreeUtil.labelEquals;
 
 public class PpRule extends Rule {
-    private static final Set<String> PP_BLACKLIST = ImmutableSet.of("by");
+    private static final Set<String> WHERE_PP_BLACKLIST = ImmutableSet.of("by");
+    private static final Set<String> WHEN_PP_BLACKLIST = ImmutableSet.of();
 
     private static PpRule instance;
 
@@ -44,7 +45,7 @@ public class PpRule extends Rule {
         final Tree root = sentence.parse();
         for (int i = 1; i < root.size(); i++) {
             final Tree node = root.getNodeNumber(i);
-            if (labelEquals(node, "pp") && !PP_BLACKLIST.contains(getLabel(node.getLeaves().get(0)))) {
+            if (labelEquals(node, "pp")) {
                 final Tree parent = TreeUtil.getParent(root, node);
                 if (labelEquals(parent, "vp")) {
                     final Tree ppTree = node;
@@ -54,9 +55,15 @@ public class PpRule extends Rule {
 
                         String wh = null;
                         if (NerUtil.headOfTreeIsLocation(sentence, root, secondChildOfPp)) {
+                            if (WHERE_PP_BLACKLIST.contains(getLabel(node.getLeaves().get(0)))) {
+                                continue;
+                            }
                             System.out.println("NP under PP is a location");
                             wh = "where";
                         } else if (NerUtil.headOfTreeIsTime(sentence, root, secondChildOfPp)) {
+                            if (WHEN_PP_BLACKLIST.contains(getLabel(node.getLeaves().get(0)))) {
+                                continue;
+                            }
                             System.out.println("NP under PP is a date or time");
                             wh = "when";
                         }
