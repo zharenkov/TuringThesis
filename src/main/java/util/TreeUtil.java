@@ -14,6 +14,16 @@ public class TreeUtil {
     private static final HeadFinder HEAD_FINDER = new CollinsHeadFinder();
 
     /**
+     * Returns the label of the given tree in all lower-case.
+     *
+     * @param tree the given tree
+     * @return the label of the given tree in all lower-case
+     */
+    public static String getLabel(Tree tree) {
+        return tree.value().toLowerCase();
+    }
+
+    /**
      * Returns the parent of the given {@code child} tree using the given {@code root} tree to perform the search.
      *
      * @param root  the root of the phrase structure tree

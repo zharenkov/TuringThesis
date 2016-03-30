@@ -1,6 +1,7 @@
 package question;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import simplenlg.features.Tense;
@@ -13,8 +14,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static generation.TextRealization.realizeQuestion;
+import static util.TreeUtil.getLabel;
+import static util.TreeUtil.labelEquals;
 
 public class PpRule extends Rule {
+    private static final Set<String> PP_BLACKLIST = ImmutableSet.of("by");
+
     private static PpRule instance;
 
     private PpRule() {
@@ -39,12 +44,12 @@ public class PpRule extends Rule {
         final Tree root = sentence.parse();
         for (int i = 1; i < root.size(); i++) {
             final Tree node = root.getNodeNumber(i);
-            if (TreeUtil.labelEquals(node, "pp")) {
+            if (labelEquals(node, "pp") && !PP_BLACKLIST.contains(getLabel(node.getLeaves().get(0)))) {
                 final Tree parent = TreeUtil.getParent(root, node);
-                if (TreeUtil.labelEquals(parent, "vp")) {
+                if (labelEquals(parent, "vp")) {
                     final Tree ppTree = node;
                     final Tree secondChildOfPp = ppTree.getChild(1);
-                    if (TreeUtil.labelEquals(secondChildOfPp, "np")) {
+                    if (labelEquals(secondChildOfPp, "np")) {
                         System.out.println("NP under PP: " + secondChildOfPp);
 
                         String wh = null;
@@ -70,7 +75,7 @@ public class PpRule extends Rule {
                             final StringBuilder lastString = new StringBuilder();
                             for (int k = 1; k < parent.numChildren(); k++) {
                                 final Tree vpChild = parent.getChild(k);
-                                if (TreeUtil.labelEquals(vpChild, "np") || TreeUtil.labelEquals(vpChild, "adjp")) {
+                                if (labelEquals(vpChild, "np") || labelEquals(vpChild, "adjp")) {
                                     if (lastString.length() > 0) {
                                         lastString.append(' ');
                                     }
