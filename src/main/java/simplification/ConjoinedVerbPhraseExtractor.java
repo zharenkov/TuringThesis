@@ -35,8 +35,6 @@ public class ConjoinedVerbPhraseExtractor implements Extractor {
     @Override
     public SimplificationResult extract(String sentence) {
         final Set<String> simplifiedSentences = new HashSet<>();
-        // Keep the original sentence so that we don't lose any information
-        simplifiedSentences.add(sentence);
         final Sentence parsed = new Sentence(sentence);
         final Tree root = parsed.parse();
         for (int i = 1; i < root.size(); i++) {
@@ -67,6 +65,9 @@ public class ConjoinedVerbPhraseExtractor implements Extractor {
                     }
                 }
             }
+        }
+        if (simplifiedSentences.isEmpty()) {
+            simplifiedSentences.add(sentence);
         }
         return new SimplificationResult(simplifiedSentences);
     }
