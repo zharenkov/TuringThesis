@@ -2,7 +2,7 @@ package simplification;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -16,12 +16,14 @@ import util.WordListUtil;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static util.TreeUtil.labelEquals;
 
 public class SentenceSimplifier {
-    private static final Set<Character> BANNED_CHARACTERS = ImmutableSet.of('\"', ':');
+    private static final Map<String, String> STRING_REPLACEMENTS = ImmutableMap.of("\"", "", ": ", " ", " : ", " ");
 
     private static final List<Extractor> extractors = ImmutableList.of(ExistentialIgnore.getExtractor(),
             ParentheticalExtractor.getExtractor(), AppositiveExtractor.getExtractor(),
@@ -37,8 +39,8 @@ public class SentenceSimplifier {
     public static Set<Text> simplifySentence(String originalSentence) {
         Set<String> sentences = new LinkedHashSet<>();
         String modifiedSentence = originalSentence;
-        for (final char bannedCharacter : BANNED_CHARACTERS) {
-            modifiedSentence = modifiedSentence.replaceAll("" + bannedCharacter, "");
+        for (final Entry<String, String> stringReplacement : STRING_REPLACEMENTS.entrySet()) {
+            modifiedSentence = modifiedSentence.replaceAll(stringReplacement.getKey(), stringReplacement.getValue());
         }
         sentences.add(preCleanSentence(modifiedSentence));
         for (final Extractor extractor : extractors) {
