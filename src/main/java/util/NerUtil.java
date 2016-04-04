@@ -1,9 +1,14 @@
 package util;
 
+import com.google.common.collect.ImmutableSet;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 
+import java.util.Set;
+
 public class NerUtil {
+    private static final Set<String> PERSON_WORDS = ImmutableSet.of("he", "she", "him", "her");
+
     /**
      * Returns whether the given string contains a word that is tagged as a PERSON.
      *
@@ -28,6 +33,10 @@ public class NerUtil {
      * @return whether the word at the given index in the given sentence represents a person
      */
     public static boolean isPerson(Sentence sentence, int index) {
+        final String word = sentence.word(index);
+        if (PERSON_WORDS.contains(word.toLowerCase())) {
+            return true;
+        }
         return sentence.nerTag(index).equalsIgnoreCase("person");
     }
 
