@@ -18,11 +18,12 @@ import java.util.Set;
 public class SentenceSimplifier {
     private static final Set<Character> BANNED_CHARACTERS = ImmutableSet.of('\"', ':');
 
-    private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
-            AppositiveExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor(),
-            ConjoinedVerbExtractor.getExtractor(), VerbPhraseModifierExtractor.getExtractor(),
-            RelativeClauseExtractor.getExtractor(), ParticipialModifiersExtractor.getExtractor(),
-            PrepositionalPhraseExtractor.getExtractor(), SbarWhExtractor.getExtractor());
+    private static final List<Extractor> extractors = ImmutableList.of(ExistentialIgnore.getExtractor(),
+            ParentheticalExtractor.getExtractor(), AppositiveExtractor.getExtractor(),
+            ConjoinedVerbPhraseExtractor.getExtractor(), ConjoinedVerbExtractor.getExtractor(),
+            VerbPhraseModifierExtractor.getExtractor(), RelativeClauseExtractor.getExtractor(),
+            ParticipialModifiersExtractor.getExtractor(), PrepositionalPhraseExtractor.getExtractor(),
+            SbarWhExtractor.getExtractor());
 
     public static void main(String[] args) {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
