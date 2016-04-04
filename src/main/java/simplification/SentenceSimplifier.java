@@ -3,17 +3,22 @@ package simplification;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import data.Text;
 import edu.stanford.nlp.simple.Sentence;
+import edu.stanford.nlp.trees.Tree;
+import util.TreeUtil;
 import util.WordListUtil;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static util.TreeUtil.labelEquals;
 
 public class SentenceSimplifier {
     private static final Set<Character> BANNED_CHARACTERS = ImmutableSet.of('\"', ':');
@@ -35,7 +40,7 @@ public class SentenceSimplifier {
         for (final char bannedCharacter : BANNED_CHARACTERS) {
             modifiedSentence = modifiedSentence.replaceAll("" + bannedCharacter, "");
         }
-        sentences.add(modifiedSentence);
+        sentences.add(preCleanSentence(modifiedSentence));
         for (final Extractor extractor : extractors) {
             final Set<String> simplifiedSentences = new HashSet<>();
             for (final String sentence : sentences) {
@@ -43,29 +48,34 @@ public class SentenceSimplifier {
             }
             sentences = simplifiedSentences;
         }
-        return cleanSentences(sentences);
-    }
-
-    private static Set<Text> cleanSentences(Set<String> simplifiedSentences) {
-        final Set<Text> cleanedSentences = new LinkedHashSet<>(simplifiedSentences.size());
-        for (final String sentence : simplifiedSentences) {
-            cleanedSentences.add(new Text(cleanSentence(sentence)));
+        final Set<Text> texts = new LinkedHashSet<>();
+        for (final String simplifiedSentence : sentences) {
+            texts.add(postCleanSentence(simplifiedSentence));
         }
-        return cleanedSentences;
+        return texts;
     }
 
-    private static String cleanSentence(String sentence) {
-        final Sentence parsed = new Sentence(sentence);
-        final RangeSet<Integer> rangeSet = TreeRangeSet.create();
-        final List<String> words = parsed.words();
-        for (int i = 0; i < words.size() - 2; i++) {
-            final String word = words.get(i);
-            // Check for IPA and remove it
-            if (word.equals("/") && parsed.word(i + 2).equals("/")) {
-                rangeSet.add(Range.closed(i, i + 2));
+    private static String preCleanSentence(String originalSentence) {
+        final Sentence sentence = new Sentence(originalSentence);
+        final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
+        final Tree root = sentence.parse();
+        for (int i = 1; i < root.size(); i++) {
+            final Tree tree = root.getNodeNumber(i);
+            if (labelEquals(tree, "prn")) {
+                final Tree firstLeaf = tree.getLeaves().get(0);
+                final Tree lastLeaf = Iterables.getLast(tree.getLeaves());
+                if (labelEquals(firstLeaf, "/") && labelEquals(lastLeaf, "/")) {
+                    System.out.println("Remove IPA: " + tree);
+                    final int left = TreeUtil.getLeafIndex(root, firstLeaf);
+                    final int right = TreeUtil.getLeafIndex(root, lastLeaf);
+                    partsToRemove.add(Range.closed(left, right));
+                }
             }
         }
-        final String ipaRemoved = WordListUtil.constructPhraseFromWordList(WordListUtil.removeParts(words, rangeSet));
-        return ipaRemoved.replaceAll(" -- ", "-");
+        return WordListUtil.constructPhraseFromWordList(WordListUtil.removeParts(sentence.words(), partsToRemove));
+    }
+
+    private static Text postCleanSentence(String sentence) {
+        return new Text(sentence.replaceAll(" -- ", "-"));
     }
 }
