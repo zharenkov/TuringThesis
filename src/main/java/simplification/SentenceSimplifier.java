@@ -2,6 +2,7 @@ package simplification;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 public class SentenceSimplifier {
+    private static final Set<Character> BANNED_CHARACTERS = ImmutableSet.of('\"');
+
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
             AppositiveExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor(),
             ConjoinedVerbExtractor.getExtractor(), VerbPhraseModifierExtractor.getExtractor(),
@@ -26,7 +29,11 @@ public class SentenceSimplifier {
 
     public static Set<String> simplifySentence(String originalSentence) {
         Set<String> sentences = new LinkedHashSet<>();
-        sentences.add(originalSentence.replaceAll("\"", ""));
+        String modifiedSentence = originalSentence;
+        for (final char bannedCharacter : BANNED_CHARACTERS) {
+            modifiedSentence = modifiedSentence.replaceAll("" + bannedCharacter, "");
+        }
+        sentences.add(modifiedSentence);
         for (final Extractor extractor : extractors) {
             final Set<String> simplifiedSentences = new HashSet<>();
             for (final String sentence : sentences) {
