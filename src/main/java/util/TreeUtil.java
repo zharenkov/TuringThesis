@@ -183,6 +183,24 @@ public class TreeUtil {
     }
 
     /**
+     * Returns the first SBAR ancestor for the given tree under the given root.
+     *
+     * @param root the given root
+     * @param tree the given tree
+     * @return the first SBAR ancestor or {@code null} if none exists
+     */
+    public static Tree getFirstSbar(Tree root, Tree tree) {
+        Tree currentTree = getParent(root, tree);
+        while (!labelEquals(currentTree, "sbar")) {
+            currentTree = getParent(root, currentTree);
+            if (currentTree == root) {
+                return null;
+            }
+        }
+        return currentTree;
+    }
+
+    /**
      * Returns whether the given NP tree is plural.
      *
      * @param tree the given NP tree

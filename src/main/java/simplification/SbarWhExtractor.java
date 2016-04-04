@@ -43,25 +43,22 @@ public class SbarWhExtractor implements Extractor {
             if (posTag.startsWith("wp") || posTag.equals("wdt")) {
                 System.out.println("Found word tagged WP");
                 final Tree tree = root.getLeaves().get(i);
-                final Tree grandparent = TreeUtil.getParent(root, tree, 3);
-                final Tree greatGrandparent = TreeUtil.getParent(root, tree, 4);
+                System.out.println(tree);
 
-                final Tree sbar;
-                if (TreeUtil.labelEquals(grandparent, "sbar")) {
-                    sbar = grandparent;
-                } else {
-                    sbar = greatGrandparent;
+                final Tree sbar = TreeUtil.getFirstSbar(root, tree);
+                if (sbar == null) {
+                    System.err.println("Cannot find SBAR");
+                    continue;
                 }
 
-                if (TreeUtil.labelEquals(sbar, "sbar")) {
-                    System.out.println("Found SBAR: " + sbar);
-                    final String np = getMainNp(root);
-                    if (Strings.isNullOrEmpty(np)) {
-                        System.err.println("Could not find main NP");
-                    } else {
-                        final String sbarString = TreeUtil.getStringAfterTree(root, tree);
-                        simplifiedSentences.add(TextRealization.realizeSentence(np, sbarString));
-                    }
+                System.out.println("Found SBAR: " + sbar);
+                final String np = getMainNp(root);
+                if (Strings.isNullOrEmpty(np)) {
+                    System.err.println("Could not find main NP");
+                } else {
+                    final String sbarString = TreeUtil.getStringAfterTree(root, tree);
+                    System.out.printf("NP: %s  SBAR: %s\n", np, sbarString);
+                    simplifiedSentences.add(TextRealization.realizeSentence(np, sbarString));
                 }
             }
         }
