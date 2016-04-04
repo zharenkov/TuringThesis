@@ -23,21 +23,29 @@ public class SpecificSentenceDemo {
             while (scanner.hasNext()) {
                 numberOfSentences++;
                 final String originalSentence = scanner.nextLine();
+                stringBuilder.append(originalSentence).append("\n");
                 final Set<String> simplifiedSentences = SentenceSimplifier.simplifySentence(originalSentence);
                 numberOfSimplifiedSentences += simplifiedSentences.size();
                 final Set<String> generatedQuestions = new LinkedHashSet<>();
                 for (final String simplifiedSentence : simplifiedSentences) {
                     final Set<String> questions = Rules.generateQuestions(simplifiedSentence);
                     generatedQuestions.addAll(questions);
-                    numberOfQuestionsGenerated += questions.size();
+                    stringBuilder.append("\t").append(simplifiedSentence).append("\n");
+                    for (final String question : questions) {
+                        stringBuilder.append("\t\t").append(question).append("\n");
+                    }
                 }
-                stringBuilder.append(originalSentence).append("\n");
-                for (final String question : generatedQuestions) {
-                    stringBuilder.append("\t").append(question).append("\n");
-                }
+                numberOfQuestionsGenerated += generatedQuestions.size();
                 stringBuilder.append("\n");
             }
-            final File outputFile = new File(sentenceFile.replace(".txt", "_result.txt"));
+
+            int fileNumber = 0;
+            File outputFile = new File(sentenceFile.replace(".txt", "_" + fileNumber + "_result.txt"));
+            while (outputFile.exists()) {
+                fileNumber++;
+                outputFile = new File(sentenceFile.replace(".txt", "_" + fileNumber + "_result.txt"));
+            }
+
             final StringBuilder finalBuilder = new StringBuilder();
             finalBuilder.append("Number of sentences: ").append(numberOfSentences);
             finalBuilder.append("\n");
