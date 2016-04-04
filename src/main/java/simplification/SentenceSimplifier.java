@@ -38,11 +38,7 @@ public class SentenceSimplifier {
 
     public static Set<Text> simplifySentence(String originalSentence) {
         Set<String> sentences = new LinkedHashSet<>();
-        String modifiedSentence = originalSentence;
-        for (final Entry<String, String> stringReplacement : STRING_REPLACEMENTS.entrySet()) {
-            modifiedSentence = modifiedSentence.replaceAll(stringReplacement.getKey(), stringReplacement.getValue());
-        }
-        sentences.add(preCleanSentence(modifiedSentence));
+        sentences.add(preCleanSentence(originalSentence));
         for (final Extractor extractor : extractors) {
             final Set<String> simplifiedSentences = new HashSet<>();
             for (final String sentence : sentences) {
@@ -58,7 +54,35 @@ public class SentenceSimplifier {
     }
 
     private static String preCleanSentence(String originalSentence) {
-        final Sentence sentence = new Sentence(originalSentence);
+        String modifiedSentence = originalSentence;
+        // Group quoted text
+        final StringBuilder groupedStringBuilder = new StringBuilder();
+        boolean inQuotes = false;
+        for (final char ch : modifiedSentence.toCharArray()) {
+            if (ch == '"') {
+                inQuotes = !inQuotes;
+                continue;
+            }
+
+            if (inQuotes) {
+                if (ch == ' ') {
+                    groupedStringBuilder.append('_');
+                } else {
+                    groupedStringBuilder.append(ch);
+                }
+            } else {
+                groupedStringBuilder.append(ch);
+            }
+        }
+        modifiedSentence = groupedStringBuilder.toString();
+
+        // Replace all of the banned strings
+        for (final Entry<String, String> stringReplacement : STRING_REPLACEMENTS.entrySet()) {
+            modifiedSentence = modifiedSentence.replaceAll(stringReplacement.getKey(), stringReplacement.getValue());
+        }
+
+        // Remove IPA
+        final Sentence sentence = new Sentence(modifiedSentence);
         final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
         final Tree root = sentence.parse();
         for (int i = 1; i < root.size(); i++) {

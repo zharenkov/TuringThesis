@@ -17,9 +17,13 @@ public class Rules {
         for (final Rule rule : questionRules) {
             final Set<String> questions = rule.generateQuestions(simplifiedSentence);
             for (final String question : questions) {
-                generatedQuestions.add(new Text(question));
+                generatedQuestions.add(postprocessQuestion(question));
             }
         }
         return generatedQuestions;
+    }
+
+    private static Text postprocessQuestion(String question) {
+        return new Text(question.replaceAll("_", " "));
     }
 }
