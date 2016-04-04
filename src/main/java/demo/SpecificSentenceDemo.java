@@ -1,5 +1,6 @@
 package demo;
 
+import data.Text;
 import org.apache.commons.io.FileUtils;
 import question.Rules;
 import simplification.SentenceSimplifier;
@@ -24,14 +25,14 @@ public class SpecificSentenceDemo {
                 numberOfSentences++;
                 final String originalSentence = scanner.nextLine();
                 stringBuilder.append(originalSentence).append("\n");
-                final Set<String> simplifiedSentences = SentenceSimplifier.simplifySentence(originalSentence);
+                final Set<Text> simplifiedSentences = SentenceSimplifier.simplifySentence(originalSentence);
                 numberOfSimplifiedSentences += simplifiedSentences.size();
-                final Set<String> generatedQuestions = new LinkedHashSet<>();
-                for (final String simplifiedSentence : simplifiedSentences) {
-                    final Set<String> questions = Rules.generateQuestions(simplifiedSentence);
+                final Set<Text> generatedQuestions = new LinkedHashSet<>();
+                for (final Text simplifiedSentence : simplifiedSentences) {
+                    final Set<Text> questions = Rules.generateQuestions(simplifiedSentence.getString());
                     generatedQuestions.addAll(questions);
                     stringBuilder.append("\t").append(simplifiedSentence).append("\n");
-                    for (final String question : questions) {
+                    for (final Text question : questions) {
                         stringBuilder.append("\t\t").append(question).append("\n");
                     }
                 }

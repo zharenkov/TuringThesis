@@ -1,12 +1,22 @@
 package demo;
 
 import com.google.common.base.Charsets;
+import data.Text;
 import org.apache.commons.io.FileUtils;
 import simplification.SentenceSimplifier;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 public class SimplificationDemo {
     private static final String TOPIC_SENTENCES_FILE_NAME = "topic_sentences.txt";
@@ -26,16 +36,16 @@ public class SimplificationDemo {
             return;
         }
         final Scanner scanner = new Scanner(new File(resource.getFile()));
-        final List<String> sentences = new ArrayList<>();
+        final List<Text> sentences = new ArrayList<>();
         while (scanner.hasNext()) {
-            sentences.add(scanner.nextLine());
+            sentences.add(new Text(scanner.nextLine()));
         }
 
         System.setOut(DUMMY_STREAM);
         //System.setErr(DUMMY_STREAM);
-        final Map<String, Set<String>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
-        for (final String sentence : sentences) {
-            final Set<String> strings = SentenceSimplifier.simplifySentence(sentence);
+        final Map<Text, Set<Text>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
+        for (final Text sentence : sentences) {
+            final Set<Text> strings = SentenceSimplifier.simplifySentence(sentence.getString());
             sentenceToSimplifiedSentences.put(sentence, strings);
         }
         System.setOut(OUT);

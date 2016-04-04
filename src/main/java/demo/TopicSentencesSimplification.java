@@ -1,5 +1,7 @@
 package demo;
 
+import data.Text;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,25 +10,25 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class TopicSentencesSimplification implements Serializable {
-    private final Map<String, Set<String>> sentenceToSimplifiedSentences;
+    private final Map<Text, Set<Text>> sentenceToSimplifiedSentences;
     private final int numberOfSimplifiedSentences;
 
-    public TopicSentencesSimplification(Map<String, Set<String>> sentenceToSimplifiedSentences) {
+    public TopicSentencesSimplification(Map<Text, Set<Text>> sentenceToSimplifiedSentences) {
         this.sentenceToSimplifiedSentences = sentenceToSimplifiedSentences;
         int numberOfSimplifiedSentences = 0;
-        for (final Set<String> value : sentenceToSimplifiedSentences.values()) {
+        for (final Set<Text> value : sentenceToSimplifiedSentences.values()) {
             numberOfSimplifiedSentences += value.size();
         }
         this.numberOfSimplifiedSentences = numberOfSimplifiedSentences;
     }
 
-    public List<String> getSentences() {
-        final List<String> sentences = new ArrayList<>(sentenceToSimplifiedSentences.size());
+    public List<Text> getSentences() {
+        final List<Text> sentences = new ArrayList<>(sentenceToSimplifiedSentences.size());
         sentences.addAll(sentenceToSimplifiedSentences.keySet());
         return sentences;
     }
 
-    public Map<String, Set<String>> getSentenceToSimplifiedSentences() {
+    public Map<Text, Set<Text>> getSentenceToSimplifiedSentences() {
         return sentenceToSimplifiedSentences;
     }
 
@@ -51,12 +53,12 @@ public class TopicSentencesSimplification implements Serializable {
         final StringBuilder builder = new StringBuilder();
         builder.append(String.format("%d topic sentences\n", sentenceToSimplifiedSentences.size()));
         builder.append(String.format("%d simplified sentences\n", numberOfSimplifiedSentences));
-        for (Entry<String, Set<String>> entry : sentenceToSimplifiedSentences.entrySet()) {
+        for (Entry<Text, Set<Text>> entry : sentenceToSimplifiedSentences.entrySet()) {
             builder.append("---------------------------------\n\n");
             builder.append("Original Sentence:\n");
             builder.append(entry.getKey()).append("\n\n");
             builder.append("Simplified Sentences:\n");
-            for (final String simplifiedSentence : entry.getValue()) {
+            for (final Text simplifiedSentence : entry.getValue()) {
                 builder.append(simplifiedSentence).append("\n");
             }
             builder.append("\n---------------------------------\n\n");

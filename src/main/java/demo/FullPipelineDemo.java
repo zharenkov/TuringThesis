@@ -1,13 +1,36 @@
 package demo;
 
 import com.google.common.base.Charsets;
-import org.apache.commons.cli.*;
+import data.Text;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import simplification.SentenceSimplifier;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -59,9 +82,9 @@ public class FullPipelineDemo {
                     return;
                 }
                 final Scanner scanner = new Scanner(new File(resource.getFile()));
-                final List<String> sentences = new ArrayList<>();
+                final List<Text> sentences = new ArrayList<>();
                 while (scanner.hasNext()) {
-                    sentences.add(scanner.nextLine());
+                    sentences.add(new Text(scanner.nextLine()));
                 }
 
                 result = new TopicSentencesSimplificationAndQuestions(simplification.getSentenceToSimplifiedSentences(),
@@ -78,21 +101,21 @@ public class FullPipelineDemo {
                 return;
             }
             final Scanner scanner = new Scanner(new File(resource.getFile()));
-            final List<String> sentences = new ArrayList<>();
+            final List<Text> sentences = new ArrayList<>();
             while (scanner.hasNext()) {
-                sentences.add(scanner.nextLine());
+                sentences.add(new Text(scanner.nextLine()));
             }
 
             System.setOut(DUMMY_STREAM);
             //System.setErr(DUMMY_STREAM);
-            final Map<String, Set<String>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
+            final Map<Text, Set<Text>> sentenceToSimplifiedSentences = new LinkedHashMap<>();
             final int processors = Runtime.getRuntime().availableProcessors();
             final ExecutorService executor = Executors.newFixedThreadPool(processors);
-            for (final String sentence : sentences) {
+            for (final Text sentence : sentences) {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        final Set<String> strings = SentenceSimplifier.simplifySentence(sentence);
+                        final Set<Text> strings = SentenceSimplifier.simplifySentence(sentence.getString());
                         sentenceToSimplifiedSentences.put(sentence, strings);
                     }
                 });

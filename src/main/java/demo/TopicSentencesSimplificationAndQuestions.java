@@ -1,5 +1,6 @@
 package demo;
 
+import data.Text;
 import question.Rules;
 
 import java.io.Serializable;
@@ -13,13 +14,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TopicSentencesSimplificationAndQuestions implements Serializable {
-    private final List<String> sentences;
-    private final Map<String, Set<String>> sentenceToSimplifiedSentences;
-    private final Map<String, Set<String>> simplifiedSentenceToQuestions;
+    private final List<Text> sentences;
+    private final Map<Text, Set<Text>> sentenceToSimplifiedSentences;
+    private final Map<Text, Set<Text>> simplifiedSentenceToQuestions;
     private final int numberOfSimplifiedSentences;
     private final int numberOfGeneratedQuestions;
 
-    public TopicSentencesSimplificationAndQuestions(Map<String, Set<String>> sentenceToSimplifiedSentences, List<String> sentences) {
+    public TopicSentencesSimplificationAndQuestions(Map<Text, Set<Text>> sentenceToSimplifiedSentences, List<Text> sentences) {
         this.sentences = sentences;
         this.sentenceToSimplifiedSentences = sentenceToSimplifiedSentences;
         simplifiedSentenceToQuestions = new HashMap<>();
@@ -27,13 +28,13 @@ public class TopicSentencesSimplificationAndQuestions implements Serializable {
         final AtomicInteger numberOfGeneratedQuestions = new AtomicInteger(0);
         final int processors = Runtime.getRuntime().availableProcessors();
         final ExecutorService executor = Executors.newFixedThreadPool(processors);
-        for (final Set<String> value : sentenceToSimplifiedSentences.values()) {
+        for (final Set<Text> value : sentenceToSimplifiedSentences.values()) {
             numberOfSimplifiedSentences += value.size();
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    for (final String simplifiedSentence : value) {
-                        final Set<String> generatedQuestions = Rules.generateQuestions(simplifiedSentence);
+                    for (final Text simplifiedSentence : value) {
+                        final Set<Text> generatedQuestions = Rules.generateQuestions(simplifiedSentence.getString());
                         simplifiedSentenceToQuestions.put(simplifiedSentence, generatedQuestions);
                         numberOfGeneratedQuestions.addAndGet(generatedQuestions.size());
                     }
@@ -79,16 +80,16 @@ public class TopicSentencesSimplificationAndQuestions implements Serializable {
         builder.append(String.format("%d topic sentences\n", sentenceToSimplifiedSentences.size()));
         builder.append(String.format("%d simplified sentences\n", numberOfSimplifiedSentences));
         builder.append(String.format("%d generated questions\n", numberOfGeneratedQuestions));
-        for (final String sentence : sentences) {
+        for (final Text sentence : sentences) {
             builder.append("---------------------------------\n\n");
             builder.append("Original Sentence:\n");
             builder.append(sentence).append("\n\n");
             builder.append("Simplified Sentences:\n");
-            for (final String simplifiedSentence : sentenceToSimplifiedSentences.get(sentence)) {
+            for (final Text simplifiedSentence : sentenceToSimplifiedSentences.get(sentence)) {
                 builder.append(simplifiedSentence).append("\n");
-                final Set<String> questions = simplifiedSentenceToQuestions.get(simplifiedSentence);
+                final Set<Text> questions = simplifiedSentenceToQuestions.get(simplifiedSentence);
                 if (questions != null) {
-                    for (final String question : questions) {
+                    for (final Text question : questions) {
                         builder.append("\t").append(question).append("\n");
                     }
                 }

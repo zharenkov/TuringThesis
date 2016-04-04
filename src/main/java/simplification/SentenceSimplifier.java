@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
+import data.Text;
 import edu.stanford.nlp.simple.Sentence;
 import util.WordListUtil;
 
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 public class SentenceSimplifier {
-    private static final Set<Character> BANNED_CHARACTERS = ImmutableSet.of('\"');
+    private static final Set<Character> BANNED_CHARACTERS = ImmutableSet.of('\"', ':');
 
     private static final List<Extractor> extractors = ImmutableList.of(ParentheticalExtractor.getExtractor(),
             AppositiveExtractor.getExtractor(), ConjoinedVerbPhraseExtractor.getExtractor(),
@@ -27,7 +28,7 @@ public class SentenceSimplifier {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
     }
 
-    public static Set<String> simplifySentence(String originalSentence) {
+    public static Set<Text> simplifySentence(String originalSentence) {
         Set<String> sentences = new LinkedHashSet<>();
         String modifiedSentence = originalSentence;
         for (final char bannedCharacter : BANNED_CHARACTERS) {
@@ -44,10 +45,10 @@ public class SentenceSimplifier {
         return cleanSentences(sentences);
     }
 
-    private static Set<String> cleanSentences(Set<String> simplifiedSentences) {
-        final Set<String> cleanedSentences = new LinkedHashSet<>(simplifiedSentences.size());
+    private static Set<Text> cleanSentences(Set<String> simplifiedSentences) {
+        final Set<Text> cleanedSentences = new LinkedHashSet<>(simplifiedSentences.size());
         for (final String sentence : simplifiedSentences) {
-            cleanedSentences.add(cleanSentence(sentence));
+            cleanedSentences.add(new Text(cleanSentence(sentence)));
         }
         return cleanedSentences;
     }

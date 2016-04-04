@@ -1,5 +1,7 @@
 package question;
 
+import data.Text;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -10,11 +12,13 @@ public class Rules {
     final static List<Rule> questionRules = Arrays.asList(EquativeCopulaRule.getRule(),
             AttributiveCopulaRule.getRule(), NpVpRule.getRule(), PpRule.getRule());
 
-    public static Set<String> generateQuestions(String simplifiedSentence) {
-        final Set<String> generatedQuestions = new HashSet<>();
+    public static Set<Text> generateQuestions(String simplifiedSentence) {
+        final Set<Text> generatedQuestions = new HashSet<>();
         for (final Rule rule : questionRules) {
             final Set<String> questions = rule.generateQuestions(simplifiedSentence);
-            generatedQuestions.addAll(questions);
+            for (final String question : questions) {
+                generatedQuestions.add(new Text(question));
+            }
         }
         return generatedQuestions;
     }
