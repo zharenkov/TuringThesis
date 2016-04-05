@@ -39,7 +39,11 @@ public class NpVpRule extends Rule {
             final Tree node = root.getNodeNumber(i);
             for (int k = 0; k < node.numChildren() - 1; k++) {
                 final Tree child = node.getChild(k);
-                final Tree nextSibling = node.getChild(k + 1);
+                Tree nextSibling = node.getChild(k + 1);
+                if (TreeUtil.labelEquals(nextSibling, ",") && k + 2 < node.numChildren()) {
+                    System.out.println("Skipping over comma");
+                    nextSibling = node.getChild(k + 2);
+                }
                 if (TreeUtil.labelEquals(child, "np") && TreeUtil.labelEquals(nextSibling, "vp")) {
                     System.out.printf("Examining NP [%s] and VP [%s]\n", child, nextSibling);
                     final String wh = NerUtil.getWhFromHead(sentence, root, child);
