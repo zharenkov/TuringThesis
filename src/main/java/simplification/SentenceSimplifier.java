@@ -30,7 +30,7 @@ public class SentenceSimplifier {
             ConjoinedVerbPhraseExtractor.getExtractor(), ConjoinedVerbExtractor.getExtractor(),
             VerbPhraseModifierExtractor.getExtractor(), RelativeClauseExtractor.getExtractor(),
             ParticipialModifiersExtractor.getExtractor(), PrepositionalPhraseExtractor.getExtractor(),
-            SbarWhExtractor.getExtractor());
+            SbarWhExtractor.getExtractor(), SubVpExtractor.getExtractor());
 
     public static void main(String[] args) {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
