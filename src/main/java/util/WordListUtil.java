@@ -12,7 +12,8 @@ import java.util.Set;
 
 public class WordListUtil {
     private static final Set<String> DATE_LOCATION_NER_TAGS = ImmutableSet.of("date", "location");
-    private static final Set<String> NO_WHITESPACE_BEFORE = ImmutableSet.of(",", ";", "!", ".", "'", "''", ":");
+    private static final Set<String> NO_WHITESPACE_BEFORE = ImmutableSet.of(",", ";", "!", ".", "'", "''", ":", "%",
+            "°");
     private static final Set<String> NO_WHITESPACE_AFTER = ImmutableSet.of("`", "``");
     private static final String COMMA = ",";
 
