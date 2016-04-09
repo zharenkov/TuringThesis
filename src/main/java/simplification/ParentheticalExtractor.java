@@ -11,7 +11,12 @@ import simplenlg.features.Tense;
 import util.TreeUtil;
 import util.WordListUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 public class ParentheticalExtractor implements Extractor {
@@ -67,8 +72,8 @@ public class ParentheticalExtractor implements Extractor {
                 final String personName = getPersonName(words, nerTags, parenthetical.lowerEndpoint() - 1);
                 System.out.println(dates);
                 if (dates.size() == 2) {
-                    simplifiedSentences.add(TextRealization.realizeSentence(personName, "was born", dates.get(0)));
-                    simplifiedSentences.add(TextRealization.realizeSentence(personName, "died", dates.get(1)));
+                    simplifiedSentences.add(TextRealization.realizeSentence(personName, "was born in", dates.get(0)));
+                    simplifiedSentences.add(TextRealization.realizeSentence(personName, "died in", dates.get(1)));
                 }
                 final List<String> posTags = parsed.posTags();
                 // If the first word of the parenthetical is a verb, construct a simple sentence with the VP
