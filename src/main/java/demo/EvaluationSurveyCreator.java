@@ -29,16 +29,19 @@ public class EvaluationSurveyCreator {
                 sentences.add(scanner.nextLine());
             }
 
+            int totalQuestionsGenerated = 0;
             final Map<Text, String> questionsToOriginalSentence = new HashMap<>();
             for (final String sentence : sentences) {
                 final Set<Text> simplifiedSentences = SentenceSimplifier.simplifySentence(sentence);
                 for (final Text simplifiedSentence : simplifiedSentences) {
                     final Set<Text> generatedQuestions = Rules.generateQuestions(simplifiedSentence.getString());
+                    totalQuestionsGenerated += generatedQuestions.size();
                     for (final Text question : generatedQuestions) {
                         questionsToOriginalSentence.put(question, sentence);
                     }
                 }
             }
+            System.out.println("Total questions generated: " + totalQuestionsGenerated);
             final List<Entry<Text, String>> questionsAndOriginalSentences = new ArrayList<>(
                     questionsToOriginalSentence.entrySet());
 
