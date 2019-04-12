@@ -99,4 +99,16 @@ public class TopicSentencesSimplificationAndQuestions implements Serializable {
 
         return builder.toString();
     }
+
+    public List<Text> getSentences() {
+        return sentences;
+    }
+
+    public Map<Text, Set<Text>> getSentenceToSimplifiedSentences() {
+        return sentenceToSimplifiedSentences;
+    }
+
+    public Map<Text, Set<Text>> getSimplifiedSentenceToQuestions() {
+        return simplifiedSentenceToQuestions;
+    }
 }

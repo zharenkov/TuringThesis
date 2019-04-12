@@ -8,15 +8,17 @@ import simplification.SentenceSimplifier;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
 
 public class SpecificSentenceDemo {
     public static void main(String[] args) throws IOException {
-        final String sentenceFile = args[0];
+        String sentenceFile = "simple.txt";
+        final InputStream sentenceFileS = ClassLoader.getSystemClassLoader().getResourceAsStream(sentenceFile);//args[0];
         try {
-            final Scanner scanner = new Scanner(new File(sentenceFile));
+            final Scanner scanner = new Scanner(sentenceFileS);
             final StringBuilder stringBuilder = new StringBuilder();
             int numberOfSentences = 0;
             int numberOfSimplifiedSentences = 0;

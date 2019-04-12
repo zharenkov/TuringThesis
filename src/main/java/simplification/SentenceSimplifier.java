@@ -8,6 +8,7 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import data.Text;
+import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.simple.Sentence;
 import edu.stanford.nlp.trees.Tree;
 import util.TreeUtil;
@@ -25,18 +26,29 @@ import static util.TreeUtil.labelEquals;
 public class SentenceSimplifier {
     private static final Map<String, String> STRING_REPLACEMENTS = ImmutableMap.of("\"", "", ": ", " ", " : ", " ");
 
-    private static final List<Extractor> extractors = ImmutableList.of(ExistentialIgnore.getExtractor(),
+    private static final List<Extractor> allextractors = ImmutableList.of(ExistentialIgnore.getExtractor(),
             ParentheticalExtractor.getExtractor(), AppositiveExtractor.getExtractor(),
             ConjoinedVerbPhraseExtractor.getExtractor(), ConjoinedVerbExtractor.getExtractor(),
             VerbPhraseModifierExtractor.getExtractor(), RelativeClauseExtractor.getExtractor(),
             ParticipialModifiersExtractor.getExtractor(), PrepositionalPhraseExtractor.getExtractor(),
             SbarWhExtractor.getExtractor(), SubVpExtractor.getExtractor());
 
+    private static final List<Extractor> paranthesisExtractors = ImmutableList.of(ParentheticalExtractor.getExtractor());
+
     public static void main(String[] args) {
         System.out.println(simplifySentence(Joiner.on(' ').join(args)));
     }
 
+    public static Set<Text> simplifyParanteticalSentence(String originalSentence) {
+        return doSimplification(originalSentence, paranthesisExtractors);
+    }
+
     public static Set<Text> simplifySentence(String originalSentence) {
+        return doSimplification(originalSentence, allextractors);
+    }
+
+    public static Set<Text> doSimplification(String originalSentence, List<Extractor> extractors) {
+
         Set<String> sentences = new LinkedHashSet<>();
         sentences.add(preCleanSentence(originalSentence));
         for (final Extractor extractor : extractors) {

@@ -19,7 +19,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class SimplificationDemo {
-    private static final String TOPIC_SENTENCES_FILE_NAME = "topic_sentences.txt";
+    private static final String TOPIC_SENTENCES_FILE_NAME = "simple.txt";
     private static final String OUTPUT_FILE_NAME = "output/demo/simplification/result_%d.txt";
     private static final PrintStream OUT = System.out;
     private static final PrintStream ERR = System.err;
@@ -55,7 +55,7 @@ public class SimplificationDemo {
                 sentenceToSimplifiedSentences);
         System.out.println(simplification);
 
-        if (args.length == 1 && args[0].equals("out")) {
+        if (true) {
             int n = 0;
             File file = new File(String.format(OUTPUT_FILE_NAME, n));
             while (file.exists()) {

@@ -2,43 +2,22 @@ package demo;
 
 import com.google.common.base.Charsets;
 import data.Text;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import simplification.SentenceSimplifier;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static util.OptionUtil.createOptionalOptionNoArgument;
 
 public class FullPipelineDemo {
-    private static final String TOPIC_SENTENCES_FILE_NAME = "topic_sentences.txt";
+    private static final String TOPIC_SENTENCES_FILE_NAME = "iphoneXwiki_new.txt";
     private static final String OUTPUT_FILE_NAME = "output/demo/pipeline/result_%d.txt";
     private static final String SIMPLIFICATION_OUTPUT_FILE_NAME = "output/demo/simplification/result.ser";
     private static final String NO_OUTPUT = "no_output";
@@ -50,7 +29,7 @@ public class FullPipelineDemo {
         }
     });
 
-    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         final Options options = new Options();
         options.addOption(createOptionalOptionNoArgument(NO_OUTPUT, "disable output to file"));
         options.addOption(createOptionalOptionNoArgument(NO_SIMPLIFICATION, "disable simplification system"));
@@ -66,6 +45,7 @@ public class FullPipelineDemo {
 
         final ClassLoader classLoader = SimplificationDemo.class.getClassLoader();
         final TopicSentencesSimplificationAndQuestions result;
+        List<String> corefed = new ArrayList<>();
         if (cmdLine.hasOption(NO_SIMPLIFICATION)) {
             System.err.println("Skipping simplification system. Loading from file instead.");
             try (
@@ -145,7 +125,17 @@ public class FullPipelineDemo {
 
             result = new TopicSentencesSimplificationAndQuestions(sentenceToSimplifiedSentences, sentences);
             System.setOut(OUT);
+
+            List<String> simpleSents = new ArrayList<>();
+
+            for (Text sentence : result.getSentences()) {
+                Set<Text> sents = result.getSentenceToSimplifiedSentences().get(sentence);
+                simpleSents.addAll(sents.stream().map(t->t.getString()).collect(Collectors.toList()));
+            }
+
+            //corefed = CorefService.doCoref(simpleSents.stream().collect(Collectors.joining("\n")));
             //System.setErr(ERR);
+
         }
 
         if (cmdLine.hasOption(NO_OUTPUT)) {
@@ -159,7 +149,7 @@ public class FullPipelineDemo {
                 file = new File(String.format(OUTPUT_FILE_NAME, n));
             }
             try {
-                FileUtils.writeStringToFile(file, result.toString(), Charsets.UTF_8.name());
+                FileUtils.writeStringToFile(file, corefed.stream().collect(Collectors.joining("\n")), Charsets.UTF_8.name());
             } catch (IOException e) {
                 e.printStackTrace();
             }
