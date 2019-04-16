@@ -38,13 +38,13 @@ public class RelativeClauseExtractor implements Extractor {
     public SimplificationResult extract(String sentence) {
         final Sentence parsed = new Sentence(sentence);
         final List<String> words = parsed.words();
-        System.out.println("Original sentence: " + words);
+//        System.out.println("Original sentence: " + words);
 
         final SemanticGraph dependencies = parsed.dependencyGraph();
         final List<SemanticGraphEdge> appositivesAndRelativeClauses = new ArrayList<>();
         appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(RELATIVE_CLAUSE_MODIFIER));
         appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(CLAUSAL_MODIFIER));
-        System.out.println("Relations: " + appositivesAndRelativeClauses);
+//        System.out.println("Relations: " + appositivesAndRelativeClauses);
 
         final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
         final Set<String> simplifiedSentences = new HashSet<>();
@@ -60,10 +60,10 @@ public class RelativeClauseExtractor implements Extractor {
         }
 
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
-        System.out.println("With relative clauses removed: " + answer);
+//        System.out.println("With relative clauses removed: " + answer);
         final String simplifiedSentence = WordListUtil.constructPhraseFromWordList(answer);
         simplifiedSentences.add(simplifiedSentence);
-        System.out.println("Simplified Sentences: " + simplifiedSentences);
+//        System.out.println("Simplified Sentences: " + simplifiedSentences);
         return new SimplificationResult(simplifiedSentences);
     }
 

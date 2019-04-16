@@ -1,19 +1,17 @@
 package questionGeneration.vo;
 
-public class Output implements Comparable {
+public class GeneratedQuestion implements Comparable {
 
     String sentence;
     String question;
     Double score;
     String model;
-    String paragraph;
 
-    public Output(String model, String sentence, String question, Double score, String paragraph) {
+    public GeneratedQuestion(String model, String sentence, String question, Double score) {
         this.model = model;
         this.sentence = sentence;
         this.question = question;
         this.score = score;
-        this.paragraph = paragraph;
     }
 
     public String getSentence() {
@@ -32,9 +30,6 @@ public class Output implements Comparable {
         return model;
     }
 
-    public String getParagraph() {
-        return paragraph;
-    }
 
     public void setScore(Double score) {
         this.score = score;
@@ -46,19 +41,18 @@ public class Output implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        if (this.score < ((Output)o).score) return -1;
-        if (this.score > ((Output)o).score) return 1;
+        if (this.score < ((GeneratedQuestion)o).score) return -1;
+        if (this.score > ((GeneratedQuestion)o).score) return 1;
         return 0;
     }
 
     @Override
     public String toString() {
-        return "Output{" +
-                "sentence='" + sentence + '\'' +"\n" +
+        return "{" + "\n" +
+                //"sentence='" + sentence + '\'' +"\n" +
                 ", question='" + question + '\'' +"\n" +
                 ", score=" + score +"\n" +
-                ", model='" + model + '\'' +"\n" +
-                ", paragraph='" + paragraph + '\'' +"\n" +
+                //", model='" + model + '\'' +"\n" +
                 '}';
     }
 }

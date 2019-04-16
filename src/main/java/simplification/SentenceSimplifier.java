@@ -36,7 +36,7 @@ public class SentenceSimplifier {
     private static final List<Extractor> paranthesisExtractors = ImmutableList.of(ParentheticalExtractor.getExtractor());
 
     public static void main(String[] args) {
-        System.out.println(simplifySentence(Joiner.on(' ').join(args)));
+//        System.out.println(simplifySentence(Joiner.on(' ').join(args)));
     }
 
     public static Set<Text> simplifyParanteticalSentence(String originalSentence) {
@@ -103,7 +103,7 @@ public class SentenceSimplifier {
                 final Tree firstLeaf = tree.getLeaves().get(0);
                 final Tree lastLeaf = Iterables.getLast(tree.getLeaves());
                 if (labelEquals(firstLeaf, "/") && labelEquals(lastLeaf, "/")) {
-                    System.out.println("Remove IPA: " + tree);
+//                    System.out.println("Remove IPA: " + tree);
                     final int left = TreeUtil.getLeafIndex(root, firstLeaf);
                     final int right = TreeUtil.getLeafIndex(root, lastLeaf);
                     partsToRemove.add(Range.closed(left, right));

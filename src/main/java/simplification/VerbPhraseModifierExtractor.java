@@ -39,7 +39,7 @@ public class VerbPhraseModifierExtractor implements Extractor {
     public SimplificationResult extract(String sentence) {
         final Sentence parsed = new Sentence(sentence);
         final List<String> words = parsed.words();
-        System.out.println("Original sentence: " + words);
+//        System.out.println("Original sentence: " + words);
         final SemanticGraph dependencies = parsed.dependencyGraph();
 
         final List<SemanticGraphEdge> modifiers = new ArrayList<>();
@@ -66,10 +66,10 @@ public class VerbPhraseModifierExtractor implements Extractor {
             }
         }
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
-        System.out.println("With appositives and relative clauses removed: " + answer);
+//        System.out.println("With appositives and relative clauses removed: " + answer);
         final String simplifiedSentence = WordListUtil.constructPhraseFromWordList(answer);
         simplifiedSentences.add(simplifiedSentence);
-        System.out.println("Simplified Sentences: " + simplifiedSentences);
+//        System.out.println("Simplified Sentences: " + simplifiedSentences);
         return new SimplificationResult(simplifiedSentences);
     }
 }

@@ -27,7 +27,7 @@ public class ExistentialIgnore implements Extractor {
         for (final Tree leaf : root.getLeaves()) {
             final Tree posTag = TreeUtil.getParent(root, leaf);
             if (TreeUtil.labelEquals(posTag, "ex")) {
-                System.out.println("Found evidence of existential sentence: Aborting!");
+//                System.out.println("Found evidence of existential sentence: Aborting!");
                 return new SimplificationResult(Collections.<String>emptySet());
             }
         }

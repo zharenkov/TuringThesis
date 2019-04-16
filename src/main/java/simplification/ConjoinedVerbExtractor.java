@@ -28,7 +28,7 @@ public class ConjoinedVerbExtractor implements Extractor {
 
     public static void main(String[] args) {
         final SimplificationResult simplificationResult = getExtractor().extract(Joiner.on(' ').join(args));
-        System.out.println(simplificationResult);
+//        System.out.println(simplificationResult);
     }
 
     @Override

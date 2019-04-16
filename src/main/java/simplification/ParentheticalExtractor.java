@@ -39,7 +39,7 @@ public class ParentheticalExtractor implements Extractor {
     public SimplificationResult extract(String sentence) {
         final Sentence parsed = new Sentence(sentence);
         final List<String> words = parsed.words();
-        System.out.println("Original sentence: " + words);
+//        System.out.println("Original sentence: " + words);
 
         int start = -1;
         final Stack<String> parenthesis = new Stack<>();
@@ -53,7 +53,7 @@ public class ParentheticalExtractor implements Extractor {
                 parenthesis.add("(");
             } else if (words.get(i).equals(RIGHT_PARENTHESIS)) {
                 if (parenthesis.isEmpty()) {
-                    System.err.println("Mismatching parenthesis! Aborting extraction.");
+//                    System.err.println("Mismatching parenthesis! Aborting extraction.");
                 }
                 parenthesis.pop();
                 if (parenthesis.isEmpty()) {
@@ -70,7 +70,7 @@ public class ParentheticalExtractor implements Extractor {
             if (nerTags.get(parenthetical.lowerEndpoint() - 1).equalsIgnoreCase("person")) {
                 final List<String> dates = getDates(words, nerTags, parenthetical);
                 final String personName = getPersonName(words, nerTags, parenthetical.lowerEndpoint() - 1);
-                System.out.println(dates);
+//                System.out.println(dates);
                 if (dates.size() == 2) {
                     simplifiedSentences.add(TextRealization.realizeSentence(personName, "was born in", dates.get(0)));
                     simplifiedSentences.add(TextRealization.realizeSentence(personName, "died in", dates.get(1)));
@@ -105,7 +105,7 @@ public class ParentheticalExtractor implements Extractor {
         }
 
         final List<String> modified = WordListUtil.removeParts(words, rangeSet);
-        System.out.println("With parentheticals removed: " + modified);
+//        System.out.println("With parentheticals removed: " + modified);
         simplifiedSentences.add(WordListUtil.constructPhraseFromWordList(modified));
         return new SimplificationResult(simplifiedSentences);
     }

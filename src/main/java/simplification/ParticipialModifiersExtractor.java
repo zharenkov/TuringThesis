@@ -27,14 +27,14 @@ public class ParticipialModifiersExtractor implements Extractor {
 
     public static void main(String[] args) {
         final SimplificationResult simplificationResult = getExtractor().extract(Joiner.on(' ').join(args));
-        System.out.println(simplificationResult.getSimplifiedSentences());
+//        System.out.println(simplificationResult.getSimplifiedSentences());
     }
 
     @Override
     public SimplificationResult extract(String sentence) {
-        System.out.println("Original sentence: " + sentence);
+//        System.out.println("Original sentence: " + sentence);
         final Sentence parsed = new Sentence(sentence);
-        System.out.println("NER tags: " + parsed.nerTags());
+//        System.out.println("NER tags: " + parsed.nerTags());
         //final Tree root = parsed.parse();
         final List<String> words = parsed.words();
         final List<String> posTags = parsed.posTags();
@@ -45,7 +45,7 @@ public class ParticipialModifiersExtractor implements Extractor {
             final String posTag = posTags.get(i);
             // If the word is a participle
             if (posTag.equalsIgnoreCase("vbg") || posTag.equalsIgnoreCase("vbn")) {
-                System.out.printf("Found participle '%s' at index %d\n", words.get(i), i);
+//                System.out.printf("Found participle '%s' at index %d\n", words.get(i), i);
                 // Look for a participle that comes after a noun phrase and a comma
                 if (words.get(i - 1).equals(",") && !posTags.get(i - 2).startsWith("vb")) {
                     final int leftBoundary = i - 1;

@@ -39,24 +39,24 @@ public class SubVpExtractor implements Extractor {
     }
 
     public static void main(String[] args) {
-        System.out.println(getExtractor().extract(Joiner.on(' ').join(args)));
+//        System.out.println(getExtractor().extract(Joiner.on(' ').join(args)));
     }
 
     @Override
     public SimplificationResult extract(String sentence) {
-        System.out.println("Checking for sub VPs in the sentence: " + sentence);
+//        System.out.println("Checking for sub VPs in the sentence: " + sentence);
         final Sentence parsed = new Sentence(sentence);
         final Tree root = parsed.parse();
         final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
         final Set<String> simplifiedSentences = new LinkedHashSet<>();
         for (final Tree tree : root.getChild(0).children()) {
             if (labelEquals(tree, "vp")) {
-                System.out.println("Found main VP: " + tree);
+//                System.out.println("Found main VP: " + tree);
                 final String beforeVp = TreeUtil.getStringBeforeTree(root, tree);
                 if (Strings.isNullOrEmpty(beforeVp)) {
                     continue;
                 }
-                System.out.println("\tBefore VP: " + beforeVp);
+//                System.out.println("\tBefore VP: " + beforeVp);
 
                 final Queue<Tree> trees = new LinkedList<>();
                 trees.addAll(Arrays.asList(tree.children()));
@@ -72,9 +72,9 @@ public class SubVpExtractor implements Extractor {
                     }
 
                     if (labelEquals(subTree, "vp") && npBetween) {
-                        System.out.println("Found sub VP: " + subTree);
+//                        System.out.println("Found sub VP: " + subTree);
                         final Tree subVpHead = TreeUtil.findHead(subTree).getLeaves().get(0);
-                        System.out.println("\tHead: " + subVpHead);
+//                        System.out.println("\tHead: " + subVpHead);
 
                         final String beVerb;
                         if (PosUtil.isPastTenseVerb(root, subVpHead)) {

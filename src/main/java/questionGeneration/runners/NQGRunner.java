@@ -1,11 +1,10 @@
 package questionGeneration.runners;
 
 
-import questionGeneration.vo.Output;
+import questionGeneration.vo.GeneratedQuestion;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +37,7 @@ public class NQGRunner implements ModelRunner {
     }
 
     @Override
-    public List<Output> getQuestions() throws IOException, InterruptedException {
+    public List<GeneratedQuestion> getQuestions() throws IOException, InterruptedException {
         String command = String.format(
                 "th translate.lua -config %s -model model/%s -src %s ", config, model,  inputFileSrc);
         if (inputFilePar != null) {
@@ -50,16 +49,16 @@ public class NQGRunner implements ModelRunner {
         pb.directory(new File(home));
         pb.redirectError(new File("nqg.log"));
         Process run = pb.start();
-        List<String> out = new ArgLineCollector(run).collectOutput();
+        List<String> out = new ArgLineCollector(run).collectOutput(false);
         run.waitFor();
         return processOutputs(out);
     }
 
-    private List<Output> processOutputs(List<String> out) {
+    private List<GeneratedQuestion> processOutputs(List<String> out) {
         List<String> sentences= new ArrayList<>();
         List<String> questions = new ArrayList<>();
         List<Double> scores = new ArrayList<>();
-        List<String> paragraphs = new ArrayList<>();
+//        List<String> paragraphs = new ArrayList<>();
 
         for (String s : out) {
             if (s.startsWith("SENT")) {
@@ -67,9 +66,10 @@ public class NQGRunner implements ModelRunner {
             } else if (s.startsWith("PRED SCORE")) {
                 scores.add(Double.valueOf(s.substring((s.indexOf(":")+1)).trim()));
             } else if (s.startsWith("PRED")) {
-                questions.add(s.substring(s.indexOf(":")+1));
-            } else if (s.startsWith("PARA")) {
-                paragraphs.add(s.substring(s.indexOf(":")+1));
+                questions.add(s.substring(s.indexOf(":") + 1));
+//            } else if (s.startsWith("PARA")) {
+//                paragraphs.add(s.substring(s.indexOf(":")+1));
+//            }
             }
         }
 
@@ -79,27 +79,26 @@ public class NQGRunner implements ModelRunner {
 //                .map(arr -> cleanDuplicates(arr))
 //                .collect(Collectors.toList());
 
-        List<Output> outputs = new ArrayList<>();
+        List<GeneratedQuestion> generatedQuestions = new ArrayList<>();
         for (int i=0; i<sentences.size();i++) {
-            outputs.add(new Output("NQG", sentences.get(i),questions.get(i),scores.get(i), paragraphs.get(i)));
+            generatedQuestions.add(new GeneratedQuestion("NQG", sentences.get(i),questions.get(i),scores.get(i)));
         }
         //deduplicate
-        outputs = outputs.stream().filter(distinctByKey(n->n.getQuestion())).collect(Collectors.toList());
+        generatedQuestions = generatedQuestions.stream().filter(distinctByKey(n->n.getQuestion())).collect(Collectors.toList());
         //sort
 
         // min normalization
-        Double max = outputs.stream().mapToDouble(Output::getScore).map(Math::abs).max().getAsDouble();
-        Double min = outputs.stream().mapToDouble(Output::getScore).map(Math::abs).min().getAsDouble();
-        Double maxlength = outputs.stream().mapToDouble(o-> o.getQuestion().length()).max().getAsDouble();
-        outputs.stream().forEach(output -> output.setScore((0.01+Math.abs(output.getScore())- min)/(max-min)*(output.getQuestion().length()/maxlength)));
-        //get top 30%
-        Collections.sort(outputs);
-        outputs = outputs.subList(0, (int) (outputs.size()*0.3));
-        return outputs;
+//        Double max = generatedQuestions.stream().mapToDouble(GeneratedQuestion::getScore).map(Math::abs).max().getAsDouble();
+//        Double min = generatedQuestions.stream().mapToDouble(GeneratedQuestion::getScore).map(Math::abs).min().getAsDouble();
+//        Double maxlength = generatedQuestions.stream().mapToDouble(o-> o.getQuestion().length()).max().getAsDouble();
+//        generatedQuestions.stream().forEach(output -> output.setScore((0.01+Math.abs(output.getScore())- min)/(max-min)*(output.getQuestion().length()/maxlength)));
+//        //get top 30%
+//        Collections.sort(generatedQuestions);
+//        generatedQuestions = generatedQuestions.subList(0, (int) (generatedQuestions.size()*0.3));
+        return generatedQuestions;
     }
 
     private String cleanDuplicates(String[] words) {
-        String res = "";
         List<String> list = new ArrayList<>();
         list.add(words[0]);
         for (int i =1; i<words.length;i++) {
@@ -108,5 +107,10 @@ public class NQGRunner implements ModelRunner {
             }
         }
         return list.stream().collect(Collectors.joining(" "));
+    }
+
+    @Override
+    public List<GeneratedQuestion> call() throws Exception {
+        return getQuestions();
     }
 }

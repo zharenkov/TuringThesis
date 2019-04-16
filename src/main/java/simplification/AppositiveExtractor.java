@@ -45,12 +45,12 @@ public class AppositiveExtractor implements Extractor {
         final Sentence parsed = new Sentence(sentence);
         final Tree root = parsed.parse();
         final List<String> words = parsed.words();
-        System.out.println("Original sentence: " + words);
+        //System.out.println("Original sentence: " + words);
 
         final SemanticGraph dependencies = parsed.dependencyGraph();
         final List<SemanticGraphEdge> appositivesAndRelativeClauses = new ArrayList<>();
         appositivesAndRelativeClauses.addAll(dependencies.findAllRelns(APPOSITIONAL_MODIFIER));
-        System.out.println("Relations: " + appositivesAndRelativeClauses);
+//        System.out.println("Relations: " + appositivesAndRelativeClauses);
 
         final RangeSet<Integer> partsToRemove = TreeRangeSet.create();
         final Set<String> simplifiedSentences = new HashSet<>();
@@ -75,10 +75,10 @@ public class AppositiveExtractor implements Extractor {
         }
 
         final List<String> answer = WordListUtil.removeParts(words, partsToRemove);
-        System.out.println("With appositives removed: " + answer);
+//        System.out.println("With appositives removed: " + answer);
         final String simplifiedSentence = WordListUtil.constructPhraseFromWordList(answer);
         simplifiedSentences.add(simplifiedSentence);
-        System.out.println("Simplified Sentences: " + simplifiedSentences);
+//        System.out.println("Simplified Sentences: " + simplifiedSentences);
         return new SimplificationResult(simplifiedSentences);
     }
 

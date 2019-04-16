@@ -10,7 +10,7 @@ public class SimplificationResult {
     private final Set<String> simplifiedSentences;
 
     public SimplificationResult(Set<String> simplifiedSentences) {
-        this.simplifiedSentences = processSentences(simplifiedSentences);
+        this.simplifiedSentences = simplifiedSentences;
     }
 
     private static Set<String> processSentences(Set<String> sentences) {

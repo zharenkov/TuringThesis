@@ -1,6 +1,6 @@
 package vo;
 
-import questionGeneration.vo.Output;
+import questionGeneration.vo.GeneratedQuestion;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ public class ParagraphWithSimplifications {
     private String sourceParagraph;
     private String simplifiedParagraph;
     private List<String> simplifiedSentences;
-    private List<Output> questions;
+    private List<GeneratedQuestion> questions;
 
-    public ParagraphWithSimplifications(String sourceParagraph, String simplifiedParagraph, List<String> simplifiedSentences, List<Output> questions) {
+    public ParagraphWithSimplifications(String sourceParagraph, String simplifiedParagraph, List<String> simplifiedSentences, List<GeneratedQuestion> questions) {
         this.sourceParagraph = sourceParagraph;
         this.simplifiedParagraph = simplifiedParagraph;
         this.simplifiedSentences = simplifiedSentences;
@@ -30,7 +30,7 @@ public class ParagraphWithSimplifications {
         return simplifiedSentences;
     }
 
-    public List<Output> getQuestions() {
+    public List<GeneratedQuestion> getQuestions() {
         return questions;
     }
 
@@ -38,8 +38,8 @@ public class ParagraphWithSimplifications {
     public String toString() {
         return "ParagraphWithSimplifications{" +
                 "sourceParagraph='" + sourceParagraph + '\'' + "\n" +
-                ", simplifiedParagraph='" + simplifiedParagraph + '\'' +"\n" +
-                ", simplifiedSentences=" + simplifiedSentences +"\n" +
+                //", simplifiedParagraph='" + simplifiedParagraph + '\'' +"\n" +
+                //", simplifiedSentences=" + simplifiedSentences +"\n" +
                 ", questions=" + questions +"\n" +
                 '}';
     }

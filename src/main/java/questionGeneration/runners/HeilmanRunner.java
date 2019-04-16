@@ -1,12 +1,11 @@
 package questionGeneration.runners;
 
 
-import questionGeneration.vo.Output;
+import questionGeneration.vo.GeneratedQuestion;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class HeilmanRunner implements ModelRunner {
@@ -20,10 +19,10 @@ public class HeilmanRunner implements ModelRunner {
     }
 
     @Override
-    public List<Output> getQuestions() throws IOException, InterruptedException {
+    public List<GeneratedQuestion> getQuestions() throws IOException, InterruptedException {
         //String home = "/home/opc/QuestionGeneration/";
         //String home = "/Volumes/MacintoshHDD/Downloads/Safari/QuestionGeneration/";
-        String command = "java -Xmx1200m -cp question-generation.jar " +
+        String command = "java -Xmx500m -cp question-generation.jar " +
                 "edu/cmu/ark/QuestionAsker " +
                 "--verbose --model models/linear-regression-ranker-reg500.ser.gz " +
                 "--prefer-wh --max-length 30 --downweight-pro --inputfile %s ";
@@ -32,12 +31,12 @@ public class HeilmanRunner implements ModelRunner {
         pb.directory(new File(home));
         pb.redirectError(new File("heilman.log"));
         Process run = pb.start();
-        List<String> out = new ArgLineCollector(run).collectOutput();
+        List<String> out = new ArgLineCollector(run).collectOutput(false);
         run.waitFor();
         return processOutput(out);
     }
 
-    private List<Output> processOutput(List<String> out) {
+    private List<GeneratedQuestion> processOutput(List<String> out) {
         List<String> sentences= new ArrayList<>();
         List<String> questions = new ArrayList<>();
         List<Double> scores = new ArrayList<>();
@@ -53,24 +52,28 @@ public class HeilmanRunner implements ModelRunner {
             }
         }
 
-        List<Output> outputs = new ArrayList<>();
+        List<GeneratedQuestion> generatedQuestions = new ArrayList<>();
         for (int i = 0; i < sentences.size(); i++) {
-            outputs.add(
-                    new Output("Heilman", sentences.get(i),questions.get(i),scores.get(i), "-")
+            generatedQuestions.add(
+                    new GeneratedQuestion("Heilman", sentences.get(i),questions.get(i),scores.get(i))
             );
         }
 
 
 
         // min normalization
-        Double max = outputs.stream().mapToDouble(Output::getScore).map(Math::abs).max().getAsDouble();
-        Double min = outputs.stream().mapToDouble(Output::getScore).map(Math::abs).min().getAsDouble();
-        Double maxlength = outputs.stream().mapToDouble(o-> o.getQuestion().length()).max().getAsDouble();
-        outputs.stream().forEach(output -> output.setScore((0.01+Math.abs(output.getScore())- min)/(max-min)*(output.getQuestion().length()/maxlength)));
-        //get top 30%
-        Collections.sort(outputs);
-        outputs = outputs.subList(0, (int) (outputs.size()*0.3));
-        return outputs;
+//        Double max = generatedQuestions.stream().mapToDouble(GeneratedQuestion::getScore).map(Math::abs).max().getAsDouble();
+//        Double min = generatedQuestions.stream().mapToDouble(GeneratedQuestion::getScore).map(Math::abs).min().getAsDouble();
+//        Double maxlength = generatedQuestions.stream().mapToDouble(o-> o.getQuestion().length()).max().getAsDouble();
+//        generatedQuestions.stream().forEach(output -> output.setScore((0.01+Math.abs(output.getScore())- min)/(max-min)*(output.getQuestion().length()/maxlength)));
+//        //get top 30%
+//        Collections.sort(generatedQuestions);
+//        generatedQuestions = generatedQuestions.subList(0, (int) (generatedQuestions.size()*0.3));
+        return generatedQuestions;
     }
 
+    @Override
+    public List<GeneratedQuestion> call() throws Exception {
+        return getQuestions();
+    }
 }

@@ -65,7 +65,7 @@ public class TextRealization {
 
         builder.append(punctuation);
         final String result = builder.toString().trim();
-        return Character.toUpperCase(result.charAt(0)) + result.substring(1);
+        return result;//Character.toUpperCase(result.charAt(0)) + result.substring(1);
     }
 
     /**

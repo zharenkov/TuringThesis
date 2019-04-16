@@ -1,50 +1,28 @@
 package service;
 
 import data.Text;
-import service.CorefService;
-import demo.SimplificationDemo;
-import demo.TopicSentencesSimplificationAndQuestions;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
-import org.apache.commons.io.FileUtils;
+import pipeline.SpotPipeline;
 import simplification.SentenceSimplifier;
+import util.ReplaceUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SimplificationService {
 
     private StanfordCoreNLP pipeline;
 
-    private static final PrintStream DUMMY_STREAM = new PrintStream(new OutputStream() {
-        public void write(int b) {
-        }
-    });
-
-    public SimplificationService() {
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,coref");
-        props.setProperty("tokenize.options","strictTreebank3=true");
-        pipeline = new StanfordCoreNLP(props);
+    public SimplificationService(StanfordCoreNLP pipeline) {
+        this.pipeline = pipeline;
     }
 
     public String simplyfyParagraph(String paragraph) {
-        final ClassLoader classLoader = SimplificationDemo.class.getClassLoader();
-        final TopicSentencesSimplificationAndQuestions result;
-        System.setOut(DUMMY_STREAM);
-        //System.setErr(DUMMY_STREAM);
-        final int processors = Runtime.getRuntime().availableProcessors();
-
         //remove braces
         String deparanthesisParagraph = "";
         Annotation para = new Annotation(paragraph);
@@ -57,12 +35,16 @@ public class SimplificationService {
         deparanthesisParagraph = sb.toString();
 
         // coref
-        String corefedParagraph = CorefService.doCoref(deparanthesisParagraph);
+        String corefedParagraph = ReplaceUtils.replaceWords(
+                CorefService.doCoref(deparanthesisParagraph, pipeline),
+                SpotPipeline.phraseTable
+                );
+
         // simplification
         Annotation annotatedCorefedParagraph = new Annotation(corefedParagraph);
-        pipeline.annotate(para);
+        pipeline.annotate(annotatedCorefedParagraph);
         sb = new StringBuilder();
-        for (CoreMap cm : para.get(CoreAnnotations.SentencesAnnotation.class)) {
+        for (CoreMap cm : annotatedCorefedParagraph.get(CoreAnnotations.SentencesAnnotation.class)) {
             if (".".equals(cm.toString())) continue;
             final Set<Text> strings = SentenceSimplifier.simplifySentence(cm.toString());
             sb.append(strings.stream().map(Text::getString).collect(Collectors.joining(" "))).append(" ");

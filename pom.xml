@@ -114,7 +114,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>SpotPipeline</mainClass>
+                                    <mainClass>pipeline.SpotPipeline</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
@@ -130,7 +130,7 @@
                     <!--<archive>-->
                         <!--<index>true</index>-->
                         <!--<manifest>-->
-                            <!--<mainClass>SpotPipeline</mainClass>-->
+                            <!--<mainClass>pipeline.SpotPipeline</mainClass>-->
                         <!--</manifest>-->
                     <!--</archive>-->
                 <!--</configuration>-->

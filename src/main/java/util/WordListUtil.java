@@ -47,7 +47,7 @@ public class WordListUtil {
             }
         }
         if (leftCommaBound <= governorIndex || rightCommaBound <= governorIndex) {
-            System.out.println("The dependent is not bounded by commas after the governor");
+//            System.out.println("The dependent is not bounded by commas after the governor");
             return null;
         }
         return Range.closed(leftCommaBound, rightCommaBound);

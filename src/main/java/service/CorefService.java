@@ -3,37 +3,21 @@ package service;
 import edu.stanford.nlp.coref.CorefCoreAnnotations;
 import edu.stanford.nlp.coref.data.CorefChain;
 import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class CorefService {
 
-    public static void main(String[] args) throws IOException {
-        doCoref("");
-    }
 
-    public static String doCoref(String text) {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    public static String doCoref(String text, StanfordCoreNLP pipeline) {
         Annotation doc = new Annotation(text);
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,coref");
-        props.setProperty("ssplit.boundaryTokenRegex", "\\.|[!?]+");
-        props.setProperty("coref.algorithm", "neural");//"statistical" : "neural"
-        props.setProperty("coref.neural.greedyness", "0.5");
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-//
 //        PTBTokenizer ptbTokenizer = new PTBTokenizer(
 //                new FileReader(classLoader.getResource("simplifiedParagraphs.txt").getFile())
 //                , new WordTokenFactory()

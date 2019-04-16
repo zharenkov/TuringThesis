@@ -1,26 +1,35 @@
 package service;
 
+import org.apache.commons.io.FileUtils;
+import pipeline.SpotPipeline;
 import questionGeneration.runners.HeilmanRunner;
 import questionGeneration.runners.NQGRunner;
-import questionGeneration.vo.Output;
+import questionGeneration.vo.GeneratedQuestion;
+import util.ReplaceUtils;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class QGService {
 
+    public static final String HYPO_TEMPLATE = "hypo_%d.txt";
+    public static final String REF_TEMPLATE = "ref_%d.txt";
+
     private Properties properties;
-    private Map<String, String> reversedPhraseTable;
-    public QGService(Properties properties, Map<String, String> reversedPhraseTable) {
+
+    public QGService(Properties properties) {
         this.properties = properties;
-        this.reversedPhraseTable = reversedPhraseTable;
     }
 
-    public List<Output> generateQuestions(String sentFileLower, String paraFileLower, String sentFile) throws IOException, InterruptedException {
+    public List<GeneratedQuestion> generateQuestions(String sentFileLower, String paraFileLower, String sentFile) throws IOException, InterruptedException, ExecutionException {
 
+        String root = properties.getProperty("home");
+        String evalRoot = properties.getProperty("eval.home");
+
+        //generate questions
         NQGRunner nqgRunner = new NQGRunner(
                 properties.getProperty("nqg.home"),
                 properties.getProperty("nqg.model"),
@@ -31,17 +40,44 @@ public class QGService {
                 properties.getProperty("heilman.home"),
                 sentFile
         );
+        List<GeneratedQuestion> allout = new ArrayList<>();
+//        allout.addAll(nqgRunner.getQuestions());
+//        allout.addAll(heilmanRunner.getQuestions());
 
-        List<Output> heilmanOutputs = heilmanRunner.getQuestions();
-        List<Output> nqgOutputs = nqgRunner.getQuestions();
-        List<Output> allout = new ArrayList<>();
-        allout.addAll(nqgOutputs);
-        allout.addAll(heilmanOutputs);
-        for (Map.Entry<String, String> entry : reversedPhraseTable.entrySet()) {
-            for (Output o : allout) {
-                o.setQuestion(o.getQuestion().replaceAll(entry.getKey(), entry.getValue()));
-            }
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        List<Future<List<GeneratedQuestion>>> questionsFutureList = executor.invokeAll(Arrays.asList(nqgRunner, heilmanRunner));
+        for (Future<List<GeneratedQuestion>> f : questionsFutureList) {
+            allout.addAll(f.get());
         }
+        executor.shutdown();
+        executor.awaitTermination(2, TimeUnit.MINUTES);
+
+        //evaluation
+        //prepare files
+        long millis = System.currentTimeMillis();
+        String hypoFilePath = root + String.format(HYPO_TEMPLATE, millis);
+        String refFilePath = root + String.format(REF_TEMPLATE, millis);
+        File hypoFile = new File(hypoFilePath);
+        File refFile = new File(refFilePath);
+        FileUtils.writeLines(hypoFile, allout.stream().map(GeneratedQuestion::getQuestion).collect(Collectors.toList()));
+        FileUtils.writeLines(refFile, allout.stream().map(GeneratedQuestion::getSentence).collect(Collectors.toList()));
+        //evaluate
+        EvaluationService evaluationService = new EvaluationService(evalRoot, hypoFilePath, refFilePath);
+        List<Double> scores = evaluationService.evaluateScores();
+        for (int i = 0; i<allout.size(); i++) {
+            allout.get(i).setScore(scores.get(i));
+        }
+        //rm files
+        hypoFile.delete();
+        refFile.delete();
+
+        //filter best questions
+        allout = allout.stream().filter(output -> output.getScore() >= 0.275)
+                .collect(Collectors.toList());
+
+        //replace word by phrasetable
+        allout.forEach(out -> out.setQuestion(ReplaceUtils.replaceWords(out.getQuestion(), SpotPipeline.reversedPhraseTable)));
+
         return allout;
 
     }
