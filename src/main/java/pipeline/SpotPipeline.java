@@ -10,10 +10,7 @@ import service.QGService;
 import service.SimplificationService;
 import vo.ParagraphWithSimplifications;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -98,7 +95,48 @@ public class SpotPipeline {
         }
         executor.shutdown();
         executor.awaitTermination(60, TimeUnit.MINUTES);
-        FileUtils.writeLines(new File("result.txt"), simplified.values().stream().map(s -> s.toString()).collect(Collectors.toList()));
+
+        String name = args[0].split("\\.")[0];
+        try (PrintWriter writer = new PrintWriter(new File(name+".csv"))) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("model,")
+                    .append("question,")
+                    .append("sentence,")
+                    .append("score")
+                    .append('\n');
+            List<GeneratedQuestion> questions = new ArrayList<>();
+            simplified.values().stream().forEach(s-> questions.addAll(s.getQuestions()));
+
+
+            questions.forEach(q -> {
+                sb.append("\""+ q.getModel() +"\"");
+                sb.append(",");
+                sb.append("\"" + (q.getQuestion().replaceAll("\"",""))+ "\"");
+                sb.append(",");
+                sb.append("\"" + q.getSentence().replaceAll("\"","") + "\"");
+                sb.append(",");
+                sb.append(q.getScore());
+                sb.append("\n");
+            });
+
+            writer.write(sb.toString());
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+//        FileUtils.writeLines(new File("result.txt"), simplified.values().stream().map(s -> s.toString()).collect(Collectors.toList()));
+//        List<String> sents = new ArrayList<>();
+//        List<String> paragraphs = new ArrayList<>();
+//                simplified.values().stream().forEach(o->
+//                {
+//                    for (String sent : o.getSimplifiedSentences()) {
+//                        paragraphs.add(o.getSimplifiedParagraph());
+//                        sents.add(sent);
+//                    }
+//                });
+//                FileUtils.writeLines(new File("sent.txt"), sents);
+//        FileUtils.writeLines(new File("para.txt"), paragraphs);
         System.out.println("Total time: " + (System.currentTimeMillis()-start)/1000);
     }
 

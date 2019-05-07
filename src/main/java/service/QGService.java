@@ -9,7 +9,10 @@ import util.ReplaceUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ public class QGService {
 
         String root = properties.getProperty("home");
         String evalRoot = properties.getProperty("eval.home");
-
+        String threshold = properties.getProperty("eval.threshold");
         //generate questions
         NQGRunner nqgRunner = new NQGRunner(
                 properties.getProperty("nqg.home"),
@@ -64,7 +67,7 @@ public class QGService {
         //evaluate
         EvaluationService evaluationService = new EvaluationService(evalRoot, hypoFilePath, refFilePath);
         List<Double> scores = evaluationService.evaluateScores();
-        for (int i = 0; i<allout.size(); i++) {
+        for (int i = 0; i < allout.size(); i++) {
             allout.get(i).setScore(scores.get(i));
         }
         //rm files
@@ -72,11 +75,15 @@ public class QGService {
         refFile.delete();
 
         //filter best questions
-        allout = allout.stream().filter(output -> output.getScore() >= 0.275)
-                .collect(Collectors.toList());
+        allout = allout.stream().filter(output ->
+                output.getScore() >= Double.valueOf(threshold))
+                        //            && output.getQuestion().split("\\s+").length < 10 )
+                        .collect(Collectors.toList());
 
         //replace word by phrasetable
-        allout.forEach(out -> out.setQuestion(ReplaceUtils.replaceWords(out.getQuestion(), SpotPipeline.reversedPhraseTable)));
+        allout.forEach(out ->
+                out.setQuestion(ReplaceUtils.replaceWords(out.getQuestion(), SpotPipeline.reversedPhraseTable))
+        );
 
         return allout;
 

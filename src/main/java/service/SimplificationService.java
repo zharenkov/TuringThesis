@@ -5,6 +5,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.StringUtils;
 import pipeline.SpotPipeline;
 import simplification.SentenceSimplifier;
 import util.ReplaceUtils;
@@ -29,8 +30,15 @@ public class SimplificationService {
         pipeline.annotate(para);
         StringBuilder sb = new StringBuilder();
         for (CoreMap cm : para.get(CoreAnnotations.SentencesAnnotation.class)) {
-            final Set<Text> strings = SentenceSimplifier.simplifyParanteticalSentence(cm.toString());
-            sb.append(strings.stream().map(Text::getString).collect(Collectors.joining(" "))).append(" ");
+            if (cm.get(CoreAnnotations.TokensAnnotation.class).stream().filter(s->!StringUtils.isPunct(s.word())).count()<4) continue;
+            try {
+
+                final Set<Text> strings = SentenceSimplifier.simplifyParanteticalSentence(cm.toString());
+                sb.append(strings.stream().map(Text::getString).collect(Collectors.joining(" "))).append(" ");
+            } catch (Exception e) {
+                continue;
+            }
+
         }
         deparanthesisParagraph = sb.toString();
 
@@ -45,9 +53,13 @@ public class SimplificationService {
         pipeline.annotate(annotatedCorefedParagraph);
         sb = new StringBuilder();
         for (CoreMap cm : annotatedCorefedParagraph.get(CoreAnnotations.SentencesAnnotation.class)) {
-            if (".".equals(cm.toString())) continue;
-            final Set<Text> strings = SentenceSimplifier.simplifySentence(cm.toString());
-            sb.append(strings.stream().map(Text::getString).collect(Collectors.joining(" "))).append(" ");
+            if (".".equals(cm.toString()) || cm.get(CoreAnnotations.TokensAnnotation.class).stream().filter(s->!StringUtils.isPunct(s.word())).count()<4) continue;
+            try {
+                final Set<Text> strings = SentenceSimplifier.simplifySentence(cm.toString());
+                sb.append(strings.stream().map(Text::getString).collect(Collectors.joining(" "))).append(" ");
+            } catch (Exception e) {
+                continue;
+            }
         }
         String simplifiedParagraph = sb.toString();
 
@@ -59,6 +71,7 @@ public class SimplificationService {
         Annotation annotation = new Annotation(paragraph);
         pipeline.annotate(annotation);
         for (CoreMap cm : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+            if (cm.get(CoreAnnotations.TokensAnnotation.class).stream().filter(s->!StringUtils.isPunct(s.word())).count()<4) continue;
             sents.add((cm.toString()));
         }
         return sents;

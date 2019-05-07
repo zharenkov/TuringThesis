@@ -84,6 +84,6 @@ public class PrepositionalPhraseExtractor implements Extractor {
     }
 
     private static String lowerCaseFirstLetter(String string) {
-        return Character.toLowerCase(string.charAt(0)) + string.substring(1);
+        return string;//Character.toLowerCase(string.charAt(0)) + string.substring(1);
     }
 }

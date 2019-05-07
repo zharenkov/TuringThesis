@@ -2,11 +2,13 @@ package questionGeneration.runners;
 
 
 import questionGeneration.vo.GeneratedQuestion;
+import simplification.SentenceSimplifier;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HeilmanRunner implements ModelRunner {
 
@@ -22,7 +24,7 @@ public class HeilmanRunner implements ModelRunner {
     public List<GeneratedQuestion> getQuestions() throws IOException, InterruptedException {
         //String home = "/home/opc/QuestionGeneration/";
         //String home = "/Volumes/MacintoshHDD/Downloads/Safari/QuestionGeneration/";
-        String command = "java -Xmx500m -cp question-generation.jar " +
+        String command = "java -Xmx1500m -cp question-generation.jar " +
                 "edu/cmu/ark/QuestionAsker " +
                 "--verbose --model models/linear-regression-ranker-reg500.ser.gz " +
                 "--prefer-wh --max-length 30 --downweight-pro --inputfile %s ";
@@ -54,9 +56,12 @@ public class HeilmanRunner implements ModelRunner {
 
         List<GeneratedQuestion> generatedQuestions = new ArrayList<>();
         for (int i = 0; i < sentences.size(); i++) {
-            generatedQuestions.add(
-                    new GeneratedQuestion("Heilman", sentences.get(i),questions.get(i),scores.get(i))
-            );
+            List<String> simplifiedQuestions = SentenceSimplifier.simplifySentence(questions.get(i)).stream().map(t->t.getString()).collect(Collectors.toList());
+            for (String q : simplifiedQuestions) {
+                generatedQuestions.add(
+                        new GeneratedQuestion("Heilman", sentences.get(i), q, scores.get(i))
+                );
+            }
         }
 
 
@@ -75,5 +80,9 @@ public class HeilmanRunner implements ModelRunner {
     @Override
     public List<GeneratedQuestion> call() throws Exception {
         return getQuestions();
+    }
+
+    public static void main(String[] args) {
+        SentenceSimplifier.simplifySentence("Is an anthropomorphic mouse who typically wears red shorts, large yellow shoes, and Mickey Mouse one of the world's most recognizable characters.").forEach(t-> System.out.println(t.toString()));
     }
 }

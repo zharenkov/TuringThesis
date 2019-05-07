@@ -39,11 +39,7 @@ public class NQGRunner implements ModelRunner {
     @Override
     public List<GeneratedQuestion> getQuestions() throws IOException, InterruptedException {
         String command = String.format(
-                "th translate.lua -config %s -model model/%s -src %s ", config, model,  inputFileSrc);
-        if (inputFilePar != null) {
-            command = command + " -par " + inputFilePar;
-        }
-
+                "th translate.lua -config %s -model model/%s -src %s -par %s ", config, model,  inputFileSrc, inputFilePar);
 
         ProcessBuilder pb = new ProcessBuilder(command.split("\\s+"));
         pb.directory(new File(home));
@@ -66,7 +62,7 @@ public class NQGRunner implements ModelRunner {
             } else if (s.startsWith("PRED SCORE")) {
                 scores.add(Double.valueOf(s.substring((s.indexOf(":")+1)).trim()));
             } else if (s.startsWith("PRED")) {
-                questions.add(s.substring(s.indexOf(":") + 1));
+                questions.add(s.substring(s.indexOf(":") + 1).trim());
 //            } else if (s.startsWith("PARA")) {
 //                paragraphs.add(s.substring(s.indexOf(":")+1));
 //            }
