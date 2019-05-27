@@ -20,18 +20,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static util.TreeUtil.labelEquals;
 
 public class SentenceSimplifier {
     private static final Map<String, String> STRING_REPLACEMENTS = ImmutableMap.of("\"", "", ": ", " ", " : ", " ");
+    private final static Pattern nounAdjPattern = Pattern.compile("(((jj)\\s(nn)|(jj)|(nn))\\s((cc)|,)\\s){2,}((jj)\\s(nn)|(jj)|(nn))");
+            //("((((jj)\\s(nn))|(nn)|(jj))\\s,\\s)+(((jj)\\s(nn))|(nn)|(jj)){1}(\\s(cc)\\s(((jj)\\s(nn))|(nn)|(jj)))?");
+    private final static Pattern verbPatter = Pattern.compile("((vb\\snn|vb)\\s((cc)|,)\\s){2,}((vb\\snn)|vb)");
+                    //("((((vb)\\s(nn))|(vb))\\s,\\s)+(((vb)\\s(nn))|(vb)){1}(\\s(cc)\\s((vb)\\s(nn)|(vb)))?");
 
-    private static final List<Extractor> allextractors = ImmutableList.of(ExistentialIgnore.getExtractor(),
+    private static final List<Extractor> allextractors = ImmutableList.of(
+            ExistentialIgnore.getExtractor(),
             ParentheticalExtractor.getExtractor(), AppositiveExtractor.getExtractor(),
             ConjoinedVerbPhraseExtractor.getExtractor(), ConjoinedVerbExtractor.getExtractor(),
             VerbPhraseModifierExtractor.getExtractor(), RelativeClauseExtractor.getExtractor(),
             ParticipialModifiersExtractor.getExtractor(), PrepositionalPhraseExtractor.getExtractor(),
-            SbarWhExtractor.getExtractor(), SubVpExtractor.getExtractor());
+            SbarWhExtractor.getExtractor(), SubVpExtractor.getExtractor(),
+            ListExtractor.getExtractor(nounAdjPattern), ListExtractor.getExtractor(verbPatter));
 
     private static final List<Extractor> paranthesisExtractors = ImmutableList.of(ParentheticalExtractor.getExtractor());
 
